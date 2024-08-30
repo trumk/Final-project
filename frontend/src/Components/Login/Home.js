@@ -1,32 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
 
 function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate(); // Tạo đối tượng navigate
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const email = localStorage.getItem('email');
     if (email) {
-      setIsLoggedIn(true); // Người dùng đã đăng nhập
+      setIsLoggedIn(true); 
     } else {
-      setIsLoggedIn(false); // Người dùng chưa đăng nhập
+      setIsLoggedIn(false); 
     }
   }, []);
 
   const logout = () => {
-    localStorage.clear(); // Xóa thông tin đăng nhập khỏi localStorage
-    setIsLoggedIn(false); // Cập nhật trạng thái đăng nhập
-    window.location.reload(); // Reload lại trang
+    localStorage.clear(); 
+    setIsLoggedIn(false); 
+    window.location.reload();
   };
 
   return (
     <div>
       <h1>Welcome</h1>
       {isLoggedIn ? (
-        <button onClick={logout}>Logout</button> // Hiển thị nút Logout nếu đã đăng nhập
+        <button onClick={logout}>Logout</button> 
       ) : (
-        <button onClick={() => navigate('/login')}>Login</button> // Hiển thị nút Login nếu chưa đăng nhập
+        <button onClick={() => navigate('/login')}>Login</button> 
       )}
     </div>
   );
