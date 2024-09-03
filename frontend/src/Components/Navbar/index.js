@@ -7,19 +7,18 @@ function Navbar() {
 
   useEffect(() => {
     const email = localStorage.getItem("email");
-    setIsLoggedIn(!!email); // Cập nhật trạng thái đăng nhập dựa trên email có trong localStorage
+    setIsLoggedIn(!!email); 
   }, []);
 
   const handleLogout = () => {
     localStorage.clear();
     setIsLoggedIn(false);
-    navigate('/login'); // Chuyển hướng đến trang đăng nhập sau khi đăng xuất
+    navigate('/'); 
   };
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
-        {/* Các liên kết ở bên trái */}
         <Link className="navbar-brand" to="/">MyApp</Link>
         <button
           className="navbar-toggler"
@@ -45,7 +44,6 @@ function Navbar() {
             </li>
           </ul>
 
-          {/* Các liên kết ở bên phải */}
           <ul className="navbar-nav ms-auto">
             {isLoggedIn ? (
               <>
