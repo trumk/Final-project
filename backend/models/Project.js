@@ -10,18 +10,25 @@ const projectSchema = new Schema({
     type: String,
     required: true,
   },
+  description: {
+    type: String,
+    required: false,
+  },
   images: [
     {
-      type: String, // URL hoặc đường dẫn tới ảnh
+      type: String, 
+      required: false,
     },
   ],
   likes: {
     type: Number,
+    required: false,
     default: 0,
   },
   comments: [
     {
       type: Schema.Types.ObjectId,
+      required: false,
       ref: 'Comment',
     },
   ],
