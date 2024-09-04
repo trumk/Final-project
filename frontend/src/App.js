@@ -1,17 +1,19 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from './Components/Login/Login';
-import IndexAll from './Components/pages';
+import Dashboard from './Pages/admin';
+import Homepage from './Pages/Guest';
 
 function App() {
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<IndexAll />} />
+          <Route path='/' element={<Homepage />} />
           <Route path='/login' element={<Login />} />
+
+          <Route path='/admin' element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import "./style.css"
 
 function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -17,8 +18,7 @@ function Navbar() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <div className="container-fluid">
+    <nav className="navbar navbar-expand-lg navbar-light bg-light custom-navbar">
         <Link className="navbar-brand" to="/">MyApp</Link>
         <button
           className="navbar-toggler"
@@ -63,7 +63,6 @@ function Navbar() {
             )}
           </ul>
         </div>
-      </div>
     </nav>
   );
 }
