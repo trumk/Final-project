@@ -4,12 +4,13 @@ import { getProjectsFailed, getProjectsStart, getProjectsSuccess } from './proje
 
 const BACKEND_URL = "http://localhost:5000/";
 
-export const getAllProjects = async (dispatch)=>{
+
+export const getAllProjects = () => async (dispatch) => { 
     dispatch(getProjectsStart());
-    try{
-        const res = await axios.get(`${BACKEND_URL}`)
+    try {
+        const res = await axios.get(`${BACKEND_URL}/api/projects`)
         dispatch(getProjectsSuccess(res.data));
-    }catch(err){
+    } catch (err) {
         dispatch(getProjectsFailed());
     }
-}
+};
