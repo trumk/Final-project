@@ -8,6 +8,9 @@ import Login from './Components/Login/Login';
 import Dashboard from './Pages/admin';
 import Homepage from './Pages/Guest';
 import ProjectPage from './Pages/admin/Project';
+import CreateProject from './Pages/admin/Project/Create';
+import EditProject from './Pages/admin/Project/[id]/Edit';
+
 
 function App() {
   return (
@@ -21,6 +24,8 @@ function App() {
             {/* admin */}
             <Route path='/admin' element={<Dashboard />} />
             <Route path='/admin/project' element={<ProjectPage />} />
+            <Route path='/admin/project/create' element={<CreateProject/>} />
+            <Route path='/admin/project/edit/:id' element={<EditProject/>} />
           </Routes>
         </BrowserRouter>
       </PersistGate>

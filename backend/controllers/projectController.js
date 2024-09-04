@@ -9,6 +9,7 @@ const getAllProjects = async (req, res) => {
   }
 };
 
+
 const getOneProject = async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);

@@ -1,116 +1,102 @@
 import { createSlice } from "@reduxjs/toolkit";
+
 const projectSlice = createSlice({
-  name: "projects",
+  name: "project",
   initialState: {
-    projects: {
-      allProjects: null,
-      isFetching: false,
-      error: false,
-    },
-    project: {
-      currentProject: null,
-      isFetching: false,
-      error: false,
-    },
-    createProject: {
-      isFetching: false,
-      error: false,
-    },
-    updateProject: {
-      currentProject: null,
-      isFetching: false,
-      error: false,
-    },
-    deleteProject: {
-      isFetching: false,
-      error: false,
-    },
+    allProjects: null,
+    currentProject: null,
+    isFetching: false,
+    error: false,
     msg: "",
   },
   reducers: {
     getProjectsStart: (state) => {
-      state.project.isFetching = true;
+      state.isFetching = true;
     },
     getProjectsSuccess: (state, action) => {
-      state.project.isFetching = false;
-      state.project.allProjects = action.payload;
-      state.project.error = false;
+      state.isFetching = false;
+      state.allProjects = action.payload;
+      state.error = false;
     },
-    getProjectsFailed: (state) => {
-      state.project.isFetching = false;
-      state.project.error = true;
+    getProjectsFailed: (state, action) => {
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to fetch projects";
     },
     getProjectStart: (state) => {
-      state.project.isFetching = true;
+      state.isFetching = true;
     },
     getProjectSuccess: (state, action) => {
-      state.project.isFetching = false;
-      state.project.currentProject = action.payload;
-      state.project.error = false;
+      state.isFetching = false;
+      state.currentProject = action.payload;
+      state.error = false;
     },
-    getProjectFailed: (state) => {
-      state.project.isFetching = false;
-      state.project.error = true;
+    getProjectFailed: (state, action) => {
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to fetch the project";
     },
     createProjectStart: (state) => {
-      state.createProject.isFetching = true;
-      state.createProject.error = false;
+      state.isFetching = true;
+      state.error = false;
     },
     createProjectSuccess: (state, action) => {
-      state.createProject.isFetching = false;
-      state.createProject.error = false;
+      state.isFetching = false;
+      state.error = false;
       state.msg = action.payload;
     },
     createProjectFailed: (state, action) => {
-      state.createProject.isFetching = false;
-      state.createProject.error = true;
-      state.msg = action.payload;
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to create the project";
     },
     updateProjectStart: (state) => {
-      state.updateProject.isFetching = true;
-      state.updateProject.error = false;
+      state.isFetching = true;
+      state.error = false;
     },
     updateProjectSuccess: (state, action) => {
-      state.updateProject.isFetching = false;
-      state.updateProject.error = false;
+      state.isFetching = false;
+      state.error = false;
       state.msg = action.payload;
     },
     updateProjectFailed: (state, action) => {
-      state.updateProject.isFetching = false;
-      state.updateProject.error = true;
-      state.msg = action.payload;
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to update the project";
     },
     deleteProjectStart: (state) => {
-      state.deleteProject.isFetching = true;
-      state.deleteProject.error = false;
+      state.isFetching = true;
+      state.error = false;
     },
     deleteProjectSuccess: (state, action) => {
-      state.deleteProject.isFetching = false;
-      state.deleteProject.error = false;
+      state.isFetching = false;
+      state.error = false;
       state.msg = action.payload;
     },
     deleteProjectFailed: (state, action) => {
-      state.deleteProject.isFetching = false;
-      state.deleteProject.error = true;
-      state.msg = action.payload;
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to delete the project";
     },
   },
 });
+
 export const {
-    getProjectsStart,
-    getProjectsSuccess,
-    getProjectsFailed,
-    getProjectStart,
-    getProjectSuccess,
-    getProjectFailed,
-    createProjectStart,
-    createProjectSuccess,
-    createProjectFailed,
-    updateProjectStart,
-    updateProjectSuccess,
-    updateProjectFailed,
-    deleteProjectStart,
-    deleteProjectSuccess,
-    deleteProjectFailed
-} = projectSlice.actions
-export default projectSlice.reducer
+  getProjectsStart,
+  getProjectsSuccess,
+  getProjectsFailed,
+  getProjectStart,
+  getProjectSuccess,
+  getProjectFailed,
+  createProjectStart,
+  createProjectSuccess,
+  createProjectFailed,
+  updateProjectStart,
+  updateProjectSuccess,
+  updateProjectFailed,
+  deleteProjectStart,
+  deleteProjectSuccess,
+  deleteProjectFailed,
+} = projectSlice.actions;
+
+export default projectSlice.reducer;

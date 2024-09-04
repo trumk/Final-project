@@ -66,7 +66,7 @@ const Dashboard = () => {
             <div className="card-header">Admin Actions</div>
             <div className="card-body">
               <h5 className="card-title">Quick Actions</h5>
-              <button className="btn btn-primary mb-2 me-2">Add New Project</button>
+              <button className="btn btn-primary mb-2 me-2" ><a href='/admin/project/create' style={{color: 'black', textDecoration: 'none'}}>Add new project</a></button>
               <button className="btn btn-secondary mb-2 me-2">Manage Users</button>
               <button className="btn btn-danger mb-2">Settings</button>
             </div>
