@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';  // Import useNavigate
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './style.css'; 
 import { getAllProjects } from '../../../redux/apiRequest';
+import NavbarAdmin from '../../../Components/NavbarAdmin';
 
 const ProjectPage = () => {
   const dispatch = useDispatch();
@@ -19,6 +20,8 @@ const ProjectPage = () => {
   };
 
   return (
+    <>
+    {/* <NavbarAdmin/> */}
     <div className="container-fluid p-4">
       <h1 className="mb-4">Project Management</h1>
       <button className="btn btn-primary mb-2 me-2">
@@ -45,7 +48,7 @@ const ProjectPage = () => {
                 <td>{project.description}</td>
                 <td>{new Date(project.createdAt).toLocaleDateString()}</td>
                 <td>
-                  <button className="btn btn-warning btn-sm me-2" onClick={() => handleEdit(project._id)}>Edit</button>
+                  <button className="btn btn-warning btn-sm " onClick={() => handleEdit(project._id)}>Edit</button>
                 </td>
               </tr>
             ))}
@@ -55,6 +58,7 @@ const ProjectPage = () => {
         <p>No projects available.</p>
       )}
     </div>
+    </>
   );
 };
 
