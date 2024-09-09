@@ -24,13 +24,16 @@ const getOneProject = async (req, res) => {
 
 const createProject = async (req, res) => {
   try {
-    const { name, author, description, images } = req.body;
+    const { name, author, description } = req.body;
+
+    // Lấy đường dẫn file và thay backslash bằng forward slash
+    const images = req.files.map(file => file.path.replace(/\\/g, '/'));
 
     const newProject = new Project({
       name,
       author,
       description,
-      images,
+      images
     });
 
     const savedProject = await newProject.save();

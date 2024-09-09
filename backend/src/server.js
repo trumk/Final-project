@@ -23,3 +23,4 @@ mongoose.connect('mongodb+srv://nguyentrung2292003:GYCKF3LGpSWUfabU@databases.l0
 });
 
 app.use('/api/projects', projectRoutes);
+app.use('/uploads', express.static('uploads'));

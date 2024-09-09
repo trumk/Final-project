@@ -38,6 +38,7 @@ const EditProject = () => {
     };
     dispatch(updateProject(id, updatedProject, navigate));
   };
+
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this project?')) {
       dispatch(deleteProject(id))
@@ -45,6 +46,7 @@ const EditProject = () => {
           navigate('/admin/project'); 
         })
         .catch((error) => {
+          console.error(error);
         });
     }
   };
@@ -88,11 +90,27 @@ const EditProject = () => {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="images" className="form-label">Images (URLs)</label>
+          <label htmlFor="images" className="form-label">Images</label>
+          <div>
+            {images.map((image, index) => (
+              <img
+                key={index}
+                src={`http://localhost:5000/${image}`}
+                alt={``}
+                style={{
+                  width: '100px',
+                  height: '100px',
+                  objectFit: 'cover',
+                  marginRight: '5px',
+                  marginBottom: '5px'
+                }}
+              />
+            ))}
+          </div>
           <input
             type="text"
             id="images"
-            className="form-control"
+            className="form-control mt-2"
             value={images.join(',')}
             onChange={(e) => setImages(e.target.value.split(','))}
           />

@@ -26,10 +26,25 @@ export const getProject = (id) => async (dispatch) => {
     }
   };
 
-export const createProject = (projectData, navigate) => async (dispatch) => {
+  export const createProject = (projectData, navigate) => async (dispatch) => {
     dispatch(createProjectStart());
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/projects`, projectData);
+      const formData = new FormData();
+      formData.append('name', projectData.name);
+      formData.append('author', projectData.author);
+      formData.append('description', projectData.description);
+  
+      // Gửi nhiều ảnh qua FormData
+      projectData.images.forEach((image) => {
+        formData.append('images', image);
+      });
+  
+      const response = await axios.post(`${BACKEND_URL}/api/projects`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
       dispatch(createProjectSuccess(response.data));
       toast.success("Add new project success");
       navigate("/admin/project");
@@ -38,6 +53,7 @@ export const createProject = (projectData, navigate) => async (dispatch) => {
       toast.error("Failed to add new project: " + err.message);
     }
   };
+  
 
   export const updateProject = (id, projectData, navigate) => async (dispatch) => {
     dispatch(updateProjectStart());

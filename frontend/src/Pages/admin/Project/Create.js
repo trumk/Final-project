@@ -13,20 +13,29 @@ const CreateProject = () => {
   const [description, setDescription] = useState('');
   const [images, setImages] = useState([]);
 
+  const handleFileChange = (e) => {
+    setImages(e.target.files); 
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const newProject = {
-      name,
-      author,
-      description,
-      images
-    };
-    dispatch(createProject(newProject, navigate));
+  
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('author', author);
+    formData.append('description', description);
+    
+    for (let i = 0; i < images.length; i++) {
+      formData.append('images', images[i]);
+    }
+    dispatch(createProject(formData, navigate));
   };
 
   return (
     <div className="container-fluid p-4">
-    <button className="btn btn-primary mb-2 me-2" ><a href='/admin/project' style={{color: 'black', textDecoration: 'none', fontWeight: 'bold', fontSize: '20px'}}>Back</a></button>
+      <button className="btn btn-primary mb-2 me-2">
+        <a href='/admin/project' style={{ color: 'black', textDecoration: 'none', fontWeight: 'bold', fontSize: '20px' }}>Back</a>
+      </button>
       <h1 className="mb-4">Create New Project</h1>
       <form onSubmit={handleSubmit} className="form">
         <div className="mb-3">
@@ -61,13 +70,13 @@ const CreateProject = () => {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="images" className="form-label">Images (URLs)</label>
+          <label htmlFor="images" className="form-label">Images</label>
           <input
-            type="text"
+            type="file"
             id="images"
             className="form-control"
-            value={images.join(',')}
-            onChange={(e) => setImages(e.target.value.split(','))}
+            multiple
+            onChange={handleFileChange}
           />
         </div>
         <button type="submit" className="btn btn-primary">Create Project</button>
