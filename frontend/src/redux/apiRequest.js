@@ -26,46 +26,38 @@ export const getProject = (id) => async (dispatch) => {
     }
   };
 
-  export const createProject = (projectData, navigate) => async (dispatch) => {
+  export const createProject = (formData, navigate) => async (dispatch) => {
     dispatch(createProjectStart());
     try {
-      const formData = new FormData();
-      formData.append('name', projectData.name);
-      formData.append('author', projectData.author);
-      formData.append('description', projectData.description);
-  
-      // Gửi nhiều ảnh qua FormData
-      projectData.images.forEach((image) => {
-        formData.append('images', image);
-      });
-  
-      const response = await axios.post(`${BACKEND_URL}/api/projects`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-  
-      dispatch(createProjectSuccess(response.data));
-      toast.success("Add new project success");
-      navigate("/admin/project");
+        const response = await axios.post(`${BACKEND_URL}/api/projects`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        dispatch(createProjectSuccess(response.data));
+        toast.success("Add new project success");
+        navigate("/admin/project");
     } catch (err) {
-      dispatch(createProjectFailed(err.message));
-      toast.error("Failed to add new project: " + err.message);
+        dispatch(createProjectFailed(err.message));
+        toast.error("Failed to add new project: " + err.message);
     }
-  };
-  
+};
 
-  export const updateProject = (id, projectData, navigate) => async (dispatch) => {
-    dispatch(updateProjectStart());
-    try {
-      const response = await axios.put(`${BACKEND_URL}/api/projects/${id}`, projectData);
-      dispatch(updateProjectSuccess(response.data));
-      toast.success("Project updated");
-      navigate('/admin/project');
-    } catch (err) {
-      dispatch(updateProjectFailed(err.message));
-    }
-  };
+export const updateProject = (id, projectData, navigate) => async (dispatch) => {
+  dispatch(updateProjectStart());
+  try {
+    const response = await axios.put(`${BACKEND_URL}/api/projects/${id}`, projectData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    dispatch(updateProjectSuccess(response.data));
+    toast.success("Project updated");
+    navigate('/admin/project');
+  } catch (err) {
+    dispatch(updateProjectFailed(err.message));
+  }
+};
   
   export const deleteProject = (id) => async (dispatch) => {
     dispatch(deleteProjectStart());

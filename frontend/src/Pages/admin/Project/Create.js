@@ -24,12 +24,19 @@ const CreateProject = () => {
     formData.append('name', name);
     formData.append('author', author);
     formData.append('description', description);
-    
+  
     for (let i = 0; i < images.length; i++) {
       formData.append('images', images[i]);
     }
+  
+    // Kiểm tra dữ liệu gửi đi
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+  
     dispatch(createProject(formData, navigate));
   };
+  
 
   return (
     <div className="container-fluid p-4">

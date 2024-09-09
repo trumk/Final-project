@@ -15,13 +15,11 @@ const storage = multer.diskStorage({
   
   const upload = multer({ storage: storage });
   
-  // Các route CRUD cơ bản
-  router.get('/', projectController.getAllProjects); // Lấy tất cả các project
-  router.get('/:id', projectController.getOneProject); // Lấy 1 project theo id
-  router.put('/:id', projectController.updateProject); // Cập nhật project theo id
-  router.delete('/:id', projectController.deleteProject); // Xóa project theo id
-  
-  // Route tạo project với upload nhiều ảnh
+  // CRUD
+  router.get('/', projectController.getAllProjects); 
+  router.get('/:id', projectController.getOneProject); 
+  router.put('/:id', upload.array('images', 5), projectController.updateProject);
+  router.delete('/:id', projectController.deleteProject); 
   router.post('/', upload.array('images', 5), projectController.createProject);
   
   module.exports = router;

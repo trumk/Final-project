@@ -14,6 +14,8 @@ const EditProject = () => {
   const [author, setAuthor] = useState('');
   const [description, setDescription] = useState('');
   const [images, setImages] = useState([]);
+  const [newImages, setNewImages] = useState([]);
+  const [removedImages, setRemovedImages] = useState(new Set()); // Sử dụng Set để theo dõi ảnh đã xóa
 
   useEffect(() => {
     dispatch(getProject(id)); 
@@ -28,17 +30,41 @@ const EditProject = () => {
     }
   }, [project]);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const updatedProject = {
-      name,
-      author,
-      description,
-      images
-    };
-    dispatch(updateProject(id, updatedProject, navigate));
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files);
+    setNewImages((prevImages) => [...prevImages, ...files]);
   };
 
+  const handleRemoveImage = (imageToRemove) => {
+    setImages((prevImages) => {
+      const updatedImages = prevImages.filter(image => image !== imageToRemove);
+      return updatedImages;
+    });
+
+    // Thêm ảnh đã xóa vào Set
+    setRemovedImages((prevRemovedImages) => new Set(prevRemovedImages).add(imageToRemove));
+  };
+  
+  const handleSubmit = (event) => {
+    event.preventDefault();
+  
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('author', author);
+    formData.append('description', description);
+    formData.append('likes', '');
+
+    // Thêm ảnh mới vào FormData
+    newImages.forEach((file) => {
+      formData.append('images', file);
+    });
+
+    // Thêm ảnh đã xóa vào FormData
+    formData.append('removedImages', JSON.stringify([...removedImages]));
+  
+    dispatch(updateProject(id, formData, navigate));
+  };
+  
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this project?')) {
       dispatch(deleteProject(id))
@@ -91,29 +117,65 @@ const EditProject = () => {
         </div>
         <div className="mb-3">
           <label htmlFor="images" className="form-label">Images</label>
-          <div>
+          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
             {images.map((image, index) => (
-              <img
-                key={index}
-                src={`http://localhost:5000/${image}`}
-                alt={``}
-                style={{
-                  width: '100px',
-                  height: '100px',
-                  objectFit: 'cover',
-                  marginRight: '5px',
-                  marginBottom: '5px'
-                }}
-              />
+              <div key={index} style={{ position: 'relative', marginRight: '10px', marginBottom: '10px' }}>
+                <img
+                  src={`http://localhost:5000/${image}`}
+                  alt={`image-${index}`}
+                  style={{
+                    width: '100px',
+                    height: '100px',
+                    objectFit: 'cover',
+                    border: '1px solid #ddd'
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveImage(image)}
+                  style={{
+                    position: 'absolute',
+                    top: '0',
+                    right: '0',
+                    backgroundColor: 'red',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '20px',
+                    height: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer'
+                  }}
+                >
+                  -
+                </button>
+              </div>
             ))}
+            <label
+              htmlFor="newImages"
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100px',
+                height: '100px',
+                border: '1px solid #ddd',
+                cursor: 'pointer',
+                backgroundColor: '#f8f9fa'
+              }}
+            >
+              <input
+                type="file"
+                id="newImages"
+                multiple
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              />
+              <span style={{ color: '#6c757d' }}>Upload more</span>
+            </label>
           </div>
-          <input
-            type="text"
-            id="images"
-            className="form-control mt-2"
-            value={images.join(',')}
-            onChange={(e) => setImages(e.target.value.split(','))}
-          />
         </div>
         <button type="submit" className="btn btn-primary me-2">Update Project</button>
         <button type="button" className="btn btn-danger btn-sm" onClick={handleDelete}>Delete</button>
