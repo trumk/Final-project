@@ -1,15 +1,15 @@
+import Footer from "../../Components/Footer/Footer";
+import Hero from "../../Components/Hero/Hero";
 import Navbar from "../../Components/Navbar/index"
+import MainContent from "../../Components/MainContent/Content"
 
 function Homepage() {
     return (
       <div>
       <Navbar/>
-      <div className="main-content">
-        <h1>
-        Welcome
-        </h1>
-      </div>
-
+      <Hero/>
+      <MainContent/>
+      <Footer/>
     </div>
     );
   }

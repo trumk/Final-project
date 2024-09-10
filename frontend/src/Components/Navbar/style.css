@@ -1,17 +1,10 @@
-body {
-  margin: 0;
+.header {
+  background-color: #333;
 }
-.custom-navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  background-color: #f8f9fa;
-  z-index: 1000;
+.navbar-brand span {
+  color: #3eb2c7;
 }
-.main-content {
-  padding-top: 60px;
+.nav-link {
+  color: white;
+  padding: 15px;
 }

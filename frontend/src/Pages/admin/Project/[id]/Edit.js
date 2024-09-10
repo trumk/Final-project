@@ -97,7 +97,7 @@ const EditProject = () => {
 
   return (
     <div className="container-fluid p-4">
-      <button className="btn btn-primary mb-2 me-2">
+      <button className="btn btn-primary mt-2 mb-2 me-2">
         <a
           href="/admin/project"
           style={{

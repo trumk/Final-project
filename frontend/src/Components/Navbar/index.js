@@ -18,52 +18,42 @@ function Navbar() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light custom-navbar">
-        <Link className="navbar-brand" to="/">MyApp</Link>
+    <header className="header">
+    <nav className="navbar navbar-expand-lg">
+      <div className="container">
+        <a className="navbar-brand" href="/">
+          gree <span>Project</span>
+        </a>
         <button
           className="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
+          data-bs-target="#navbarResponsive"
+          aria-controls="navbarResponsive"
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav me-auto">
+        <div className="collapse navbar-collapse" id="navbarResponsive">
+          <ul className="navbar-nav ml-auto">
             <li className="nav-item">
-              <Link className="nav-link" to="/">Home</Link>
+              <a className="nav-link" href="#home">Home</a>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/about">About</Link>
+              <a className="nav-link" href="#about">About</a>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/contact">Contact</Link>
+              <a className="nav-link" href="#services">Services</a>
             </li>
-          </ul>
-
-          <ul className="navbar-nav ms-auto">
-            {isLoggedIn ? (
-              <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/profile">Profile</Link>
-                </li>
-                <li className="nav-item">
-                  <button className="btn btn-outline-secondary" onClick={handleLogout}>
-                    Logout
-                  </button>
-                </li>
-              </>
-            ) : (
-              <li className="nav-item">
-                <Link className="btn btn-outline-primary" to="/login">Login</Link>
-              </li>
-            )}
+            <li className="nav-item">
+              <a className="nav-link" href="#contact">Contact</a>
+            </li>
           </ul>
         </div>
+      </div>
     </nav>
+  </header>
   );
 }
 
