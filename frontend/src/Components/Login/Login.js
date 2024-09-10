@@ -58,9 +58,6 @@ function Login() {
             style={{ height: '50px', width: '100%', fontSize:'20px' }}>
             Login
             </button>
-            <button className="btn btn-primary w-100 mb-3" onClick={handleGuestLogin}>
-              Login as Guest
-            </button>
             <button className="btn btn-danger w-100" onClick={handleGoogleLogin}>
               Login with Google
             </button>

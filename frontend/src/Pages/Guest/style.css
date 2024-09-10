@@ -1,0 +1,83 @@
+.project-page {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+}
+
+.project-item {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.project-item:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.project-image-container {
+    width: 100%;
+    height: 228.18px;
+    overflow: hidden;
+}
+
+.project-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    transition: opacity 0.3s;
+}
+
+.project-info {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.project-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0 0 10px;
+    color: #333;
+}
+
+.project-author {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 0 0 10px;
+}
+
+.project-likes {
+    font-size: 0.9rem;
+    color: #888;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.like-icon {
+    margin-right: 5px;
+    color: #ff5722; /* Màu của icon like */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .project-info {
+        padding: 15px;
+    }
+
+    .project-name {
+        font-size: 1rem;
+    }
+
+    .project-author, .project-likes {
+        font-size: 0.8rem;
+    }
+}

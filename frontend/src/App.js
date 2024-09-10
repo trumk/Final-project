@@ -10,6 +10,7 @@ import Homepage from './Pages/Guest';
 import ProjectPage from './Pages/admin/Project';
 import CreateProject from './Pages/admin/Project/Create';
 import EditProject from './Pages/admin/Project/[id]/Edit';
+import Projectpage from './Pages/Guest/projectPage';
 
 
 function App() {
@@ -18,9 +19,10 @@ function App() {
       <PersistGate loading={null} persistor={persistor}> 
         <BrowserRouter>
           <Routes>
-            <Route path='/' element={<Homepage />} />
             <Route path='/login' element={<Login />} />
-
+            <Route path='/' element={<Homepage />} />
+            <Route path='/projects' element={<Projectpage />} />
+            
             {/* admin */}
             <Route path='/admin' element={<Dashboard />} />
             <Route path='/admin/project' element={<ProjectPage />} />

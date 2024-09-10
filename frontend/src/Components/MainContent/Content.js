@@ -7,7 +7,7 @@ import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 
 const MainContent = () => {
   const dispatch = useDispatch();
-  const projects = useSelector((state) => state.project.allProjects);
+  const projects = useSelector((state) => state.project?.allProjects);
   const [topProjects, setTopProjects] = useState([]);
 
   useEffect(() => {
@@ -15,7 +15,6 @@ const MainContent = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    // Sắp xếp các dự án theo số lượt likes và chỉ lấy 3 dự án hàng đầu
     const sortedProjects = [...projects].sort((a, b) => b.likes - a.likes).slice(0, 3);
     setTopProjects(sortedProjects);
   }, [projects]);
