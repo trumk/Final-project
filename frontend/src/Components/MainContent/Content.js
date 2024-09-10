@@ -1,15 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './style.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllProjects } from '../../redux/apiRequest';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 
 const MainContent = () => {
   const dispatch = useDispatch();
   const projects = useSelector((state) => state.project.allProjects);
+  const [topProjects, setTopProjects] = useState([]);
 
   useEffect(() => {
     dispatch(getAllProjects());
   }, [dispatch]);
+
+  useEffect(() => {
+    // Sắp xếp các dự án theo số lượt likes và chỉ lấy 3 dự án hàng đầu
+    const sortedProjects = [...projects].sort((a, b) => b.likes - a.likes).slice(0, 3);
+    setTopProjects(sortedProjects);
+  }, [projects]);
 
   return (
     <section className="top-projects section-padding">
@@ -21,7 +30,7 @@ const MainContent = () => {
               <p>Discover our most outstanding projects just for you.</p>
             </div>
             <div className="project-list">
-              {projects.map((project) => (
+              {topProjects.map((project) => (
                 <div key={project._id} className="project-item">
                   {project.images.length > 0 && (
                     <img
@@ -32,8 +41,12 @@ const MainContent = () => {
                   )}
                   <div className="project-content">
                     <h3>{project.name}</h3>
-                    <h5>-{project.author}-</h5>
+                    <h5>- {project.author} -</h5>
                     <p>{project.description}</p>
+                    <div className="project-likes">
+                      <FontAwesomeIcon icon={faThumbsUp} />
+                      <span>{project.likes}</span>
+                    </div>
                     <a href={`/projects/${project._id}`} className="btn btn-project">View More</a>
                   </div>
                 </div>

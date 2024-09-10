@@ -77,4 +77,19 @@
   .btn-project:hover {
     background-color: #0056b3;
   }
+
+  .project-likes {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+  
+  .project-likes .fa-thumbs-up {
+    margin-right: 5px;
+  }
+  
+  .project-likes span {
+    font-size: 16px;
+  }
   
