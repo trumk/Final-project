@@ -1,7 +1,14 @@
+html, body, :root {
+  height: 100%;
+}
+
 .footer {
+    bottom: 0;
     background-color: #282828;
     color: #fff;
     padding: 40px 0;
+    margin-bottom: -5px;
+    height: 120%;
   }
   
   .footer-content {
