@@ -11,6 +11,7 @@ import ProjectPage from './Pages/admin/Project';
 import CreateProject from './Pages/admin/Project/Create';
 import EditProject from './Pages/admin/Project/[id]/Edit';
 import Projectpage from './Pages/Guest/projectPage';
+import DetailPage from './Pages/Guest/[id]/detail';
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
             <Route path='/login' element={<Login />} />
             <Route path='/' element={<Homepage />} />
             <Route path='/projects' element={<Projectpage />} />
+            <Route path='/project/:id' element={<DetailPage />} />
             
             {/* admin */}
             <Route path='/admin' element={<Dashboard />} />

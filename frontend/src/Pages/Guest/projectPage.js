@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import Footer from "../../Components/Footer/Footer";
+import Footer from "../../Components/Footer";
 import Navbar from "../../Components/Navbar";
 import { useEffect } from "react";
 import { getAllProjects } from "../../redux/apiRequest";

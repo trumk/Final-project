@@ -1,0 +1,59 @@
+.detail-page {
+    font-family: Arial, sans-serif;
+    color: #333;
+    padding-top: 60px; 
+    padding-bottom: 60px; 
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .project-details {
+    background: #129092;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left; 
+    margin-top: 40px;
+    margin-right: 200px;
+  }
+  
+  .project-title {
+    font-size: 2.5em;
+    color: #152c36;
+    margin-bottom: 10px;
+  }
+  
+  .project-author {
+    font-size: 1.2em;
+    text-align: left;
+    color: #555;
+    margin-bottom: 20px;
+  }
+  
+  .project-description {
+    font-size: 1.1em;
+    text-align: left;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  
+  .project-images {
+    text-align: left; /* Đặt hình ảnh về bên trái */
+  }
+  
+  .project-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .loading-message {
+    text-align: center;
+    font-size: 1.2em;
+    color: #666;
+  }
+  

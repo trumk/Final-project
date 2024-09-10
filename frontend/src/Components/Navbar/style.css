@@ -83,3 +83,11 @@
 .nav-link:hover {
   text-decoration: underline;
 }
+
+#navbarResponsive{
+  font-size: 18px;
+}
+
+#navbarResponsive > ul.navbar-nav.right-nav{
+  margin-left: 100px;
+}
