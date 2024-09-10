@@ -41,12 +41,11 @@ const MainContent = () => {
                   <div className="project-content">
                     <h3>{project.name}</h3>
                     <h5>- {project.author} -</h5>
-                    <p>{project.description}</p>
                     <div className="project-likes">
                       <FontAwesomeIcon icon={faThumbsUp} />
                       <span>{project.likes}</span>
                     </div>
-                    <a href={`/projects/${project._id}`} className="btn btn-project">View More</a>
+                    <a href={`/project/${project._id}`} className="btn btn-project">View More</a>
                   </div>
                 </div>
               ))}

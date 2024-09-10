@@ -24,7 +24,7 @@ function Projectpage() {
                         {projects && projects.length > 0 ? (
                             projects.map((project) => (
                                 <div key={project._id} className="col-lg-3 col-md-4 col-sm-6 mb-4">
-                                    <a href={`/projects/${project._id}`} className="project-item">
+                                    <a href={`/project/${project._id}`} className="project-item">
                                         {project.images.length > 0 && (
                                             <img
                                                 src={`http://localhost:5000/${project.images[0]}`}
