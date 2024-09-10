@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { auth, googleProvider } from './config'; 
 import { signInWithPopup } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
+import { faFaceSmile } from '@fortawesome/free-regular-svg-icons'; // Import biểu tượng
+import './style.css'; 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function Login() {
   const [value, setValue] = useState('');
@@ -19,50 +22,34 @@ function Login() {
       });
   };
 
-  const handleGuestLogin = () => {
-    localStorage.setItem("email", "guest");
-    navigate('/'); // Chuyển hướng đến trang chính như là khách
-  };
 
   useEffect(() => {
     setValue(localStorage.getItem('email'));
   }, []);
 
   return (
-    <div className="container-fluid vh-100">
-    <div className="row h-100">
-      <div className="col-12 col-md-6 d-flex justify-content-center align-items-center bg-light">
-        <div>
-          <h1>Welcome to my website!</h1>
-          <p>Please login to continue.</p>
-        </div>
+    <div className="login-container">
+    <div className="login-box">
+      <div className="welcome-section">
+        <h1>Welcome! <FontAwesomeIcon icon={faFaceSmile}/></h1>
+        <p>Please login to access your account</p>
       </div>
-
-      <div className="col-12 col-md-6 d-flex justify-content-center align-items-center bg-white">
-        <div className="card p-4 shadow-lg" style={{ width: '22rem' }}>
-          <div className="card-body text-center">
-            <h2 className="card-title mb-4">Login</h2>
-            <input 
-                className="w-100 mb-3 rounded p-2"
-                style={{ height: '40px' }}
-                type="text" 
-                placeholder="Enter your email" 
-              />
-              <input 
-                className="w-100 mb-3 rounded p-2"
-                style={{ height: '40px' }}
-                type="text" 
-                placeholder="Enter your password" 
-              />
-            <button type="submit" class="btn btn-info mb-3 font-weight-bold"
-            style={{ height: '50px', width: '100%', fontSize:'20px' }}>
-            Login
-            </button>
-            <button className="btn btn-danger w-100" onClick={handleGoogleLogin}>
-              Login with Google
-            </button>
-          </div>
-        </div>
+      <div className="login-form">
+        <input 
+          className="input-field" 
+          type="email" 
+          placeholder="Enter your email" 
+        />
+        <input 
+          className="input-field" 
+          type="password" 
+          placeholder="Enter your password" 
+        />
+        <button className="login-btn">Login</button>
+        <p>Or</p>
+        <button className="google-btn" onClick={handleGoogleLogin}>
+          Login with Google
+        </button>
       </div>
     </div>
   </div>
