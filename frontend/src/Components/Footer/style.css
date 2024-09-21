@@ -34,6 +34,7 @@ html, body, :root {
     font-size: 14px;
     color: #b0b0b0;
     line-height: 1.6;
+    text-align: left;
   }
   
   .footer-section ul {
@@ -90,5 +91,9 @@ html, body, :root {
     margin: 0;
     font-size: 14px;
     color: #b0b0b0;
+  }
+
+  #root > div > footer > div > div.footer-content > div.footer-section.links{
+    margin-left: 20px;
   }
   

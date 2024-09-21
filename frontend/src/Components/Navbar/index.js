@@ -63,7 +63,10 @@ function Navbar() {
               </li>
               {isLoggedIn ? (
                 <li className="nav-item">
-                  <button className="nav-link btn btn-link" onClick={handleLogout}>
+                  <button
+                    className="nav-link btn btn-link"
+                    onClick={handleLogout}
+                  >
                     Logout
                   </button>
                 </li>
