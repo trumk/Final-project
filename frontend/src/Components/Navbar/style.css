@@ -88,3 +88,7 @@
   font-size: 18px;
 }
 
+#root > div > div > div.login-form > button.google-btn > a{
+  text-decoration: none;
+  color: #fff;
+}

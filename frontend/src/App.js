@@ -12,6 +12,7 @@ import CreateProject from './Pages/admin/Project/Create';
 import EditProject from './Pages/admin/Project/[id]/Edit';
 import Projectpage from './Pages/Guest/projectPage';
 import DetailPage from './Pages/Guest/[id]/detail';
+import Login2 from './Components/Login/Login2';
 
 
 function App() {
@@ -20,7 +21,8 @@ function App() {
       <PersistGate loading={null} persistor={persistor}> 
         <BrowserRouter>
           <Routes>
-            <Route path='/login' element={<Login />} />
+            <Route path='/loginAdmin' element={<Login />} />
+            <Route path='/login' element={<Login2 />} />
             <Route path='/' element={<Homepage />} />
             <Route path='/projects' element={<Projectpage />} />
             <Route path='/project/:id' element={<DetailPage />} />

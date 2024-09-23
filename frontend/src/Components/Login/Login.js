@@ -32,7 +32,7 @@ function Login() {
     <div className="login-box">
       <div className="welcome-section">
         <h1>Welcome! <FontAwesomeIcon icon={faFaceSmile}/></h1>
-        <p>Please login to access your account</p>
+        <p>Hi Admin! Please login to access your account</p>
       </div>
       <div className="login-form">
         <input 
@@ -47,8 +47,8 @@ function Login() {
         />
         <button className="login-btn">Login</button>
         <p>Or</p>
-        <button className="google-btn" onClick={handleGoogleLogin}>
-          Login with Google
+        <button className="google-btn">
+          <a href='/login'>Login with Google</a>
         </button>
       </div>
     </div>

@@ -1,3 +1,4 @@
+/* Đặt nền và căn chỉnh trung tâm */
 .login-container {
     display: flex;
     justify-content: center;
@@ -26,45 +27,12 @@
     font-size: 16px;
     color: #888;
     margin-bottom: 30px;
-    text-align: left;
   }
   
   .login-form h2 {
     color: #1e5b75;
     font-size: 22px;
     margin-bottom: 20px;
-  }
-  
-  .input-field {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-    color: #333;
-  }
-  
-  .input-field:focus {
-    outline: none;
-    border-color: #34b3a0;
-    box-shadow: 0 0 5px rgba(52, 179, 160, 0.5);
-  }
-  
-  .login-btn {
-    width: 100%;
-    padding: 12px;
-    background-color: #1e5b75;
-    color: white;
-    font-size: 18px;
-    border: none;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    cursor: pointer;
-  }
-  
-  .login-btn:hover {
-    background-color: #1d4e65;
   }
   
   .google-btn {
@@ -88,4 +56,13 @@
     font-size: 14px;
     color: #666;
   }
+
+  #root > div > div > div.login-form > p{
+    padding-top: 5px;
+  }
+
+  #root > div > div > div.login-form > a{
+    padding-left: 68px;
+  }
+  
   
