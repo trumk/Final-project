@@ -2,20 +2,22 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
+  userName: {
+    type: String,
+    required: [true, 'Username is required'],
+    minlength: [3, 'Username must be at least 3 characters long'],
+    maxlength: [50, 'Username cannot exceed 50 characters'],
+  },
   email: {
     type: String,
-    required: true,
+    required: [true, 'Email is required'],
     unique: true,
+    match: [/\S+@\S+\.\S+/, 'Please enter a valid email'],
   },
   password: {
     type: String,
-    required: function() {
-      return !this.isOAuth; // Chỉ bắt buộc nếu không phải OAuth
-    },
-  },
-  isOAuth: {
-    type: Boolean,
-    default: false,
+    required: [true, 'Password is required'],
+    minlength: [6, 'Password must be at least 6 characters long'],
   },
   role: {
     type: String,
