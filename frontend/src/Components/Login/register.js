@@ -1,43 +1,31 @@
 import React, { useState } from "react";
-import { auth, googleProvider } from "./config";
-import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { faFaceSmile } from "@fortawesome/free-regular-svg-icons";
 import "./register.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { register } from "../../redux/apiRequest";
+import { useDispatch } from "react-redux";
 
 function Register() {
-  const [username, setUsername] = useState("");
+  const [userName, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleGoogleSignup = () => {
-    signInWithPopup(auth, googleProvider)
-      .then((data) => {
-        localStorage.setItem("email", data.user.email);
-        navigate("/");
-      })
-      .catch((error) => {
-        console.error("Error during Google sign-up:", error);
-        setErrorMessage("Google sign-up failed. Please try again.");
-      });
+  const handleRegister = async () => {
+    try {
+      const user = { userName, email, password };
+      console.log("User data:", user); 
+      await register(user, dispatch);
+      navigate("/login");
+    } catch (error) {
+      console.error("Error during registration:", error);
+      setErrorMessage("Registration failed. Please try again.");
+    }
   };
-
-  const handleRegister = () => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        localStorage.setItem("email", userCredential.user.email);
-        navigate("/");
-      })
-      .catch((error) => {
-        console.error("Error during email sign-up:", error);
-        setErrorMessage(
-          "Email sign-up failed. Please check your details and try again."
-        );
-      });
-  };
+  
 
   return (
     <div className="register-container">
@@ -51,9 +39,9 @@ function Register() {
         <div className="register-form">
           <input
             className="input-field"
-            type="username"
+            type="text"
             placeholder="Enter your username"
-            value={username}
+            value={userName}
             onChange={(e) => setUsername(e.target.value)}
           />
           <input
@@ -75,9 +63,9 @@ function Register() {
           </button>
           {errorMessage && <p className="error-message">{errorMessage}</p>}
           <p>Or</p>
-          <button className="google-btn" onClick={handleGoogleSignup}>
-            Register with Google
-          </button>
+          <p>
+            Already have an account? <a href="/login">Sign-in here</a>
+          </p>
         </div>
       </div>
     </div>

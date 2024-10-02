@@ -23,7 +23,8 @@ const register = async (req, res) => {
 
     return res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
-    return res.status(500).json({ message: "Something went wrong", error });
+    console.error("Registration error:", err);
+    res.status(500).json({ message: "Internal server error", error: err.message });
   }
 };
 

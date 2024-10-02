@@ -12,14 +12,14 @@ const EditProject = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  const project = useSelector((state) => state.project.currentProject);
+  const project = useSelector((state) => state.project?.currentProject);
 
   const [name, setName] = useState("");
   const [author, setAuthor] = useState("");
   const [description, setDescription] = useState("");
   const [images, setImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
-  const [removedImages, setRemovedImages] = useState(new Set()); // Sử dụng Set để theo dõi ảnh đã xóa
+  const [removedImages, setRemovedImages] = useState(new Set()); 
 
   useEffect(() => {
     dispatch(getProject(id));
@@ -34,14 +34,14 @@ const EditProject = () => {
     }
   }, [project]);
 
-  console.log(project.images)
+  console.log(project?.images)
   console.log(newImages)
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
     const filePreviews = files.map((file) => {
       return {
-        file: file, // File object
-        preview: URL.createObjectURL(file), // Tạo URL để xem trước ảnh
+        file: file, 
+        preview: URL.createObjectURL(file), 
       };
     });
 
@@ -56,7 +56,6 @@ const EditProject = () => {
       return updatedImages;
     });
 
-    // Thêm ảnh đã xóa vào Set
     setRemovedImages((prevRemovedImages) =>
       new Set(prevRemovedImages).add(imageToRemove)
     );
@@ -71,12 +70,11 @@ const EditProject = () => {
     formData.append("description", description);
     formData.append("likes", "");
 
-    // Thêm ảnh mới vào FormData
+
     newImages.forEach((file) => {
       formData.append("images", file);
     });
 
-    // Thêm ảnh đã xóa vào FormData
     formData.append("removedImages", JSON.stringify([...removedImages]));
 
     dispatch(updateProject(id, formData, navigate));
@@ -154,7 +152,6 @@ const EditProject = () => {
             Images
           </label>
           <div style={{ display: "flex", flexWrap: "wrap" }}>
-            {/* Hiển thị ảnh cũ */}
             {images.map((image, index) => (
               <div
                 key={index}

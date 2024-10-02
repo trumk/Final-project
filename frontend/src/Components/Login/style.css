@@ -88,4 +88,6 @@
     font-size: 14px;
     color: #666;
   }
-  
+  #root > div > div > div.login-form > p.register-link{
+    padding-top: 20px;
+  }

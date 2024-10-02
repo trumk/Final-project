@@ -1,22 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./style.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch, useSelector } from 'react-redux'; 
+import { logout } from '../../redux/apiRequest'; 
 
 function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const currentUser = useSelector((state) => state.user.currentUser); 
 
-  useEffect(() => {
-    const email = localStorage.getItem("email");
-    setIsLoggedIn(!!email);
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.clear();
-    setIsLoggedIn(false);
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      await logout(dispatch); 
+      navigate("/"); 
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (
@@ -61,7 +62,7 @@ function Navbar() {
                   Contact
                 </Link>
               </li>
-              {isLoggedIn ? (
+              {currentUser ? ( +
                 <li className="nav-item">
                   <button
                     className="nav-link btn btn-link"

@@ -1,7 +1,9 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
-import storage from 'redux-persist/lib/storage'; // Đảm bảo rằng bạn đã cài đặt redux-persist
+import storage from 'redux-persist/lib/storage'; 
 import projectReducer from './projectSlice';
+import userReducer from './userSlice';
+import authReducer from './authSlice'
 
 const persistConfig = {
   key: 'root',
@@ -11,6 +13,8 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   project: projectReducer,
+  user: userReducer,
+  auth: authReducer
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
