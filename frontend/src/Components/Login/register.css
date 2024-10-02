@@ -1,0 +1,38 @@
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to right, #1e5b75, #34b3a0);
+    margin-bottom: -23px;
+}
+
+.register-box {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+}
+
+.register-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #34b3a0;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.register-btn:hover {
+    background-color: #2d978a;
+}
+
+.error-message {
+    color: red;
+    margin-top: 10px;
+}

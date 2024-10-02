@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { auth, googleProvider } from './config'; 
 import { signInWithPopup } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
-import { faFaceSmile } from '@fortawesome/free-regular-svg-icons'; // Import biểu tượng
+import { faFaceSmile } from '@fortawesome/free-regular-svg-icons'; 
 import './style.css'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
