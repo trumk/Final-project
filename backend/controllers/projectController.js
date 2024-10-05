@@ -1,22 +1,5 @@
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
 const Project = require('../models/Project');
-
-// Hàm kiểm tra sự tồn tại của ảnh
-const checkIfImageExists = (filename) => {
-  const filePath = path.join('uploads', filename);
-  return fs.existsSync(filePath);
-};
-
-
-// Hàm xóa ảnh khỏi thư mục
-const deleteImage = (filename) => {
-  const filePath = path.join('uploads', filename);
-  if (fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath);
-  }
-};
+const { uploadFileToFirebase } = require('../middleware/firebaseConfig'); 
 
 const getAllProjects = async (req, res) => {
   try {
@@ -26,7 +9,6 @@ const getAllProjects = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch projects', error });
   }
 };
-
 
 const getOneProject = async (req, res) => {
   try {
@@ -42,101 +24,88 @@ const getOneProject = async (req, res) => {
 
 const createProject = async (req, res) => {
   try {
-    const { name, author, description } = req.body;
+    const { name, authors, description, semester, department, video } = req.body;
     const newImages = req.files ? req.files : [];
     let images = [];
 
-    // Xử lý ảnh mới
+    // Upload new images to Firebase and get their URLs
     for (const file of newImages) {
-      const originalName = file.originalname; // Tên file gốc
-      const imagePath = `uploads/${originalName}`; // Đường dẫn đầy đủ đến file
-
-      // Nếu ảnh đã tồn tại, xóa ảnh trùng trong thư mục uploads
-      if (checkIfImageExists(originalName)) {
-        deleteImage(originalName); // Xóa ảnh trùng trong thư mục uploads
-      }
-
-      // Di chuyển file từ temp đến uploads
-      fs.renameSync(file.path, imagePath);
-      images.push(imagePath);
+      const publicUrl = await uploadFileToFirebase(file); // Sử dụng buffer từ file để upload
+      images.push(publicUrl); // Add Firebase URL to images array
     }
 
+    // Tạo đối tượng Project mới
     const newProject = new Project({
       name,
-      author,
+      authors: Array.isArray(authors) ? authors : [authors],
       description,
-      images,
+      semester,
+      department,
+      images, // Store the Firebase image URLs
+      video,
     });
 
+    // Lưu project mới vào cơ sở dữ liệu
     const savedProject = await newProject.save();
     res.status(201).json(savedProject);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to create project', error });
+    // Ghi lại chi tiết lỗi vào log của server
+    console.error('Error creating project:', error);
+
+    // Trả về lỗi chi tiết cho client
+    res.status(500).json({ 
+      message: 'Failed to create project', 
+      error: error.message,   // Thông báo lỗi
+      stack: error.stack,     // Stack trace để dễ debug
+      details: error          // Toàn bộ đối tượng lỗi
+    });
   }
 };
 
 
+
 const updateProject = async (req, res) => {
   try {
-    const { name, author, description, removedImages } = req.body;
+    const { removedImages } = req.body;
     const newImages = req.files ? req.files : [];
     let images = [];
-    console.log(newImages)
-    // Lấy thông tin project cũ
+
+    // Fetch the old project
     const oldProject = await Project.findById(req.params.id);
     if (!oldProject) {
       return res.status(404).json({ message: 'Project not found' });
     }
 
-    let oldImages = [...oldProject.images]; // Clone danh sách ảnh cũ
+    let oldImages = [...oldProject.images]; // Clone old image list
 
-    // Xử lý ảnh mới
+    // Upload new images to Firebase and get their URLs
     for (const file of newImages) {
-      const filename = file.filename;
-      const imagePath = `uploads/${filename}`;
-      const oldImageIndex = oldImages.findIndex(oldImage => path.basename(oldImage) === filename);
-
-      // Nếu ảnh mới trùng với ảnh cũ thì thay thế ảnh cũ bằng ảnh mới
-      if (oldImageIndex !== -1) {
-        // Xóa ảnh cũ trong thư mục uploads
-        deleteImage(path.basename(oldImages[oldImageIndex]));
-        // Thay thế ảnh cũ bằng ảnh mới
-        oldImages[oldImageIndex] = imagePath;
-      } else {
-        // Di chuyển ảnh mới nếu không trùng với ảnh cũ
-        if (!checkIfImageExists(filename)) {
-          fs.renameSync(file.path, imagePath);
-        } else {
-          fs.unlinkSync(file.path); // Xóa file temp nếu đã tồn tại
-        }
-        // Thêm ảnh mới vào danh sách
-        images.push(imagePath);
-      }
+      const publicUrl = await uploadFileToFirebase(file);
+      images.push(publicUrl); // Add new image URLs to array
     }
 
-    // Xử lý ảnh đã xóa (từ yêu cầu phía client)
+    // Handle removed images
     const removedImagesList = JSON.parse(removedImages || '[]');
-    oldImages = oldImages.filter(image => !removedImagesList.includes(image)); // Loại bỏ ảnh đã bị xóa khỏi danh sách cũ
+    oldImages = oldImages.filter(image => !removedImagesList.includes(image));
+    images = [...oldImages, ...images]; // Combine old and new images
 
-    // Gộp danh sách ảnh cũ và ảnh mới
-    images = [...oldImages, ...images];
-    console.log(oldImages)
+    // Create update data object with only provided fields
+    const updateData = {};
 
+    // Only add fields to updateData if they are provided in the request body
+    if (req.body.name) updateData.name = req.body.name;
+    if (req.body.authors) updateData.authors = Array.isArray(req.body.authors) ? req.body.authors : [req.body.authors];
+    if (req.body.description) updateData.description = req.body.description;
+    if (req.body.semester) updateData.semester = req.body.semester;
+    if (req.body.department) updateData.department = req.body.department;
+    if (images.length > 0) updateData.images = images;
+    if (req.body.video) updateData.video = req.body.video;
 
-    console.log(images)
-
-    const updateData = {
-      name,
-      author,
-      description,
-      images, // Cập nhật lại danh sách ảnh mới
-    };
-
-    const updatedProject = await Project.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      { new: true, runValidators: true }
-    );
+    // Update the project with the new data
+    const updatedProject = await Project.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!updatedProject) {
       return res.status(404).json({ message: 'Project not found' });
@@ -149,34 +118,38 @@ const updateProject = async (req, res) => {
 };
 
 
-
 const deleteProject = async (req, res) => {
   try {
-    // Lấy thông tin project trước khi xóa
     const project = await Project.findById(req.params.id);
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
     }
 
-    // Xóa ảnh liên quan
-    for (const image of project.images) {
-      const imageFilename = path.basename(image);
-      deleteImage(imageFilename);
+    // Xóa từng ảnh khỏi Firebase Storage
+    for (const imageUrl of project.images) {
+      const fileName = imageUrl.split('/').pop(); // Lấy tên file từ URL của Firebase
+      const file = bucket.file(fileName);
+
+      // Kiểm tra xem file có tồn tại trong Firebase Storage không
+      const [exists] = await file.exists();
+      if (exists) {
+        await file.delete(); // Xóa file nếu tồn tại
+      }
     }
 
-    // Xóa project
+    // Xóa project khỏi MongoDB
     await Project.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: 'Project deleted successfully' });
+
+    res.status(200).json({ message: 'Project and associated images deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Failed to delete project', error });
   }
 };
-  
 
 module.exports = {
-    getAllProjects,
-    getOneProject,
-    createProject,
-    updateProject,
-    deleteProject
-}
+  getAllProjects,
+  getOneProject,
+  createProject,
+  updateProject,
+  deleteProject,
+};
