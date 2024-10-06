@@ -28,36 +28,31 @@ const createProject = async (req, res) => {
     const newImages = req.files ? req.files : [];
     let images = [];
 
-    // Upload new images to Firebase and get their URLs
     for (const file of newImages) {
-      const publicUrl = await uploadFileToFirebase(file); // Sử dụng buffer từ file để upload
-      images.push(publicUrl); // Add Firebase URL to images array
+      const publicUrl = await uploadFileToFirebase(file); 
+      images.push(publicUrl); 
     }
 
-    // Tạo đối tượng Project mới
     const newProject = new Project({
       name,
       authors: Array.isArray(authors) ? authors : [authors],
       description,
       semester,
       department,
-      images, // Store the Firebase image URLs
+      images, 
       video,
     });
 
-    // Lưu project mới vào cơ sở dữ liệu
     const savedProject = await newProject.save();
     res.status(201).json(savedProject);
   } catch (error) {
-    // Ghi lại chi tiết lỗi vào log của server
     console.error('Error creating project:', error);
 
-    // Trả về lỗi chi tiết cho client
     res.status(500).json({ 
       message: 'Failed to create project', 
-      error: error.message,   // Thông báo lỗi
-      stack: error.stack,     // Stack trace để dễ debug
-      details: error          // Toàn bộ đối tượng lỗi
+      error: error.message,  
+      stack: error.stack,    
+      details: error         
     });
   }
 };
@@ -70,29 +65,24 @@ const updateProject = async (req, res) => {
     const newImages = req.files ? req.files : [];
     let images = [];
 
-    // Fetch the old project
     const oldProject = await Project.findById(req.params.id);
     if (!oldProject) {
       return res.status(404).json({ message: 'Project not found' });
     }
 
-    let oldImages = [...oldProject.images]; // Clone old image list
+    let oldImages = [...oldProject.images]; 
 
-    // Upload new images to Firebase and get their URLs
     for (const file of newImages) {
       const publicUrl = await uploadFileToFirebase(file);
-      images.push(publicUrl); // Add new image URLs to array
+      images.push(publicUrl); 
     }
 
-    // Handle removed images
     const removedImagesList = JSON.parse(removedImages || '[]');
     oldImages = oldImages.filter(image => !removedImagesList.includes(image));
-    images = [...oldImages, ...images]; // Combine old and new images
+    images = [...oldImages, ...images]; 
 
-    // Create update data object with only provided fields
     const updateData = {};
 
-    // Only add fields to updateData if they are provided in the request body
     if (req.body.name) updateData.name = req.body.name;
     if (req.body.authors) updateData.authors = Array.isArray(req.body.authors) ? req.body.authors : [req.body.authors];
     if (req.body.description) updateData.description = req.body.description;
@@ -101,7 +91,6 @@ const updateProject = async (req, res) => {
     if (images.length > 0) updateData.images = images;
     if (req.body.video) updateData.video = req.body.video;
 
-    // Update the project with the new data
     const updatedProject = await Project.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
       runValidators: true,

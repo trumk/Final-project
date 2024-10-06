@@ -104,22 +104,38 @@ export const register = async (user, dispatch) => {
   }
 };
 
-export const login = async (user, dispatch) => {
+export const login = async (user, dispatch, navigate) => {
   dispatch(loginStart());
   try {
-    await axios.post(`${BACKEND_URL}/api/auth/login`, user);
-    dispatch(loginSuccess());
-    toast.success("Login successfully");
+    const res = await axios.post(`${BACKEND_URL}/api/auth/login`, user);
+    
+    if (res.data && res.data.user) {
+      console.log("User role:", res.data.user.role); 
+      dispatch(loginSuccess(res.data.user));
+      
+      if (res.data.user.role === 'admin') {
+        setTimeout(() => {
+          navigate('/admin');
+        }, 30);  
+      } else {
+        setTimeout(() => {
+          navigate('/');
+        }, 30);  
+      }
+      toast.success("Login successfully");
+    } else {
+      throw new Error("No user data returned");
+    }
   } catch (err) {
-    dispatch(loginFailed());
+    dispatch(loginFailed(err.message || "Failed to login"));
     console.error(err);
   }
 };
 
-export const logout = async (user, dispatch) => {
+export const logout = async (dispatch) => {
   dispatch(logoutStart());
   try {
-    await axios.post(`${BACKEND_URL}/api/auth/logout`, user);
+    await axios.post(`${BACKEND_URL}/api/auth/logout`); 
     dispatch(logoutSuccess());
     toast.success("Logout successfully");
   } catch (err) {

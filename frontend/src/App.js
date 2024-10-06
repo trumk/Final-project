@@ -13,7 +13,7 @@ import EditProject from './Pages/admin/Project/[id]/Edit';
 import Projectpage from './Pages/Guest/projectPage';
 import DetailPage from './Pages/Guest/[id]/detail';
 import Register from './Components/Login/register';
-
+import ProtectedRoute from './Components/ProtectedRoute';
 
 function App() {
   return (
@@ -26,12 +26,40 @@ function App() {
             <Route path='/' element={<Homepage />} />
             <Route path='/projects' element={<Projectpage />} />
             <Route path='/project/:id' element={<DetailPage />} />
-            
-            {/* admin */}
-            <Route path='/admin' element={<Dashboard />} />
-            <Route path='/admin/project' element={<ProjectPage />} />
-            <Route path='/admin/project/create' element={<CreateProject/>} />
-            <Route path='/admin/project/edit/:id' element={<EditProject/>} />
+
+            {/* Bảo vệ các route dành cho admin */}
+            <Route
+              path='/admin'
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/admin/project'
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <ProjectPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/admin/project/create'
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <CreateProject />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/admin/project/edit/:id'
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <EditProject />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
       </PersistGate>

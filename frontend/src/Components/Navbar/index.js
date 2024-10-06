@@ -1,25 +1,24 @@
-import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./style.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
-import { useDispatch, useSelector } from 'react-redux'; 
-import { logout } from '../../redux/apiRequest'; 
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../redux/apiRequest';
 
 function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const currentUser = useSelector((state) => state.user.currentUser); 
-
+  const currentUser = useSelector((state) => state.auth.currentUser); 
+  
   const handleLogout = async () => {
     try {
       await logout(dispatch); 
-      navigate("/"); 
+      navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error);
     }
   };
-
+  
   return (
     <header className="header">
       <nav className="navbar navbar-expand-lg">
@@ -62,14 +61,30 @@ function Navbar() {
                   Contact
                 </Link>
               </li>
-              {currentUser ? ( +
-                <li className="nav-item">
-                  <button
-                    className="nav-link btn btn-link"
-                    onClick={handleLogout}
+              {currentUser ? (
+                <li className="nav-item dropdown">
+                  <a
+                    className="nav-link dropdown-toggle"
+                    href="/"
+                    id="navbarDropdown"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false" 
                   >
-                    Logout
-                  </button>
+                    {currentUser.userName} 
+                  </a>
+                  <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li>
+                      <Link className="dropdown-item" to="/profile">
+                        Profile
+                      </Link>
+                    </li>
+                    <li>
+                      <button className="dropdown-item" onClick={handleLogout}>
+                        Logout
+                      </button>
+                    </li>
+                  </ul>
                 </li>
               ) : (
                 <li className="nav-item">
