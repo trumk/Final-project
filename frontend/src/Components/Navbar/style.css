@@ -92,3 +92,78 @@
   text-decoration: none;
   color: #fff;
 }
+/* Modal backdrop */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Màu đen mờ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+/* Modal content */
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 10px; /* Tạo khoảng cách giữa các nút */
+}
+
+/* Button styles */
+.btn-logout {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  transition: background-color 0.3s ease;
+  width: 160px; 
+}
+
+.btn-logout:hover {
+  background-color: #c82333;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  transition: background-color 0.3s ease;
+  width: 160px; 
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+@media (max-width: 576px) {
+  .modal-content {
+    padding: 15px;
+    max-width: 95%;
+  }
+
+  .modal-actions {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .modal-actions .btn {
+    flex: 1;
+    margin: 0 5px;
+  }
+}
+
+
