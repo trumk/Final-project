@@ -132,6 +132,21 @@ export const login = async (user, dispatch, navigate) => {
   }
 };
 
+export const loginWithProvider = async (email, providerId, dispatch, navigate) => {
+  dispatch(loginStart());
+  try {
+    const res = await axios.post(`${BACKEND_URL}/api/auth/loginWithProvider`, { email, providerId });
+
+    if (res.data.user) {
+      dispatch(loginSuccess(res.data.user)); 
+      navigate('/'); 
+    }
+  } catch (error) {
+    dispatch(loginFailed(error.message || "Failed to login with provider"));
+    console.error("Login with provider failed:", error);
+  }
+};
+
 export const logout = async (dispatch) => {
   dispatch(logoutStart());
   try {

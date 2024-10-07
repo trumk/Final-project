@@ -1,18 +1,20 @@
 import { initializeApp } from "firebase/app";
-import {getAuth, GoogleAuthProvider} from "firebase/auth"
+import { getAuth, GoogleAuthProvider, GithubAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC35DB_BfzLeSRYB99Ye4LNTdp5sNKXjD0",
-  authDomain: "login-6a024.firebaseapp.com",
-  projectId: "login-6a024",
-  storageBucket: "login-6a024.appspot.com",
-  messagingSenderId: "1064704207102",
-  appId: "1:1064704207102:web:a35ed20e7dcff06e719daf",
-  measurementId: "G-FT1MLVJ5J1"
+  apiKey: "AIzaSyA0Q0v91MVZ1WXaXhXw7U6Iy9IQKYC8zJw",
+  authDomain: "final-da3c8.firebaseapp.com",
+  projectId: "final-da3c8",
+  storageBucket: "final-da3c8.appspot.com",
+  messagingSenderId: "108562652183",
+  appId: "1:108562652183:web:a2759c3a25b8d618dcd052",
+  measurementId: "G-G8T00ZBFL5"
 };
 
-
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app)
-const googleProvider = new GoogleAuthProvider()
-export {auth, googleProvider}
+
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider(); 
+
+export { auth, googleProvider, githubProvider };

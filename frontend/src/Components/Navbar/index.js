@@ -20,15 +20,15 @@ function Navbar() {
     } catch (error) {
       console.error("Logout failed:", error);
     }
-    setShowLogoutModal(false); // Đóng modal sau khi logout thành công
+    setShowLogoutModal(false); 
   };
 
   const handleLogoutClick = () => {
-    setShowLogoutModal(true); // Hiển thị modal khi ấn nút Logout
+    setShowLogoutModal(true); 
   };
 
   const closeModal = () => {
-    setShowLogoutModal(false); // Đóng modal
+    setShowLogoutModal(false); 
   };
 
   return (

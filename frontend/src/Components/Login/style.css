@@ -91,3 +91,18 @@
   #root > div > div > div.login-form > p.register-link{
     padding-top: 20px;
   }
+  .github-btn {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 10px;
+    margin-top: 10px;
+    width: 100%;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .github-btn:hover {
+    background-color: #555;
+  }
+  

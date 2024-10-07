@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { auth, googleProvider } from "./config";
+import { auth, googleProvider, githubProvider } from "./config"; 
 import { signInWithPopup } from "firebase/auth";
 import { useNavigate, Link } from 'react-router-dom'; 
 import { faFaceSmile } from '@fortawesome/free-regular-svg-icons'; 
 import './style.css'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getOneUser, login } from '../../redux/apiRequest';
+import { getOneUser, login, loginWithProvider } from '../../redux/apiRequest';
 import { useDispatch } from 'react-redux';
 
 function Login() {
@@ -17,13 +17,29 @@ function Login() {
 
   const handleGoogleLogin = () => {
     signInWithPopup(auth, googleProvider)
-      .then((data) => {
-        localStorage.setItem("email", data.user.email);
-        navigate("/"); 
+      .then((result) => {
+        console.log(result); 
+        const email = result.user.email;
+        const providerId = 'google';
+  
+        loginWithProvider(email, providerId, dispatch, navigate);
       })
       .catch((error) => {
         console.error("Error during Google sign-in:", error);
-        setErrorMessage("Google login failed");
+      });
+  };
+  
+
+  const handleGithubLogin = () => {
+    signInWithPopup(auth, githubProvider)
+      .then((result) => {
+        const email = result.user.email; 
+        const providerId = 'github'; 
+
+        loginWithProvider(email, providerId, dispatch, navigate);
+      })
+      .catch((error) => {
+        console.error("Error during GitHub sign-in:", error);
       });
   };
 
@@ -71,6 +87,9 @@ function Login() {
           <p>Or</p>
           <button className="google-btn" onClick={handleGoogleLogin}>
             Login with Google
+          </button>
+          <button className="github-btn" onClick={handleGithubLogin}>
+            Login with GitHub
           </button>
           <p className="register-link">
             Don't have an account? <Link to="/register">Create here</Link> 
