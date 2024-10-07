@@ -58,7 +58,7 @@ const ProjectPage = () => {
                     {/* Hiển thị chỉ ảnh đầu tiên */}
                     {project.images.length > 0 && (
                       <img
-                        src={`http://localhost:5000/${project.images[0]}`} // Hiển thị ảnh đầu tiên
+                        src={project.images[0]} // URL ảnh từ Firebase
                         alt={`Project ${project.name}`}
                         style={{
                           width: "100px",
@@ -68,8 +68,9 @@ const ProjectPage = () => {
                       />
                     )}
                   </td>
+
                   <td>{project.name}</td>
-                  <td>{project.author}</td>
+                  <td>{project.authors}</td>
                   <td>{project.description}</td>
                   <td>{new Date(project.createdAt).toLocaleDateString()}</td>
                   <td>

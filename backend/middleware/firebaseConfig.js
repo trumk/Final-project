@@ -2,6 +2,7 @@ require('dotenv').config();
 const admin = require('firebase-admin');
 const multer = require('multer');
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 
 // Firebase Admin SDK configuration
 admin.initializeApp({
@@ -30,38 +31,34 @@ const upload = multer({
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
-  fileFilter: (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png|gif|mp4|avi|mov|mkv/; // Allowed file types
-    const mimetype = filetypes.test(file.mimetype);
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      return cb(new Error('Only images and videos are allowed!'));
-    }
-  },
 }).single('file'); // Handles single file upload
 
 // Function to upload file to Firebase Storage
 const uploadFileToFirebase = async (file) => {
   const fileName = Date.now() + '-' + file.originalname;
   const firebaseFile = bucket.file(fileName);
+  const downloadToken = uuidv4(); // Tạo một token mới
 
   try {
+    // Upload file lên Firebase Storage cùng với token trong metadata
     await firebaseFile.save(file.buffer, {
       metadata: {
         contentType: file.mimetype,
+        metadata: {
+          firebaseStorageDownloadTokens: downloadToken, // Thêm token vào metadata
+        },
       },
     });
+    // Tạo URL với token download
+    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(fileName)}?alt=media&token=${downloadToken}`;
 
-    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
     return publicUrl;
   } catch (error) {
     console.error('Error uploading file to Firebase:', error);
     throw new Error('Failed to upload file to Firebase');
   }
 };
+
 
 // Middleware to verify Firebase Auth Token
 const verifyFirebaseToken = async (req, res, next) => {

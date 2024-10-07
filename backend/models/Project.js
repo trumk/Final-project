@@ -40,24 +40,12 @@ const projectSchema = new Schema({
   images: [
     {
       type: String,
-      required: false,
-      validate: {
-        validator: function (v) {
-          return /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/.test(v); 
-        },
-        message: props => `${props.value} is not a valid image URL!`,
-      },
-    },
+      required: false
+    }
   ],
   video: {
     type: String, 
-    required: false,
-    validate: {
-      validator: function (v) {
-        return /^https?:\/\/.+\.(mp4|avi|mov|mkv)$/.test(v); 
-      },
-      message: props => `${props.value} is not a valid video URL!`,
-    },
+    required: false
   },
   likes: {
     type: Number,

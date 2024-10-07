@@ -28,10 +28,12 @@ const register = async (req, res) => {
   }
 };
 
+
 const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
@@ -66,6 +68,7 @@ const login = async (req, res) => {
     return res.status(500).json({ message: "Something went wrong", error });
   }
 };
+
 
 const loginWithProvider = async (req, res) => {
   const { email, providerId } = req.body; 

@@ -1,5 +1,6 @@
 const Project = require('../models/Project');
 const { uploadFileToFirebase } = require('../middleware/firebaseConfig'); 
+const { bucket } = require('../middleware/firebaseConfig'); 
 
 const getAllProjects = async (req, res) => {
   try {
@@ -30,8 +31,11 @@ const createProject = async (req, res) => {
 
     for (const file of newImages) {
       const publicUrl = await uploadFileToFirebase(file); 
+      console.log(publicUrl)
       images.push(publicUrl); 
     }
+
+   
 
     const newProject = new Project({
       name,
@@ -109,31 +113,43 @@ const updateProject = async (req, res) => {
 
 const deleteProject = async (req, res) => {
   try {
+    console.log("Starting project deletion process for ID:", req.params.id);
+
     const project = await Project.findById(req.params.id);
     if (!project) {
+      console.log("Project not found for ID:", req.params.id);
       return res.status(404).json({ message: 'Project not found' });
     }
 
-    // Xóa từng ảnh khỏi Firebase Storage
+    console.log("Project found:", project);
+
     for (const imageUrl of project.images) {
-      const fileName = imageUrl.split('/').pop(); // Lấy tên file từ URL của Firebase
+      const fileName = imageUrl.split('/').pop().split('?')[0]; 
+      console.log("Attempting to delete image file:", fileName);
+
       const file = bucket.file(fileName);
 
-      // Kiểm tra xem file có tồn tại trong Firebase Storage không
       const [exists] = await file.exists();
       if (exists) {
-        await file.delete(); // Xóa file nếu tồn tại
+        console.log("File exists, deleting file:", fileName);
+        await file.delete(); 
+        console.log("File deleted:", fileName);
+      } else {
+        console.log("File not found:", fileName);
       }
     }
 
-    // Xóa project khỏi MongoDB
-    await Project.findByIdAndDelete(req.params.id);
+    console.log("Deleting project from database with ID:", req.params.id);
+    await Project.findByIdAndDelete(req.params.id); 
 
+    console.log("Project deleted successfully");
     res.status(200).json({ message: 'Project and associated images deleted successfully' });
   } catch (error) {
+    console.error("Error during project deletion:", error);
     res.status(500).json({ message: 'Failed to delete project', error });
   }
 };
+
 
 module.exports = {
   getAllProjects,
