@@ -193,28 +193,22 @@ export const getOneUser = (id) => async (dispatch) => {
   }
 };
 
-export const getCommentsByProject = (projectId, idToken) => async (dispatch) => {
+export const getCommentsByProject = (projectId) => async (dispatch) => {
   dispatch(getCommentsStart());
-  const headers = idToken ? { Authorization: `Bearer ${idToken}` } : {}; // Chỉ gửi token nếu có
   try {
-    const res = await axios.get(`${BACKEND_URL}/api/projects/${projectId}/comments`, {
-      headers,
-    });
+    const res = await axios.get(`${BACKEND_URL}/api/projects/${projectId}/comments`);
     dispatch(getCommentsSuccess(res.data));
   } catch (error) {
     dispatch(getCommentsFailed(error.message));
   }
 };
 
-// Thêm bình luận vào dự án
-export const addComment = (projectId, commentData, idToken) => async (dispatch) => {
+export const addComment = (projectId, commentData) => async (dispatch) => {
   dispatch(addCommentStart());
-  const headers = idToken ? { Authorization: `Bearer ${idToken}` } : {}; // Chỉ gửi token nếu có
   try {
     const res = await axios.post(
       `${BACKEND_URL}/api/projects/${projectId}/comments`,
-      commentData,
-      { headers }
+      commentData
     );
     dispatch(addCommentSuccess(res.data));
   } catch (error) {
@@ -222,36 +216,35 @@ export const addComment = (projectId, commentData, idToken) => async (dispatch) 
   }
 };
 
-// Like dự án
-export const likeProject = (projectId, idToken) => async (dispatch) => {
+export const likeProject = (projectId, likeData) => async (dispatch) => {
   dispatch(likeProjectStart());
-  const headers = idToken ? { Authorization: `Bearer ${idToken}` } : {}; // Chỉ gửi token nếu có
   try {
-    await axios.post(`${BACKEND_URL}/api/projects/${projectId}/like`, {}, { headers });
+    await axios.post(`${BACKEND_URL}/api/projects/${projectId}/like`, likeData);
     dispatch(likeProjectSuccess());
   } catch (error) {
     dispatch(likeProjectFailed(error.message));
   }
 };
 
-export const getNotifications = async (dispatch, idToken) => {
+
+export const getNotifications = async (dispatch) => {
   dispatch(getNotificationsStart());
-  const headers = idToken ? { Authorization: `Bearer ${idToken}` } : {}; // Xử lý Firebase token (nếu có)
   try {
-    const res = await axios.get(`${BACKEND_URL}/api/notifications`, { headers });
+    const res = await axios.get(`${BACKEND_URL}/api/notifications`);
     dispatch(getNotificationsSuccess(res.data));
   } catch (error) {
     dispatch(getNotificationsFailed(error.message));
   }
 };
 
-export const markNotificationsAsRead = async (dispatch, idToken) => {
-  const headers = idToken ? { Authorization: `Bearer ${idToken}` } : {}; // Xử lý Firebase token (nếu có)
+
+export const markNotificationsAsRead = async (dispatch) => {
   try {
-    await axios.put(`${BACKEND_URL}/api/notifications/read`, {}, { headers });
+    await axios.put(`${BACKEND_URL}/api/notifications/read`);
     dispatch(markAsRead());
   } catch (error) {
     console.error("Error marking notifications as read:", error);
   }
 };
+
 

@@ -59,29 +59,25 @@ const uploadFileToFirebase = async (file) => {
   }
 };
 
-
 const verifyFirebaseToken = async (req, res, next) => {
   const idToken = req.headers.authorization?.split(' ')[1]; 
 
   if (!idToken) {
-    // Nếu không có token, kiểm tra người dùng đã đăng nhập thông qua phương pháp khác hay không
-    if (req.session && req.session.user) {
-      req.user = req.session.user; // Lưu thông tin người dùng từ session (nếu có)
-      return next();
-    }
-    // Nếu không có token và không có session, người dùng không được xác thực
-    return res.status(401).json({ message: 'Unauthorized' });
+    // Nếu không có token, tiếp tục mà không kiểm tra
+    req.user = null; // Không có req.user nếu không có token
+    return next();
   }
 
   try {
     const decodedToken = await admin.auth().verifyIdToken(idToken); 
-    req.user = { uid: decodedToken.uid, ...decodedToken }; 
+    req.user = decodedToken; // Gán thông tin người dùng từ Firebase token
     next(); 
   } catch (error) {
     console.error('Token verification failed:', error);
     res.status(401).json({ message: 'Unauthorized' });
   }
 };
+
 
 const setCooPHeaders = (req, res, next) => {
   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');

@@ -2,7 +2,12 @@ import Navbar from "../../../Components/Navbar";
 import Footer from "../../../Components/Footer";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { getProject, addComment, likeProject } from "../../../redux/apiRequest";
+import {
+  getProject,
+  addComment,
+  likeProject,
+  getCommentsByProject,
+} from "../../../redux/apiRequest";
 import { useParams } from "react-router-dom";
 import "./style.css";
 
@@ -11,20 +16,23 @@ function DetailPage() {
   const dispatch = useDispatch();
 
   const project = useSelector((state) => state.project.currentProject);
+  const comments = useSelector((state) => state.project.comments);
   const currentUser = useSelector((state) => state.auth.currentUser); // Lấy thông tin người dùng hiện tại
 
   const [commentText, setCommentText] = useState(""); // Quản lý trạng thái text của bình luận
   const [isLiked, setIsLiked] = useState(false); // Trạng thái cho việc thích dự án
 
-  // Lấy chi tiết dự án
+  // Lấy chi tiết dự án và bình luận
   useEffect(() => {
-    dispatch(getProject(id));
+    dispatch(getProject(id)).then(() => {
+      dispatch(getCommentsByProject(id));
+    });
   }, [dispatch, id]);
 
   // Cập nhật trạng thái isLiked khi dự án được tải về
   useEffect(() => {
     if (project && currentUser) {
-      setIsLiked(project.likedUsers.includes(currentUser.id));
+      setIsLiked(project.likedUsers?.includes(currentUser.id));
     }
   }, [project, currentUser]);
 
@@ -42,22 +50,26 @@ function DetailPage() {
       comment: commentText,
     };
 
-    const idToken = currentUser.idToken || null; // Kiểm tra xem có token Firebase không
+    dispatch(addComment(id, commentData)).then(() => {
+      dispatch(getCommentsByProject(id)); // Tải lại bình luận sau khi thêm bình luận thành công
+    });
 
-    dispatch(addComment(id, commentData, idToken)); // Gửi bình luận đến server
     setCommentText(""); // Reset input
   };
 
-  // Xử lý like dự án
   const handleLike = () => {
     if (!currentUser) {
       alert("You need to login to like.");
       return;
     }
 
-    const idToken = currentUser.idToken || null; // Kiểm tra xem có token Firebase không
+    const likeData = {
+      userId: currentUser.id,
+    };
 
-    dispatch(likeProject(id, idToken)); // Gửi yêu cầu like đến server
+    dispatch(likeProject(id, likeData)).then(() => {
+      dispatch(getProject(id)); // Tải lại thông tin dự án sau khi like/unlike thành công
+    });
     setIsLiked(!isLiked); // Thay đổi trạng thái liked
   };
 
@@ -80,7 +92,10 @@ function DetailPage() {
             <p className="project-description">{project.description}</p>
 
             {/* Nút like */}
-            <button className={`like-button ${isLiked ? "liked" : ""}`} onClick={handleLike}>
+            <button
+              className={`like-button ${isLiked ? "liked" : ""}`}
+              onClick={handleLike}
+            >
               {isLiked ? "Unlike" : "Like"} ({project.likes})
             </button>
 
@@ -96,12 +111,15 @@ function DetailPage() {
             </form>
 
             {/* Hiển thị bình luận */}
-            {project.comments?.length > 0 ? (
+            {comments?.length > 0 ? (
               <div className="comments-section">
                 <h3>Comments:</h3>
-                {project.comments.map((comment) => (
+                {comments.map((comment) => (
                   <div key={comment._id} className="comment">
-                    <p><strong>{comment.userId.userName}:</strong> {comment.comment}</p>
+                    <p>
+                      <strong>{comment?.userId?.userName}:</strong>{" "}
+                      {comment.comment}
+                    </p>
                   </div>
                 ))}
               </div>

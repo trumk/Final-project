@@ -102,7 +102,7 @@ const projectSlice = createSlice({
     },
     addCommentSuccess: (state, action) => {
       state.isFetching = false;
-      state.comments.push(action.payload);
+      state.currentProject.comments.push(action.payload); 
       state.error = false;
     },
     addCommentFailed: (state, action) => {
