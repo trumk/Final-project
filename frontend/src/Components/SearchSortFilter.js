@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import "./SearchSortFilter.css"
-import { searchProjects, sortProjects, filterProjects } from '../redux/apiRequest'; 
+import { searchProjects, sortProjects, filterProjects, getAllProjects } from '../redux/apiRequest'; 
 
 const SearchSortFilter = () => {
   const dispatch = useDispatch();
@@ -11,17 +11,28 @@ const SearchSortFilter = () => {
   const [semester, setSemester] = useState('');
   const [department, setDepartment] = useState('');
 
-  const handleSearch = () => {
-    dispatch(searchProjects(searchTerm));
-  };
+  // Debounce để tránh gọi API quá nhiều lần khi gõ tìm kiếm
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchTerm) {
+        dispatch(searchProjects(searchTerm));
+      } else {
+        // Nếu searchTerm là rỗng, lấy tất cả các project
+        dispatch(getAllProjects());
+      }
+    }, 300); // Gọi sau 300ms nếu không có thay đổi
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, dispatch]);
+
+  // Tự động gọi API khi thay đổi lọc theo kỳ và khoa
+  useEffect(() => {
+    dispatch(filterProjects(semester, department));
+  }, [semester, department, dispatch]);
 
   const handleSort = (e) => {
     setSortOption(e.target.value);
     dispatch(sortProjects(e.target.value));
-  };
-
-  const handleFilter = () => {
-    dispatch(filterProjects(semester, department));
   };
 
   return (
@@ -35,7 +46,6 @@ const SearchSortFilter = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-input"
         />
-        <button onClick={handleSearch} className="search-button">Search</button>
       </div>
 
       {/* Sort */}
@@ -72,8 +82,6 @@ const SearchSortFilter = () => {
           <option value="Design">Design</option>
           <option value="HR">HR</option>
         </select>
-
-        <button onClick={handleFilter} className="filter-button">Filter</button>
       </div>
     </div>
   );
