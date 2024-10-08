@@ -55,7 +55,6 @@ const ProjectPage = () => {
                 <tr key={project._id}>
                   <th scope="row">{index + 1}</th>
                   <td>
-                    {/* Hiển thị chỉ ảnh đầu tiên */}
                     {project.images.length > 0 && (
                       <img
                         src={project.images[0]} // URL ảnh từ Firebase

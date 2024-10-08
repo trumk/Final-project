@@ -40,6 +40,45 @@ const projectSlice = createSlice({
       state.error = true;
       state.msg = action.payload || "Failed to fetch the project";
     },
+     searchProjectsStart: (state) => {
+      state.isFetching = true;
+    },
+    searchProjectsSuccess: (state, action) => {
+      state.isFetching = false;
+      state.allProjects = action.payload; 
+      state.error = false;
+    },
+    searchProjectsFailed: (state, action) => {
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to search projects";
+    },
+    sortProjectsStart: (state) => {
+      state.isFetching = true;
+    },
+    sortProjectsSuccess: (state, action) => {
+      state.isFetching = false;
+      state.allProjects = action.payload;
+      state.error = false;
+    },
+    sortProjectsFailed: (state, action) => {
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to sort projects";
+    },
+    filterProjectsStart: (state) => {
+      state.isFetching = true;
+    },
+    filterProjectsSuccess: (state, action) => {
+      state.isFetching = false;
+      state.allProjects = action.payload; 
+      state.error = false;
+    },
+    filterProjectsFailed: (state, action) => {
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to filter projects";
+    },
     createProjectStart: (state) => {
       state.isFetching = true;
       state.error = false;
@@ -82,8 +121,6 @@ const projectSlice = createSlice({
       state.error = true;
       state.msg = action.payload || "Failed to delete the project";
     },
-
-    // Comments actions
     getCommentsStart: (state) => {
       state.isFetching = true;
     },
@@ -110,14 +147,12 @@ const projectSlice = createSlice({
       state.error = true;
       state.msg = action.payload || "Failed to add comment";
     },
-
-    // Like actions
     likeProjectStart: (state) => {
       state.isFetching = true;
     },
     likeProjectSuccess: (state, action) => {
       state.isFetching = false;
-      state.currentProject.likes += 1; // Cộng thêm 1 like
+      state.currentProject.likes += 1; 
       state.error = false;
     },
     likeProjectFailed: (state, action) => {
@@ -125,8 +160,6 @@ const projectSlice = createSlice({
       state.error = true;
       state.msg = action.payload || "Failed to like project";
     },
-
-    // Notification actions
     getNotificationsStart: (state) => {
       state.isFetching = true;
     },
@@ -154,6 +187,15 @@ export const {
   getProjectStart,
   getProjectSuccess,
   getProjectFailed,
+  searchProjectsStart,
+  searchProjectsSuccess,
+  searchProjectsFailed,
+  sortProjectsStart,
+  sortProjectsSuccess,
+  sortProjectsFailed,
+  filterProjectsStart,
+  filterProjectsSuccess,
+  filterProjectsFailed,
   createProjectStart,
   createProjectSuccess,
   createProjectFailed,

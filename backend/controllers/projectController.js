@@ -291,7 +291,6 @@ const likeProject = async (req, res) => {
     }
   };
 
-
 const getCommentsByProject = async (req, res) => {
   try {
     const comments = await Comment.find({ projectId: req.params.projectId }).populate('userId', 'userName');
@@ -302,6 +301,75 @@ const getCommentsByProject = async (req, res) => {
   }
 };
 
+const searchProjects = async (req, res) => {
+  try {
+    const { search } = req.query;
+
+    if (!search) {
+      return res.status(400).json({ message: 'Search query is required' });
+    }
+
+    const filter = {
+      $or: [
+        { name: { $regex: search, $options: 'i' } },  
+        { authors: { $regex: search, $options: 'i' } } 
+      ]
+    };
+
+    const projects = await Project.find(filter);
+    res.status(200).json(projects);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to search projects', error });
+  }
+};
+
+const sortProjects = async (req, res) => {
+  try {
+    const { sort } = req.query;
+
+    if (!sort) {
+      return res.status(400).json({ message: 'Sort query is required' });
+    }
+
+    let sortOption = {};
+
+    if (sort === 'likes') {
+      sortOption.likes = -1;
+    } else if (sort === 'alphabetical') {
+      sortOption.name = 1; 
+    } else {
+      return res.status(400).json({ message: 'Invalid sort option' });
+    }
+
+    const projects = await Project.find().sort(sortOption);
+    res.status(200).json(projects);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to sort projects', error });
+  }
+};
+
+const filterProjects = async (req, res) => {
+  try {
+    const { semester, department } = req.query;
+
+    let filter = {};
+
+    if (semester) {
+      filter.semester = semester;
+    }
+
+    if (department) {
+      filter.department = department;
+    }
+
+    const projects = await Project.find(filter);
+    res.status(200).json(projects);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to filter projects', error });
+  }
+};
+
+
 
 module.exports = {
   getAllProjects,
@@ -311,5 +379,8 @@ module.exports = {
   deleteProject,
   addComment,
   getCommentsByProject,
-  likeProject
+  likeProject,
+  searchProjects,
+  sortProjects,
+  filterProjects
 };

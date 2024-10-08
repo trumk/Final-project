@@ -9,6 +9,9 @@ import {
   deleteProjectFailed,
   deleteProjectStart,
   deleteProjectSuccess,
+  filterProjectsFailed,
+  filterProjectsStart,
+  filterProjectsSuccess,
   getCommentsFailed,
   getCommentsStart,
   getCommentsSuccess,
@@ -25,6 +28,12 @@ import {
   likeProjectStart,
   likeProjectSuccess,
   markAsRead,
+  searchProjectsFailed,
+  searchProjectsStart,
+  searchProjectsSuccess,
+  sortProjectsFailed,
+  sortProjectsStart,
+  sortProjectsSuccess,
   updateProjectFailed,
   updateProjectStart,
   updateProjectSuccess,
@@ -237,7 +246,6 @@ export const getNotifications = async (dispatch) => {
   }
 };
 
-
 export const markNotificationsAsRead = async (dispatch) => {
   try {
     await axios.put(`${BACKEND_URL}/api/notifications/read`);
@@ -246,5 +254,51 @@ export const markNotificationsAsRead = async (dispatch) => {
     console.error("Error marking notifications as read:", error);
   }
 };
+
+export const searchProjects = (searchTerm) => async (dispatch) => {
+  dispatch(searchProjectsStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/api/projects/search?search=${searchTerm}`);
+    dispatch(searchProjectsSuccess(res.data));
+  } catch (err) {
+    console.error(err);
+    dispatch(searchProjectsFailed(err.message));
+  }
+};
+
+
+export const sortProjects = (sortOption) => async (dispatch) => {
+  dispatch(sortProjectsStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/api/projects/sort?sort=${sortOption}`);
+    dispatch(sortProjectsSuccess(res.data));
+  } catch (err) {
+    console.error(err);
+    dispatch(sortProjectsFailed(err.message));
+  }
+};
+
+export const filterProjects = (semester, department) => async (dispatch) => {
+  dispatch(filterProjectsStart());
+  try {
+    let url = `${BACKEND_URL}/api/projects/filter?`;
+    
+    if (semester) {
+      url += `semester=${semester}&`;
+    }
+    
+    if (department) {
+      url += `department=${department}`;
+    }
+
+    const res = await axios.get(url);
+    dispatch(filterProjectsSuccess(res.data));
+  } catch (err) {
+    console.error(err);
+    dispatch(filterProjectsFailed(err.message));
+  }
+};
+
+
 
 
