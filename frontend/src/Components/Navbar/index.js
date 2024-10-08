@@ -1,17 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./style.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faBell } from "@fortawesome/free-solid-svg-icons"; 
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/apiRequest';
+import { getNotifications, markNotificationsAsRead } from '../../redux/apiRequest'; 
 
 function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.currentUser); 
-  
+  const notifications = useSelector((state) => state.project.notifications); 
+  const unreadCount = useSelector((state) => state.project.unreadCount); 
+
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  // Fetch notifications when the component mounts
+  useEffect(() => {
+    if (currentUser) {
+      dispatch(getNotifications); // Fetch user-specific notifications
+    }
+  }, [dispatch, currentUser]);
 
   const handleLogoutConfirm = async () => {
     try {
@@ -29,6 +40,14 @@ function Navbar() {
 
   const closeModal = () => {
     setShowLogoutModal(false); 
+  };
+
+  // Handle showing/hiding notifications and marking them as read
+  const handleNotificationClick = () => {
+    setShowNotifications(!showNotifications);
+    if (!showNotifications) {
+      dispatch(markNotificationsAsRead); // Mark notifications as read when opening dropdown
+    }
   };
 
   return (
@@ -64,16 +83,30 @@ function Navbar() {
                 </li>
               </ul>
               <ul className="navbar-nav right-nav">
-                <li className="nav-item">
-                  <Link className="nav-link" to="#about">
-                    About
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="#contact">
-                    Contact
-                  </Link>
-                </li>
+                {currentUser && (
+                  <li className="nav-item position-relative">
+                    {/* Notification Bell with count */}
+                    <button className="nav-link" onClick={handleNotificationClick}>
+                      <FontAwesomeIcon icon={faBell} />
+                      {unreadCount > 0 && <span className="notification-count">{unreadCount}</span>}
+                    </button>
+
+                    {/* Notification Dropdown */}
+                    {showNotifications && (
+                      <ul className="notification-dropdown">
+                        {notifications.length > 0 ? (
+                          notifications.map((notif, index) => (
+                            <li key={index} className="notification-item">
+                              <p>{notif.sender?.userName} {notif.message}</p>
+                            </li>
+                          ))
+                        ) : (
+                          <li className="notification-item">No new notifications</li>
+                        )}
+                      </ul>
+                    )}
+                  </li>
+                )}
                 {currentUser ? (
                   <li className="nav-item dropdown">
                     <a
@@ -112,7 +145,7 @@ function Navbar() {
         </nav>
       </header>
 
-      {/* Modal để xác nhận logout */}
+      {/* Modal to confirm logout */}
       {showLogoutModal && (
         <div className="modal-backdrop">
           <div className="modal-content">
