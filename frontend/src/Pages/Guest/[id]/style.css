@@ -1,12 +1,10 @@
-/* Tổng container của trang chi tiết */
 .detail-page {
   padding: 0;
   margin: 0;
   padding-top: 50px;
-  background-color: #f4f4f9; /* Màu nền xám nhạt để làm nổi bật các phần chính */
+  background-color: #f4f4f9; 
 }
 
-/* Container chính */
 .content-container {
   max-width: 100%;
   margin: 0 auto;
@@ -16,7 +14,6 @@
   gap: 20px;
 }
 
-/* Layout chính gồm 2 phần: thông tin dự án và bình luận */
 .main-content {
   display: flex;
   justify-content: space-between;
@@ -24,15 +21,14 @@
   margin-bottom: 20px;
 }
 
-/* Section thông tin dự án (chiếm 65% chiều ngang) */
 .project-details-section {
-  flex: 0 0 60%; /* Chiếm 65% màn hình */
+  flex: 0 0 60%; 
   background-color: #ffffff;
   padding: 25px;
   border-radius: 8px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s, transform 0.3s;
-  border-left: 5px solid #007bff; /* Thêm đường màu để tạo điểm nhấn */
+  border-left: 5px solid #007bff;
 }
 
 .project-details-section:hover {
@@ -44,10 +40,9 @@
   font-size: 2em;
   font-weight: bold;
   margin-bottom: 20px;
-  color: #007bff; /* Màu xanh để tạo sự nhất quán cho tiêu đề */
+  color: #007bff; 
 }
 
-/* Giảm kích thước ảnh dự án */
 .project-image {
   width: 60%;
   height: auto;
@@ -73,7 +68,7 @@
 /* Nút Like */
 .like-button {
   padding: 12px 24px;
-  background-color: #28a745; /* Màu xanh lá để nổi bật nút like */
+  background-color: #28a745;
   color: #ffffff;
   font-weight: bold;
   border: none;
@@ -83,24 +78,23 @@
 }
 
 .like-button.liked {
-  background-color: #dc3545; /* Đổi thành màu đỏ khi đã like */
+  background-color: #dc3545; 
 }
 
 .like-button:hover {
-  background-color: #218838; /* Màu xanh đậm hơn khi hover */
+  background-color: #218838; 
   box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
   transform: translateY(-2px);
 }
 
-/* Section bình luận giống Facebook (chiếm 30% chiều ngang) */
 .comments-section {
-  flex: 0 0 40%; /* Chiếm 30% màn hình */
+  flex: 0 0 40%; 
   background-color: #ffffff;
   padding: 25px;
   border-radius: 8px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s, transform 0.3s;
-  border-left: 5px solid #ffc107; /* Thêm đường màu vàng để tạo điểm nhấn cho phần bình luận */
+  border-left: 5px solid #ffc107; 
 }
 
 .comments-section:hover {
@@ -154,7 +148,6 @@
   transform: translateY(-2px);
 }
 
-/* Phần bình luận giống Facebook */
 .comment-item {
   display: flex;
   margin-top: 20px;
@@ -174,7 +167,7 @@
 }
 
 .comment-content {
-  background-color: #e9ecef; /* Màu nền sáng để phân biệt bình luận */
+  background-color: #e9ecef; 
   border-radius: 10px;
   padding: 15px;
   max-width: 100%;
@@ -184,7 +177,7 @@
 .comment-user-name {
   font-weight: bold;
   margin-bottom: 5px;
-  color: #007bff; /* Màu xanh đậm để nổi bật tên người dùng */
+  color: #007bff;
 }
 
 .comment-text {
@@ -192,7 +185,6 @@
   color: #444;
 }
 
-/* Section dự án liên quan */
 .related-projects-section {
   background-color: #ffffff;
   padding: 25px;
@@ -214,7 +206,6 @@
   display: inline-block;
 }
 
-/* General styles */
 .loading-message {
   text-align: center;
   font-size: 1.5em;
