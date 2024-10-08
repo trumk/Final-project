@@ -8,8 +8,12 @@ const projectSlice = createSlice({
     isFetching: false,
     error: false,
     msg: "",
+    comments: [], // Lưu trữ các bình luận cho một dự án
+    notifications: [], // Lưu trữ thông báo của người dùng
+    unreadCount: 0, // Số lượng thông báo chưa đọc
   },
   reducers: {
+    // Projects actions
     getProjectsStart: (state) => {
       state.isFetching = true;
     },
@@ -78,6 +82,68 @@ const projectSlice = createSlice({
       state.error = true;
       state.msg = action.payload || "Failed to delete the project";
     },
+
+    // Comments actions
+    getCommentsStart: (state) => {
+      state.isFetching = true;
+    },
+    getCommentsSuccess: (state, action) => {
+      state.isFetching = false;
+      state.comments = action.payload;
+      state.error = false;
+    },
+    getCommentsFailed: (state, action) => {
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to fetch comments";
+    },
+    addCommentStart: (state) => {
+      state.isFetching = true;
+    },
+    addCommentSuccess: (state, action) => {
+      state.isFetching = false;
+      state.comments.push(action.payload);
+      state.error = false;
+    },
+    addCommentFailed: (state, action) => {
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to add comment";
+    },
+
+    // Like actions
+    likeProjectStart: (state) => {
+      state.isFetching = true;
+    },
+    likeProjectSuccess: (state, action) => {
+      state.isFetching = false;
+      state.currentProject.likes += 1; // Cộng thêm 1 like
+      state.error = false;
+    },
+    likeProjectFailed: (state, action) => {
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to like project";
+    },
+
+    // Notification actions
+    getNotificationsStart: (state) => {
+      state.isFetching = true;
+    },
+    getNotificationsSuccess: (state, action) => {
+      state.isFetching = false;
+      state.notifications = action.payload;
+      state.unreadCount = action.payload.filter((n) => !n.isRead).length;
+      state.error = false;
+    },
+    getNotificationsFailed: (state, action) => {
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to fetch notifications";
+    },
+    markAsRead: (state) => {
+      state.unreadCount = 0;
+    },
   },
 });
 
@@ -97,6 +163,19 @@ export const {
   deleteProjectStart,
   deleteProjectSuccess,
   deleteProjectFailed,
+  getCommentsStart,
+  getCommentsSuccess,
+  getCommentsFailed,
+  addCommentStart,
+  addCommentSuccess,
+  addCommentFailed,
+  likeProjectStart,
+  likeProjectSuccess,
+  likeProjectFailed,
+  getNotificationsStart,
+  getNotificationsSuccess,
+  getNotificationsFailed,
+  markAsRead,
 } = projectSlice.actions;
 
 export default projectSlice.reducer;

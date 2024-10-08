@@ -60,24 +60,29 @@ const uploadFileToFirebase = async (file) => {
 };
 
 
-// Middleware to verify Firebase Auth Token
 const verifyFirebaseToken = async (req, res, next) => {
-  const idToken = req.headers.authorization?.split(' ')[1]; // Token from Authorization header
+  const idToken = req.headers.authorization?.split(' ')[1]; 
+
   if (!idToken) {
-    return res.status(401).json({ message: 'No token provided' });
+    // Nếu không có token, kiểm tra người dùng đã đăng nhập thông qua phương pháp khác hay không
+    if (req.session && req.session.user) {
+      req.user = req.session.user; // Lưu thông tin người dùng từ session (nếu có)
+      return next();
+    }
+    // Nếu không có token và không có session, người dùng không được xác thực
+    return res.status(401).json({ message: 'Unauthorized' });
   }
 
   try {
-    const decodedToken = await admin.auth().verifyIdToken(idToken); // Verifying token
-    req.user = decodedToken; // Attach user info to request object
-    next(); // Proceed to the next middleware
+    const decodedToken = await admin.auth().verifyIdToken(idToken); 
+    req.user = { uid: decodedToken.uid, ...decodedToken }; 
+    next(); 
   } catch (error) {
     console.error('Token verification failed:', error);
     res.status(401).json({ message: 'Unauthorized' });
   }
 };
 
-// Setting Cross-Origin-Opener-Policy to handle popups properly
 const setCooPHeaders = (req, res, next) => {
   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
   next();

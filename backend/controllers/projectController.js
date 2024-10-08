@@ -1,6 +1,8 @@
 const Project = require('../models/Project');
 const { uploadFileToFirebase } = require('../middleware/firebaseConfig'); 
 const { bucket } = require('../middleware/firebaseConfig'); 
+const Comment = require('../models/Comment');
+const Notification = require('../models/Notification');
 
 const getAllProjects = async (req, res) => {
   try {
@@ -150,6 +152,104 @@ const deleteProject = async (req, res) => {
   }
 };
 
+const likeProject = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    // Kiểm tra req.user tồn tại hay không
+    if (!req.user || (!req.user.uid && !req.user._id)) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    const senderId = req.user.uid || req.user._id; // Dùng uid cho Firebase hoặc _id cho người dùng thường
+
+    // Kiểm tra xem người dùng đã like dự án trước đó hay chưa
+    const hasLiked = project.likedUsers.includes(senderId);
+
+    if (hasLiked) {
+      // Nếu đã like thì dislike (trừ đi 1)
+      project.likes -= 1;
+      project.likedUsers = project.likedUsers.filter(user => user.toString() !== senderId.toString());
+    } else {
+      // Nếu chưa like thì thêm like
+      project.likes += 1;
+      project.likedUsers.push(senderId);
+
+      // Tạo thông báo like nếu người dùng chưa like trước đó
+      const notification = new Notification({
+        recipient: project.authors[0], 
+        sender: senderId, 
+        project: project._id,
+        type: 'like',
+      });
+      await notification.save();
+    }
+
+    await project.save();
+
+    res.status(200).json({ message: hasLiked ? 'Project disliked successfully' : 'Project liked successfully', likes: project.likes });
+  } catch (error) {
+    console.error('Error liking project:', error);
+    res.status(500).json({ message: 'Failed to like/dislike project', error });
+  }
+};
+
+const addComment = async (req, res) => {
+  try {
+    const { comment, parentId } = req.body;
+
+    // Kiểm tra req.user tồn tại hay không
+    if (!req.user || (!req.user.uid && !req.user._id)) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    const senderId = req.user.uid || req.user._id; // Dùng uid cho Firebase hoặc _id cho người dùng thường
+
+    const newComment = new Comment({
+      projectId: req.params.projectId,
+      userId: senderId, 
+      comment,
+      parentId: parentId || null,
+    });
+
+    await newComment.save();
+
+    const project = await Project.findById(req.params.projectId);
+    project.comments.push(newComment._id);
+    await project.save();
+
+    if (parentId) {
+      const parentComment = await Comment.findById(parentId);
+      if (parentComment) {
+        const notification = new Notification({
+          recipient: parentComment.userId,
+          sender: senderId,
+          comment: newComment._id,
+          type: 'reply',
+        });
+        await notification.save();
+      }
+    }
+
+    res.status(201).json(newComment);
+  } catch (error) {
+    console.error('Error adding comment:', error);
+    res.status(500).json({ message: 'Failed to add comment', error });
+  }
+};
+
+const getCommentsByProject = async (req, res) => {
+  try {
+    const comments = await Comment.find({ projectId: req.params.projectId }).populate('userId', 'userName');
+    res.status(200).json(comments);
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+    res.status(500).json({ message: 'Failed to fetch comments', error });
+  }
+};
 
 module.exports = {
   getAllProjects,
@@ -157,4 +257,7 @@ module.exports = {
   createProject,
   updateProject,
   deleteProject,
+  addComment,
+  getCommentsByProject,
+  likeProject
 };

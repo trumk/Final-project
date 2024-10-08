@@ -53,6 +53,10 @@ const projectSchema = new Schema({
     default: 0,
     min: [0, 'Likes cannot be less than 0.'], 
   },
+  likedUsers: [{ 
+    type: Schema.Types.ObjectId, 
+    ref: 'User' 
+  }],
   comments: [
     {
       type: Schema.Types.ObjectId,

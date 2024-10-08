@@ -1,4 +1,5 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { thunk } from 'redux-thunk'; 
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; 
 import projectReducer from './projectSlice';
@@ -15,11 +16,9 @@ const rootReducer = combineReducers({
   project: projectReducer,
   user: userReducer,
   auth: authReducer
-})
+});
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
-
-
 
 export const store = configureStore({
   reducer: persistedReducer,
@@ -28,7 +27,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }),
+    }).concat(thunk), 
 });
 
 export const persistor = persistStore(store);
