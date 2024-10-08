@@ -8,9 +8,9 @@ const projectSlice = createSlice({
     isFetching: false,
     error: false,
     msg: "",
-    comments: [], // Lưu trữ các bình luận cho một dự án
-    notifications: [], // Lưu trữ thông báo của người dùng
-    unreadCount: 0, // Số lượng thông báo chưa đọc
+    comments: [], 
+    notifications: [], 
+    unreadCount: 0, 
   },
   reducers: {
     // Projects actions

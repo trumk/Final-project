@@ -44,13 +44,38 @@
 }
 
 .project-image {
-  width: 60%;
+  width: 70%;
   height: auto;
   margin: 20px auto;
   display: block;
   border-radius: 8px;
   object-fit: cover;
 }
+
+.image-previews {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.preview-image {
+  width: 70px;
+  height: 70px;
+  margin-right: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  object-fit: cover;
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+.preview-image:hover {
+  transform: scale(1.1);
+}
+
+.preview-image.active {
+  border: 2px solid #007bff;
+}
+
 
 .project-author {
   font-size: 1.1em;
@@ -87,6 +112,7 @@
   transform: translateY(-2px);
 }
 
+/* Comment Section */
 .comments-section {
   flex: 0 0 40%; 
   background-color: #ffffff;
@@ -150,9 +176,22 @@
 
 .comment-item {
   display: flex;
+  flex-direction: column;
   margin-top: 20px;
   align-items: flex-start;
   gap: 10px;
+  padding-left: 15px; /* Tạo khoảng cách cho comment */
+
+}
+
+.comment-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #ccc;
 }
 
 .comment-avatar {
@@ -183,6 +222,74 @@
 .comment-text {
   font-size: 1em;
   color: #444;
+}
+
+/* Styles for reply */
+.reply-container {
+  margin-left: 40px; /* Indent replies to distinguish from parent comments */
+  padding-top: 10px;
+}
+
+.reply-item {
+  display: flex;
+  margin-top: 10px;
+  align-items: flex-start;
+  gap: 10px;
+  margin-left: 50px; /* Thụt lề reply để dễ phân biệt */
+  font-size: 0.9em; /* Kích thước chữ nhỏ hơn */
+  position: relative;
+}
+
+.reply-item::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #ccc;
+}
+
+.reply-input-container {
+  display: flex;
+  margin-left: 50px; /* Thụt lề reply input */
+}
+
+.reply-input {
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: none;
+  outline: none;
+  flex: 1;
+}
+
+.reply-submit-button {
+  margin-top: 10px;
+  background-color: #007bff;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.reply-submit-button:hover {
+  background-color: #0056b3;
+}
+
+.reply-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  margin-top: 5px;
+  font-size: 0.9em;
+}
+
+.reply-button:hover {
+  text-decoration: underline;
 }
 
 .related-projects-section {

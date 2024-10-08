@@ -5,6 +5,24 @@ const Comment = require('../models/Comment');
 const Notification = require('../models/Notification');
 const User = require('../models/User');
 
+const deleteFileFromFirebase = async (fileUrl) => {
+  try {
+    const fileName = decodeURIComponent(fileUrl.split('/o/')[1].split('?')[0]);
+    const file = bucket.file(fileName);
+
+    const [exists] = await file.exists();
+    if (exists) {
+      await file.delete();
+      console.log(`Deleted file from Firebase: ${fileName}`);
+    } else {
+      console.log(`File not found in Firebase: ${fileName}`);
+    }
+  } catch (error) {
+    console.error('Error deleting file from Firebase:', error);
+    throw new Error('Failed to delete file from Firebase');
+  }
+};
+
 const getAllProjects = async (req, res) => {
   try {
     const projects = await Project.find();
@@ -64,28 +82,48 @@ const createProject = async (req, res) => {
   }
 };
 
-
 const updateProject = async (req, res) => {
   try {
+    // Log dữ liệu nhận được từ request để kiểm tra
+    console.log('Received request:', req.body);
+    console.log('Files received:', req.files);
+
     const { removedImages } = req.body;
     const newImages = req.files ? req.files : [];
     let images = [];
 
+    // Lấy dự án cũ
     const oldProject = await Project.findById(req.params.id);
     if (!oldProject) {
+      console.log("Project not found:", req.params.id);
       return res.status(404).json({ message: 'Project not found' });
     }
 
-    let oldImages = [...oldProject.images]; 
+    console.log("Old project images:", oldProject.images);
 
+    let oldImages = [...oldProject.images];
+
+    // Tải lên ảnh mới lên Firebase
     for (const file of newImages) {
       const publicUrl = await uploadFileToFirebase(file);
-      images.push(publicUrl); 
+      console.log("Uploaded new image:", publicUrl);
+      images.push(publicUrl);
     }
 
+    // Loại bỏ ảnh đã yêu cầu xóa khỏi Firebase
     const removedImagesList = JSON.parse(removedImages || '[]');
+    console.log('Images to remove:', removedImagesList);
+
+    for (const imageUrl of removedImagesList) {
+      console.log('Attempting to delete image:', imageUrl);
+      await deleteFileFromFirebase(imageUrl);
+      console.log('Deleted image from Firebase:', imageUrl);
+    }
+
+    // Cập nhật danh sách ảnh còn lại
     oldImages = oldImages.filter(image => !removedImagesList.includes(image));
-    images = [...oldImages, ...images]; 
+    images = [...oldImages, ...images];
+    console.log("Updated images list:", images);
 
     const updateData = {};
 
@@ -97,21 +135,25 @@ const updateProject = async (req, res) => {
     if (images.length > 0) updateData.images = images;
     if (req.body.video) updateData.video = req.body.video;
 
+    console.log("Updating project with data:", updateData);
+
     const updatedProject = await Project.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
       runValidators: true,
     });
 
     if (!updatedProject) {
+      console.log("Project not found after update:", req.params.id);
       return res.status(404).json({ message: 'Project not found' });
     }
 
+    console.log("Project updated successfully:", updatedProject);
     res.status(200).json(updatedProject);
   } catch (error) {
+    console.error('Error updating project:', error);
     res.status(500).json({ message: 'Failed to update project', error });
   }
 };
-
 
 const deleteProject = async (req, res) => {
   try {
@@ -209,14 +251,12 @@ const likeProject = async (req, res) => {
 
   const addComment = async (req, res) => {
     try {
-      const { comment, parentId, userId } = req.body; // Lấy userId từ body cho người dùng đăng nhập thường
-
-      // Nếu không có req.user (Firebase), kiểm tra userId từ req.body
+      const { comment, parentId, userId } = req.body; 
       if (!req.user && !userId) {
         return res.status(401).json({ message: 'Unauthorized' });
       }
 
-      const senderId = req.user?.uid || userId; // Ưu tiên uid từ Firebase, nếu không dùng userId từ body
+      const senderId = req.user?.uid || userId;
 
       const newComment = new Comment({
         projectId: req.params.projectId,

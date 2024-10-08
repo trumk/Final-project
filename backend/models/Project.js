@@ -34,7 +34,6 @@ const projectSchema = new Schema({
     type: String, 
     required: false,
     minlength: [2, 'Department name must be at least 2 characters long.'],
-    maxlength: [100, 'Department name cannot exceed 100 characters.'],
     trim: true,
   },
   images: [

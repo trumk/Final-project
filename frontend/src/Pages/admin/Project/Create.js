@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { createProject } from '../../../redux/apiRequest';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-quill/dist/quill.snow.css';  // Import CSS của React Quill
+import ReactQuill from 'react-quill';  // Import React Quill
 import './style.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,7 +13,7 @@ const CreateProject = () => {
   
   const [name, setName] = useState('');
   const [authors, setAuthors] = useState('');
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState('');  // Thay vì dùng textarea, dùng ReactQuill
   const [semester, setSemester] = useState('Spring');  // Default semester
   const [department, setDepartment] = useState('IT');  // Default department
   const [videoUrl, setVideoUrl] = useState('');  // Video URL (nếu có)
@@ -35,7 +37,7 @@ const CreateProject = () => {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('authors', authors);
-    formData.append('description', description);
+    formData.append('description', description);  // Lưu nội dung từ ReactQuill
     formData.append('semester', semester);
     formData.append('department', department);
   
@@ -86,12 +88,12 @@ const CreateProject = () => {
         </div>
         <div className="mb-3">
           <label htmlFor="description" className="form-label">Description</label>
-          <textarea
-            id="description"
-            className="form-control"
+          <ReactQuill
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            maxLength="500"
+            onChange={setDescription}
+            placeholder="Enter project description..."
+            className="form-control"
+            theme="snow"
           />
         </div>
         <div className="mb-3">

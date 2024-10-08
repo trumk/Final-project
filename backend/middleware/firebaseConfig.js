@@ -78,7 +78,6 @@ const verifyFirebaseToken = async (req, res, next) => {
   }
 };
 
-
 const setCooPHeaders = (req, res, next) => {
   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
   next();

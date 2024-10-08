@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  deleteProject,
-  getProject,
-  updateProject,
-} from "../../../../redux/apiRequest";
+import { deleteProject, getProject, updateProject } from "../../../../redux/apiRequest";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "react-quill/dist/quill.snow.css"; 
+import ReactQuill from "react-quill"; 
 
 const EditProject = () => {
   const dispatch = useDispatch();
@@ -15,11 +13,15 @@ const EditProject = () => {
   const project = useSelector((state) => state.project?.currentProject);
 
   const [name, setName] = useState("");
-  const [author, setAuthor] = useState("");
-  const [description, setDescription] = useState("");
+  const [authors, setAuthors] = useState("");
+  const [description, setDescription] = useState(""); // Sử dụng react-quill cho phần mô tả
+  const [semester, setSemester] = useState("Spring");
+  const [department, setDepartment] = useState("IT");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [videoFile, setVideoFile] = useState(null);
   const [images, setImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
-  const [removedImages, setRemovedImages] = useState(new Set()); 
+  const [removedImages, setRemovedImages] = useState(new Set());
 
   useEffect(() => {
     dispatch(getProject(id));
@@ -28,37 +30,45 @@ const EditProject = () => {
   useEffect(() => {
     if (project) {
       setName(project.name);
-      setAuthor(project.author);
+      setAuthors(project.authors);
       setDescription(project.description);
+      setSemester(project.semester || "Spring");
+      setDepartment(project.department || "IT");
+      setVideoUrl(project.video || "");
       setImages(project.images);
     }
   }, [project]);
 
-  console.log(project?.images)
-  console.log(newImages)
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
     const filePreviews = files.map((file) => {
       return {
-        file: file, 
-        preview: URL.createObjectURL(file), 
+        file: file,
+        preview: URL.createObjectURL(file),
       };
     });
-
     setNewImages((prevImages) => [...prevImages, ...filePreviews]);
   };
 
+  const handleVideoFileChange = (event) => {
+    setVideoFile(event.target.files[0]);
+  };
+
   const handleRemoveImage = (imageToRemove) => {
-    setImages((prevImages) => {
-      const updatedImages = prevImages.filter(
-        (image) => image !== imageToRemove
-      );
+    setImages((prevImages) => prevImages.filter((image) => image !== imageToRemove));
+    setRemovedImages((prevRemovedImages) => {
+      const updatedSet = new Set(prevRemovedImages);
+      updatedSet.add(imageToRemove);
+      return updatedSet;
+    });
+  };
+
+  const handleRemoveNewImage = (index) => {
+    setNewImages((prevImages) => {
+      const updatedImages = [...prevImages];
+      updatedImages.splice(index, 1);
       return updatedImages;
     });
-
-    setRemovedImages((prevRemovedImages) =>
-      new Set(prevRemovedImages).add(imageToRemove)
-    );
   };
 
   const handleSubmit = (event) => {
@@ -66,20 +76,23 @@ const EditProject = () => {
 
     const formData = new FormData();
     formData.append("name", name);
-    formData.append("author", author);
+    formData.append("authors", authors);
     formData.append("description", description);
-    formData.append("likes", "");
-
+    formData.append("semester", semester);
+    formData.append("department", department);
+    if (videoFile) {
+      formData.append("video", videoFile);
+    } else if (videoUrl) {
+      formData.append("video", videoUrl);
+    }
 
     newImages.forEach((file) => {
-      formData.append("images", file);
+      formData.append("images", file.file);
     });
-
     formData.append("removedImages", JSON.stringify([...removedImages]));
 
     dispatch(updateProject(id, formData, navigate));
   };
-
 
   const handleDelete = () => {
     if (window.confirm("Are you sure you want to delete this project?")) {
@@ -124,15 +137,15 @@ const EditProject = () => {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="author" className="form-label">
-            Author
+          <label htmlFor="authors" className="form-label">
+            Authors
           </label>
           <input
             type="text"
-            id="author"
+            id="authors"
             className="form-control"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
+            value={authors}
+            onChange={(e) => setAuthors(e.target.value)}
             required
           />
         </div>
@@ -140,11 +153,68 @@ const EditProject = () => {
           <label htmlFor="description" className="form-label">
             Description
           </label>
-          <textarea
-            id="description"
-            className="form-control"
+          <ReactQuill
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={setDescription}
+            className="form-control"
+            theme="snow"
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="semester" className="form-label">
+            Semester
+          </label>
+          <select
+            id="semester"
+            className="form-control"
+            value={semester}
+            onChange={(e) => setSemester(e.target.value)}
+          >
+            <option value="Spring">Spring</option>
+            <option value="Summer">Summer</option>
+            <option value="Fall">Fall</option>
+            <option value="Winter">Winter</option>
+          </select>
+        </div>
+        <div className="mb-3">
+          <label htmlFor="department" className="form-label">
+            Department
+          </label>
+          <select
+            id="department"
+            className="form-control"
+            value={department}
+            onChange={(e) => setDepartment(e.target.value)}
+          >
+            <option value="IT">IT</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Design">Design</option>
+            <option value="HR">HR</option>
+          </select>
+        </div>
+        <div className="mb-3">
+          <label htmlFor="videoUrl" className="form-label">
+            Video URL (Optional)
+          </label>
+          <input
+            type="url"
+            id="videoUrl"
+            className="form-control"
+            value={videoUrl}
+            onChange={(e) => setVideoUrl(e.target.value)}
+            placeholder="Enter video URL"
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="videoFile" className="form-label">
+            Upload Video (Optional)
+          </label>
+          <input
+            type="file"
+            id="videoFile"
+            className="form-control"
+            onChange={handleVideoFileChange}
+            accept="video/*"
           />
         </div>
         <div className="mb-3">
@@ -162,14 +232,17 @@ const EditProject = () => {
                 }}
               >
                 <img
-                  src={`http://localhost:5000/${image}`}
+                  src={image}
                   alt={`image-${index}`}
                   style={{
                     width: "100px",
                     height: "100px",
                     objectFit: "cover",
                     border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    transition: "transform 0.2s ease-in-out",
                   }}
+                  className="image-preview"
                 />
                 <button
                   type="button"
@@ -194,11 +267,9 @@ const EditProject = () => {
                 </button>
               </div>
             ))}
-
-            {/* Hiển thị ảnh mới được chọn */}
             {newImages.map((image, index) => (
               <div
-                key={index}
+                key={`new-${index}`}
                 style={{
                   position: "relative",
                   marginRight: "10px",
@@ -206,18 +277,21 @@ const EditProject = () => {
                 }}
               >
                 <img
-                  src={image.preview} // URL xem trước
+                  src={image.preview}
                   alt={`new-image-${index}`}
                   style={{
                     width: "100px",
                     height: "100px",
                     objectFit: "cover",
                     border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    transition: "transform 0.2s ease-in-out",
                   }}
+                  className="image-preview"
                 />
                 <button
                   type="button"
-                  onClick={() => handleRemoveImage(image)}
+                  onClick={() => handleRemoveNewImage(index)}
                   style={{
                     position: "absolute",
                     top: "0",
