@@ -12,6 +12,9 @@ import {
   filterProjectsFailed,
   filterProjectsStart,
   filterProjectsSuccess,
+  getAllCommentsFailed,
+  getAllCommentsStart,
+  getAllCommentsSuccess,
   getCommentsFailed,
   getCommentsStart,
   getCommentsSuccess,
@@ -209,6 +212,20 @@ export const getCommentsByProject = (projectId) => async (dispatch) => {
     dispatch(getCommentsSuccess(res.data));
   } catch (error) {
     dispatch(getCommentsFailed(error.message));
+  }
+};
+
+export const getAllComments = () => async (dispatch) => {
+  dispatch(getAllCommentsStart()); 
+  try {
+    const res = await axios.get(`${BACKEND_URL}/api/projects/comments`);
+    if (res.data) {
+      dispatch(getAllCommentsSuccess(res.data)); 
+    } else {
+      throw new Error("No comments found");
+    }
+  } catch (error) {
+    dispatch(getAllCommentsFailed(error.response?.data?.message || error.message || "Failed to fetch comments"));
   }
 };
 

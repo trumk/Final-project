@@ -13,7 +13,6 @@ const projectSlice = createSlice({
     unreadCount: 0, 
   },
   reducers: {
-    // Projects actions
     getProjectsStart: (state) => {
       state.isFetching = true;
     },
@@ -40,7 +39,7 @@ const projectSlice = createSlice({
       state.error = true;
       state.msg = action.payload || "Failed to fetch the project";
     },
-     searchProjectsStart: (state) => {
+    searchProjectsStart: (state) => {
       state.isFetching = true;
     },
     searchProjectsSuccess: (state, action) => {
@@ -134,6 +133,19 @@ const projectSlice = createSlice({
       state.error = true;
       state.msg = action.payload || "Failed to fetch comments";
     },
+    getAllCommentsStart: (state) => {
+      state.isFetching = true;
+    },
+    getAllCommentsSuccess: (state, action) => {
+      state.isFetching = false;
+      state.comments = action.payload; 
+      state.error = false;
+    },
+    getAllCommentsFailed: (state, action) => {
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to fetch comments";
+    },
     addCommentStart: (state) => {
       state.isFetching = true;
     },
@@ -218,6 +230,9 @@ export const {
   getNotificationsSuccess,
   getNotificationsFailed,
   markAsRead,
+  getAllCommentsStart,
+  getAllCommentsSuccess,
+  getAllCommentsFailed
 } = projectSlice.actions;
 
 export default projectSlice.reducer;

@@ -46,12 +46,12 @@ const login = async (req, res) => {
     res.cookie("userId", user._id, {
       httpOnly: true,
       secure: false, 
-      maxAge: 24 * 60 * 60 * 1000, 
+      maxAge: 1 * 60 * 60 * 1000, 
     });
     res.cookie("role", user.role, {
       httpOnly: true,
       secure: false, 
-      maxAge: 24 * 60 * 60 * 1000, 
+      maxAge: 1 * 60 * 60 * 1000,  
     });
 
     return res.status(200).json({
@@ -68,6 +68,7 @@ const login = async (req, res) => {
     return res.status(500).json({ message: "Something went wrong", error });
   }
 };
+
 
 
 const loginWithProvider = async (req, res) => {

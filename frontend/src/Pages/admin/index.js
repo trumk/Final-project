@@ -1,16 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './style.css'; 
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { logout } from '../../redux/apiRequest';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllComments, getAllProjects, getAllUsers, logout } from '../../redux/apiRequest';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faProjectDiagram, faUser, faComments, faPlus, faSignOutAlt, faCog } from '@fortawesome/free-solid-svg-icons';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [showLogoutModal, setShowLogoutModal] = useState(false); // Trạng thái hiển thị modal
+  const [showLogoutModal, setShowLogoutModal] = useState(false); 
+  const projects = useSelector((state) => state.project?.allProjects);
+  const users = useSelector((state) => state.user?.allUsers);
+  const comments = useSelector((state) => state.project?.comments);
+
+  useEffect(() => {
+    dispatch(getAllProjects());
+    dispatch(getAllUsers());
+    dispatch(getAllComments());
+  }, [dispatch]);
 
   const handleLogout = async () => {
     try {
@@ -32,42 +41,44 @@ const Dashboard = () => {
       </div>
 
       <div className="row">
-        {/* Card 1 */}
+        {/* Card 1: Projects */}
         <div className="col-md-4">
           <div className="card card-custom bg-light mb-3 shadow">
             <div className="card-header d-flex align-items-center">
               <FontAwesomeIcon icon={faProjectDiagram} className="me-2" /> Projects
             </div>
             <div className="card-body">
-              <h5 className="card-title">10 Projects</h5>
+              <h5 className="card-title">{projects ? projects.length : 0} Projects</h5>
               <p className="card-text">Manage all submitted projects.</p>
-              <button className="btn btn-custom">View Projects</button>
+              <button className="btn btn-custom">
+                <a href='/admin/project' className="text-white">View projects</a>
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Card 2 */}
+        {/* Card 2: Users */}
         <div className="col-md-4">
           <div className="card card-custom bg-light mb-3 shadow">
             <div className="card-header d-flex align-items-center">
               <FontAwesomeIcon icon={faUser} className="me-2" /> Users
             </div>
             <div className="card-body">
-              <h5 className="card-title">50 Users</h5>
+              <h5 className="card-title">{users ? users.length : 0} Users</h5>
               <p className="card-text">Manage registered users.</p>
               <button className="btn btn-custom">View Users</button>
             </div>
           </div>
         </div>
 
-        {/* Card 3 */}
+        {/* Card 3: Comments */}
         <div className="col-md-4">
           <div className="card card-custom bg-light mb-3 shadow">
             <div className="card-header d-flex align-items-center">
               <FontAwesomeIcon icon={faComments} className="me-2" /> Comments
             </div>
             <div className="card-body">
-              <h5 className="card-title">120 Comments</h5>
+              <h5 className="card-title">{comments ? comments.length : 0} Comments</h5>
               <p className="card-text">Review and manage comments.</p>
               <button className="btn btn-custom">View Comments</button>
             </div>
@@ -76,7 +87,7 @@ const Dashboard = () => {
       </div>
 
       <div className="row">
-        {/* Card 4 */}
+        {/* Card 4: Recent Activities */}
         <div className="col-md-6">
           <div className="card card-custom bg-light mb-3 shadow">
             <div className="card-header d-flex align-items-center">
@@ -85,15 +96,21 @@ const Dashboard = () => {
             <div className="card-body">
               <h5 className="card-title">Latest Updates</h5>
               <ul className="list-group">
-                <li className="list-group-item">Project "Portfolio" updated</li>
-                <li className="list-group-item">New user "John Doe" registered</li>
-                <li className="list-group-item">Comment added on "E-commerce Platform"</li>
+                {projects && projects.length > 0 && (
+                  <li className="list-group-item">Project "{projects[0].name}" updated</li>
+                )}
+                {users && users.length > 0 && (
+                  <li className="list-group-item">New user "{users[0].userName}" registered</li>
+                )}
+                {comments && comments.length > 0 && (
+                  <li className="list-group-item">Comment added on "{comments[0].projectId}"</li>
+                )}
               </ul>
             </div>
           </div>
         </div>
 
-        {/* Card 5 */}
+        {/* Card 5: Admin Actions */}
         <div className="col-md-6">
           <div className="card card-custom bg-light mb-3 shadow">
             <div className="card-header d-flex align-items-center">

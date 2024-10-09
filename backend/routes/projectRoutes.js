@@ -9,20 +9,21 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // Action routes
-router.get('/search', projectController.searchProjects); // Đặt trước
-router.get('/sort', projectController.sortProjects); // Đặt trước
-router.get('/filter', projectController.filterProjects); // Đặt trước
+router.get('/search', projectController.searchProjects); 
+router.get('/sort', projectController.sortProjects); 
+router.get('/filter', projectController.filterProjects); 
+
+// Comment routes 
+router.get('/comments', projectController.getAllComments); 
+router.post('/:projectId/comments', middleware.verifyFirebaseToken, projectController.addComment);
+router.get('/:projectId/comments', projectController.getCommentsByProject);
 
 // CRUD for Projects
 router.get('/', projectController.getAllProjects);
-router.get('/:id', projectController.getOneProject);
+router.get('/:id', projectController.getOneProject); 
 router.put('/:id', upload.array('images', 5), projectController.updateProject);
 router.delete('/:id', projectController.deleteProject);
 router.post('/', upload.array('images', 5), projectController.createProject);
-
-// Comment routes under project scope (RESTful)
-router.post('/:projectId/comments', middleware.verifyFirebaseToken, projectController.addComment);
-router.get('/:projectId/comments', projectController.getCommentsByProject);
 
 // Notification routes
 router.get('/notifications', middleware.verifyFirebaseToken, notificationController.getNotifications);
