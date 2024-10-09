@@ -66,7 +66,9 @@ const Dashboard = () => {
             <div className="card-body">
               <h5 className="card-title">{users ? users.length : 0} Users</h5>
               <p className="card-text">Manage registered users.</p>
-              <button className="btn btn-custom">View Users</button>
+              <button className="btn btn-custom">
+                <a href='/admin/user' className="text-white">View users</a>
+              </button>
             </div>
           </div>
         </div>
@@ -80,7 +82,9 @@ const Dashboard = () => {
             <div className="card-body">
               <h5 className="card-title">{comments ? comments.length : 0} Comments</h5>
               <p className="card-text">Review and manage comments.</p>
-              <button className="btn btn-custom">View Comments</button>
+              <button className="btn btn-custom">
+                <a href='/admin/comment' className="text-white">View comments</a>
+              </button>
             </div>
           </div>
         </div>

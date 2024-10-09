@@ -1,10 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom"; 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
 import { getAllProjects } from "../../../redux/apiRequest";
-// import NavbarAdmin from "../../../Components/NavbarAdmin";
 
 const ProjectPage = () => {
   const dispatch = useDispatch();
@@ -21,8 +20,10 @@ const ProjectPage = () => {
 
   return (
     <>
-      {/* <NavbarAdmin/> */}
       <div className="container-fluid p-4">
+        <button className="btn btn-primary mb-2 me-2">
+          <a href="/admin" style={{color:"white", fontSize: 20, textDecoration:"none"}}>Back</a>
+        </button>
         <h1 className="mb-4">Project Management</h1>
         <button className="btn btn-primary mb-2 me-2">
           <a

@@ -14,6 +14,8 @@ import Projectpage from './Pages/Guest/projectPage';
 import DetailPage from './Pages/Guest/[id]/detail';
 import Register from './Components/Login/register';
 import ProtectedRoute from './Components/ProtectedRoute';
+import UserPage from './Pages/admin/User';
+import CommentPage from './Pages/admin/Coment';
 
 function App() {
   return (
@@ -57,6 +59,22 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="admin">
                   <EditProject />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/admin/user'
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <UserPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/admin/comment'
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <CommentPage />
                 </ProtectedRoute>
               }
             />
