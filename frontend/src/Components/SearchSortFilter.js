@@ -1,31 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import "./SearchSortFilter.css"
 import { searchProjects, sortProjects, filterProjects, getAllProjects } from '../redux/apiRequest'; 
 
 const SearchSortFilter = () => {
   const dispatch = useDispatch();
-  
+  const { allProjects, isFetching, error } = useSelector((state) => state.project);
+
   const [searchTerm, setSearchTerm] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [sortOption, setSortOption] = useState('');
   const [semester, setSemester] = useState('');
   const [department, setDepartment] = useState('');
 
-  // Debounce để tránh gọi API quá nhiều lần khi gõ tìm kiếm
+
+  // debounce to avoid calling the API too many times when typing a search
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (searchTerm) {
         dispatch(searchProjects(searchTerm));
+        setShowSuggestions(true);
       } else {
-        // Nếu searchTerm là rỗng, lấy tất cả các project
         dispatch(getAllProjects());
+        setShowSuggestions(false);
       }
-    }, 300); // Gọi sau 300ms nếu không có thay đổi
+    }, 300);
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm, dispatch]);
 
-  // Tự động gọi API khi thay đổi lọc theo kỳ và khoa
   useEffect(() => {
     dispatch(filterProjects(semester, department));
   }, [semester, department, dispatch]);
@@ -35,10 +38,15 @@ const SearchSortFilter = () => {
     dispatch(sortProjects(e.target.value));
   };
 
+  const handleSuggestionClick = (suggestion) => {
+    setSearchTerm(suggestion); 
+    setShowSuggestions(false); 
+  };
+
   return (
     <div className="search-sort-filter">
-      {/* Search */}
-      <div className="search-container">
+     {/* Search */}
+     <div className="search-container">
         <input
           type="text"
           placeholder="Search by project or author"
@@ -46,6 +54,21 @@ const SearchSortFilter = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-input"
         />
+        {showSuggestions && allProjects && allProjects.length > 0 && (
+          <ul className="suggestions-list">
+            {allProjects.map((suggestion, index) => (
+              <li 
+                key={index}
+                onClick={() => handleSuggestionClick(suggestion.name)} 
+                className="suggestion-item"
+              >
+                {suggestion.name}
+              </li>
+            ))}
+          </ul>
+        )}
+        {isFetching && <p>Loading...</p>}
+        {error && <p>Error loading projects.</p>}
       </div>
 
       {/* Sort */}

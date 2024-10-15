@@ -147,7 +147,7 @@ function DetailPage() {
       ));
   };
 
-  const videoId = project.video ? extractVideoId(project.video) : null;
+  const videoId = project?.video ? extractVideoId(project.video) : null;
   const videoThumbnail = videoId
     ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
     : null;
