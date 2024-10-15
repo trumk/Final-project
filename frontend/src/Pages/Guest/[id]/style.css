@@ -252,7 +252,7 @@
 
 .reply-input-container {
   display: flex;
-  margin-left: 50px; /* Thụt lề reply input */
+  margin-left: 50px; 
 }
 
 .reply-input {
@@ -330,3 +330,4 @@ button:disabled {
   cursor: not-allowed;
   background-color: #cccccc;
 }
+

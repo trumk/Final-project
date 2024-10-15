@@ -1,14 +1,14 @@
-import Navbar from "../../../Components/Navbar";
-import Footer from "../../../Components/Footer";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import {
   getProject,
   addComment,
   likeProject,
   getCommentsByProject,
 } from "../../../redux/apiRequest";
-import { useParams } from "react-router-dom";
+import Navbar from "../../../Components/Navbar";
+import Footer from "../../../Components/Footer";
 import "./style.css";
 
 function DetailPage() {
@@ -23,7 +23,8 @@ function DetailPage() {
   const [replyText, setReplyText] = useState("");
   const [replyingTo, setReplyingTo] = useState(null);
   const [isLiked, setIsLiked] = useState(false);
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(0); 
+  const [isVideoSelected, setIsVideoSelected] = useState(false); 
 
   useEffect(() => {
     dispatch(getProject(id)).then(() => {
@@ -89,8 +90,14 @@ function DetailPage() {
     setIsLiked(!isLiked);
   };
 
-  const handleImageSelect = (index) => {
-    setSelectedImageIndex(index);
+  const handleMediaSelect = (index, isVideo = false) => {
+    setSelectedIndex(index);
+    setIsVideoSelected(isVideo);
+  };
+
+  const extractVideoId = (url) => {
+    const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
+    return videoIdMatch ? videoIdMatch[1] : null;
   };
 
   const renderComments = (parentId = null) => {
@@ -134,12 +141,16 @@ function DetailPage() {
               </form>
             )}
 
-            {/* Recursively render replies */}
             <div className="reply-container">{renderComments(comment._id)}</div>
           </div>
         </div>
       ));
   };
+
+  const videoId = project.video ? extractVideoId(project.video) : null;
+  const videoThumbnail = videoId
+    ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+    : null;
 
   return (
     <div className="detail-page">
@@ -150,30 +161,54 @@ function DetailPage() {
             <div className="main-content">
               <div className="project-details-section">
                 <h1 className="project-title">{project.name}</h1>
-
-                {project.images.length > 0 && (
-                  <>
+                <div className="media-container">
+                  {!isVideoSelected && project.images.length > 0 && (
                     <img
-                      src={project.images[selectedImageIndex]}
+                      src={project.images[selectedIndex]}
                       alt={`Project ${project.name}`}
                       className="project-image"
                     />
-
-                    <div className="image-previews">
-                      {project.images.map((image, index) => (
-                        <img
-                          key={index}
-                          src={image}
-                          alt={`Preview ${index}`}
-                          className={`preview-image ${
-                            selectedImageIndex === index ? "active" : ""
-                          }`}
-                          onClick={() => handleImageSelect(index)}
-                        />
-                      ))}
+                  )}
+                  {isVideoSelected && project.video && (
+                    <div className="project-image" style={{}}>
+                      <iframe
+                        width="600"
+                        height="380"
+                        src={project.video}
+                        title="Project Video"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
                     </div>
-                  </>
-                )}
+                  )}
+
+                  <div className="image-previews">
+                    {project.images.map((image, index) => (
+                      <img
+                        key={index}
+                        src={image}
+                        alt={`Preview ${index}`}
+                        className={`preview-image ${
+                          selectedIndex === index && !isVideoSelected
+                            ? "active"
+                            : ""
+                        }`}
+                        onClick={() => handleMediaSelect(index)}
+                      />
+                    ))}
+
+                    {project.video && videoThumbnail && (
+                      <img
+                        src={videoThumbnail}
+                        alt="Video preview"
+                        className={`preview-image ${
+                          isVideoSelected ? "active" : ""
+                        }`}
+                        onClick={() => handleMediaSelect(null, true)}
+                      />
+                    )}
+                  </div>
+                </div>
 
                 <p className="project-author">
                   By: {project.authors.join(", ")}
@@ -215,18 +250,12 @@ function DetailPage() {
                   </button>
                 </form>
 
-                {/* Render comments and replies */}
                 {comments.length > 0 ? (
                   <div>{renderComments()}</div>
                 ) : (
                   <p>No comments yet. Be the first to comment!</p>
                 )}
               </div>
-            </div>
-
-            <div className="related-projects-section">
-              <h3>Related Projects:</h3>
-              <p>Coming soon...</p>
             </div>
           </>
         ) : (
