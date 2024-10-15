@@ -13,47 +13,33 @@ const CreateProject = () => {
   
   const [name, setName] = useState('');
   const [authors, setAuthors] = useState('');
-  const [description, setDescription] = useState('');  // Thay vì dùng textarea, dùng ReactQuill
-  const [semester, setSemester] = useState('Spring');  // Default semester
-  const [department, setDepartment] = useState('IT');  // Default department
-  const [videoUrl, setVideoUrl] = useState('');  // Video URL (nếu có)
-  const [videoFile, setVideoFile] = useState(null);  // Video file (nếu có)
+  const [description, setDescription] = useState('');  
+  const [semester, setSemester] = useState('Spring'); 
+  const [department, setDepartment] = useState('IT');  
+  const [videoUrl, setVideoUrl] = useState(''); 
   const [images, setImages] = useState([]);
 
-  // Xử lý chọn file ảnh
   const handleFileChange = (e) => {
     setImages(e.target.files);
   };
 
-  // Xử lý chọn file video
-  const handleVideoFileChange = (e) => {
-    setVideoFile(e.target.files[0]);
-  };
-
-  // Xử lý gửi form
   const handleSubmit = (event) => {
     event.preventDefault();
   
     const formData = new FormData();
     formData.append('name', name);
     formData.append('authors', authors);
-    formData.append('description', description);  // Lưu nội dung từ ReactQuill
+    formData.append('description', description);  
     formData.append('semester', semester);
     formData.append('department', department);
-  
-    // Thêm video URL hoặc video file vào formData
-    if (videoFile) {
-      formData.append('video', videoFile);  // Nếu có file video
-    } else if (videoUrl) {
-      formData.append('video', videoUrl);  // Nếu có URL video
-    }
 
-    // Thêm tất cả các file (ảnh) vào formData
+    if (videoUrl) {
+      formData.append('video', videoUrl);
+    }
+    
     for (let i = 0; i < images.length; i++) {
       formData.append('images', images[i]);
     }
-  
-    // Gọi API để tạo project
     dispatch(createProject(formData, navigate));
   };
 
@@ -133,16 +119,6 @@ const CreateProject = () => {
             value={videoUrl}
             onChange={(e) => setVideoUrl(e.target.value)}
             placeholder="Enter video URL"
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="videoFile" className="form-label">Upload Video (Optional)</label>
-          <input
-            type="file"
-            id="videoFile"
-            className="form-control"
-            onChange={handleVideoFileChange}
-            accept="video/*"
           />
         </div>
         <div className="mb-3">

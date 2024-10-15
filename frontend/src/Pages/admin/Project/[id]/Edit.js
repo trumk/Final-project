@@ -14,11 +14,10 @@ const EditProject = () => {
 
   const [name, setName] = useState("");
   const [authors, setAuthors] = useState("");
-  const [description, setDescription] = useState(""); // Sử dụng react-quill cho phần mô tả
+  const [description, setDescription] = useState(""); 
   const [semester, setSemester] = useState("Spring");
   const [department, setDepartment] = useState("IT");
   const [videoUrl, setVideoUrl] = useState("");
-  const [videoFile, setVideoFile] = useState(null);
   const [images, setImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
   const [removedImages, setRemovedImages] = useState(new Set());
@@ -50,10 +49,6 @@ const EditProject = () => {
     setNewImages((prevImages) => [...prevImages, ...filePreviews]);
   };
 
-  const handleVideoFileChange = (event) => {
-    setVideoFile(event.target.files[0]);
-  };
-
   const handleRemoveImage = (imageToRemove) => {
     setImages((prevImages) => prevImages.filter((image) => image !== imageToRemove));
     setRemovedImages((prevRemovedImages) => {
@@ -80,10 +75,9 @@ const EditProject = () => {
     formData.append("description", description);
     formData.append("semester", semester);
     formData.append("department", department);
-    if (videoFile) {
-      formData.append("video", videoFile);
-    } else if (videoUrl) {
-      formData.append("video", videoUrl);
+
+    if (videoUrl) {
+      formData.append("video", videoUrl);  
     }
 
     newImages.forEach((file) => {
@@ -203,18 +197,6 @@ const EditProject = () => {
             value={videoUrl}
             onChange={(e) => setVideoUrl(e.target.value)}
             placeholder="Enter video URL"
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="videoFile" className="form-label">
-            Upload Video (Optional)
-          </label>
-          <input
-            type="file"
-            id="videoFile"
-            className="form-control"
-            onChange={handleVideoFileChange}
-            accept="video/*"
           />
         </div>
         <div className="mb-3">
