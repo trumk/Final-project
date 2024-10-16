@@ -9,7 +9,7 @@
 }
 
 .project-card a {
-  text-decoration: none; /* Remove underline */
+  text-decoration: none; 
 }
 
 .project-card:hover {

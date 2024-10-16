@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
@@ -6,16 +6,20 @@ import {
   addComment,
   likeProject,
   getCommentsByProject,
+  getAllProjects,
 } from "../../../redux/apiRequest";
+import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "../../../Components/Navbar";
 import Footer from "../../../Components/Footer";
 import "./style.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function DetailPage() {
   const { id } = useParams();
   const dispatch = useDispatch();
 
   const project = useSelector((state) => state.project.currentProject);
+  const allProjects = useSelector((state) => state.project.allProjects);
   const comments = useSelector((state) => state.project.comments);
   const currentUser = useSelector((state) => state.auth.currentUser);
 
@@ -23,20 +27,35 @@ function DetailPage() {
   const [replyText, setReplyText] = useState("");
   const [replyingTo, setReplyingTo] = useState(null);
   const [isLiked, setIsLiked] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(0); 
-  const [isVideoSelected, setIsVideoSelected] = useState(false); 
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isVideoSelected, setIsVideoSelected] = useState(false);
 
   useEffect(() => {
     dispatch(getProject(id)).then(() => {
       dispatch(getCommentsByProject(id));
     });
-  }, [dispatch, id]);
+
+    if (!allProjects) {
+      dispatch(getAllProjects());
+    }
+  }, [dispatch, id, allProjects]);
 
   useEffect(() => {
     if (project && currentUser) {
       setIsLiked(project.likedUsers?.includes(currentUser.id));
     }
   }, [project, currentUser]);
+
+  const relatedProjects = useMemo(() => {
+    if (allProjects && project) {
+      const filteredProjects = allProjects.filter(
+        (p) => p._id !== project._id && p.department === project.department
+      );
+      return filteredProjects;
+    }
+    return [];
+  }, [allProjects, project]);
+  console.log("Related Projects to Render:", relatedProjects);
 
   const handleCommentSubmit = (e) => {
     e.preventDefault();
@@ -96,11 +115,13 @@ function DetailPage() {
   };
 
   const extractVideoId = (url) => {
-    const videoIdMatch = url.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
+    const videoIdMatch = url.match(
+      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]+)/
+    );
     return videoIdMatch ? videoIdMatch[1] : null;
   };
 
-  const renderComments = (parentId = null) => {
+  const renderComments = (parentId = null, parentUserName = "") => {
     return comments
       .filter((comment) => comment.parentId === parentId)
       .map((comment) => (
@@ -114,7 +135,9 @@ function DetailPage() {
           </div>
           <div className="comment-content">
             <p className="comment-user-name">{comment.userId?.userName}</p>
-            <p className="comment-text">{comment.comment}</p>
+            <p className="comment-text">
+              {parentId && <strong>@{parentUserName}</strong>} {comment.comment}
+            </p>
 
             <button
               className="reply-button"
@@ -141,7 +164,9 @@ function DetailPage() {
               </form>
             )}
 
-            <div className="reply-container">{renderComments(comment._id)}</div>
+            <div className="">
+              {renderComments(comment._id, comment.userId?.userName)}
+            </div>
           </div>
         </div>
       ));
@@ -217,12 +242,11 @@ function DetailPage() {
                   className="project-description"
                   dangerouslySetInnerHTML={{ __html: project.description }}
                 />
-
                 <button
                   className={`like-button ${isLiked ? "liked" : ""}`}
                   onClick={handleLike}
                 >
-                  {isLiked ? "Unlike" : "Like"} ({project.likes})
+                  <FontAwesomeIcon icon={faThumbsUp} /> ({project.likes})
                 </button>
               </div>
 
@@ -261,6 +285,33 @@ function DetailPage() {
         ) : (
           <p className="loading-message">Loading project details...</p>
         )}
+      </div>
+
+      <div className="related-projects-section">
+        <h3>Related Projects</h3>
+        <div className="related-projects-list">
+          {relatedProjects && relatedProjects.length > 0 ? (
+            relatedProjects.map((relatedProject) => {
+              return (
+                <div key={relatedProject._id} className="related-project-card">
+                <a href={`/project/${relatedProject._id}`}>
+                {relatedProject.images.length > 0 && (
+                    <img
+                      src={relatedProject.images[0]}
+                      alt={`Project ${relatedProject.name}`}
+                      className="related-project-image"
+                    />
+                  )}
+                  <h4>{relatedProject.name}</h4>
+                  <p>By: {relatedProject.authors.join(", ")}</p>
+                </a>
+                </div>
+              );
+            })
+          ) : (
+            <p>No related projects found.</p>
+          )}
+        </div>
       </div>
       <Footer />
     </div>

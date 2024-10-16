@@ -1,10 +1,12 @@
+/* General Page */
 .detail-page {
   padding: 0;
   margin: 0;
   padding-top: 50px;
-  background-color: #f4f4f9; 
+  background-color: #f4f4f9;
 }
 
+/* Container for Content */
 .content-container {
   max-width: 100%;
   margin: 0 auto;
@@ -14,6 +16,7 @@
   gap: 20px;
 }
 
+/* Main content */
 .main-content {
   display: flex;
   justify-content: space-between;
@@ -21,8 +24,9 @@
   margin-bottom: 20px;
 }
 
+/* Project details section */
 .project-details-section {
-  flex: 0 0 60%; 
+  flex: 0 0 60%;
   background-color: #ffffff;
   padding: 25px;
   border-radius: 8px;
@@ -31,16 +35,11 @@
   border-left: 5px solid #007bff;
 }
 
-.project-details-section:hover {
-  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.15);
-  transform: translateY(-3px);
-}
-
 .project-title {
   font-size: 2em;
   font-weight: bold;
   margin-bottom: 20px;
-  color: #007bff; 
+  color: #007bff;
 }
 
 .project-image {
@@ -76,7 +75,6 @@
   border: 2px solid #007bff;
 }
 
-
 .project-author {
   font-size: 1.1em;
   color: #555;
@@ -90,10 +88,9 @@
   margin-bottom: 25px;
 }
 
-/* Nút Like */
 .like-button {
   padding: 12px 24px;
-  background-color: #28a745;
+  background-color: #acb5ae;
   color: #ffffff;
   font-weight: bold;
   border: none;
@@ -103,29 +100,23 @@
 }
 
 .like-button.liked {
-  background-color: #dc3545; 
+  background-color: #2face1;
 }
 
 .like-button:hover {
-  background-color: #218838; 
+  background-color: #8fb9b4;
   box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
   transform: translateY(-2px);
 }
 
 /* Comment Section */
 .comments-section {
-  flex: 0 0 40%; 
+  flex: 0 0 40%;
   background-color: #ffffff;
   padding: 25px;
   border-radius: 8px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s, transform 0.3s;
-  border-left: 5px solid #ffc107; 
-}
-
-.comments-section:hover {
-  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.15);
-  transform: translateY(-3px);
+  border-left: 5px solid #ffc107;
 }
 
 .comment-form {
@@ -142,24 +133,27 @@
   gap: 10px;
 }
 
-.comment-input {
-  flex: 1;
-  padding: 12px;
+.comment-input,
+.reply-input {
+  width: 100%;
+  padding: 12px 15px;
   border-radius: 20px;
   border: 1px solid #ccc;
-  resize: none;
   outline: none;
+  font-size: 1em;
   transition: border-color 0.3s, box-shadow 0.3s;
   box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
 }
 
-.comment-input:focus {
+.comment-input:focus,
+.reply-input:focus {
   border-color: #007bff;
   box-shadow: 0px 2px 8px rgba(0, 123, 255, 0.2);
 }
 
-.comment-submit-button {
-  padding: 12px 20px;
+.comment-submit-button,
+.reply-submit-button {
+  padding: 10px 20px;
   background-color: #007bff;
   color: #ffffff;
   font-weight: bold;
@@ -169,29 +163,21 @@
   transition: background-color 0.3s, transform 0.2s;
 }
 
-.comment-submit-button:hover {
+.comment-submit-button:hover,
+.reply-submit-button:hover {
   background-color: #0056b3;
   transform: translateY(-2px);
 }
 
 .comment-item {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   margin-top: 20px;
-  align-items: flex-start;
-  gap: 10px;
-  padding-left: 15px; /* Tạo khoảng cách cho comment */
-
-}
-
-.comment-item::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background-color: #ccc;
+  gap: 15px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .comment-avatar {
@@ -206,11 +192,11 @@
 }
 
 .comment-content {
-  background-color: #e9ecef; 
+  flex: 1;
+  background-color: #ffffff;
   border-radius: 10px;
   padding: 15px;
-  max-width: 100%;
-  word-break: break-word;
+  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
 }
 
 .comment-user-name {
@@ -222,61 +208,7 @@
 .comment-text {
   font-size: 1em;
   color: #444;
-}
-
-/* Styles for reply */
-.reply-container {
-  margin-left: 40px; /* Indent replies to distinguish from parent comments */
-  padding-top: 10px;
-}
-
-.reply-item {
-  display: flex;
-  margin-top: 10px;
-  align-items: flex-start;
-  gap: 10px;
-  margin-left: 50px; /* Thụt lề reply để dễ phân biệt */
-  font-size: 0.9em; /* Kích thước chữ nhỏ hơn */
-  position: relative;
-}
-
-.reply-item::before {
-  content: '';
-  position: absolute;
-  left: -20px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background-color: #ccc;
-}
-
-.reply-input-container {
-  display: flex;
-  margin-left: 50px; 
-}
-
-.reply-input {
-  padding: 8px;
-  margin-top: 5px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  resize: none;
-  outline: none;
-  flex: 1;
-}
-
-.reply-submit-button {
-  margin-top: 10px;
-  background-color: #007bff;
-  color: white;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.reply-submit-button:hover {
-  background-color: #0056b3;
+  margin-bottom: 10px;
 }
 
 .reply-button {
@@ -284,33 +216,23 @@
   border: none;
   color: #007bff;
   cursor: pointer;
-  margin-top: 5px;
   font-size: 0.9em;
+  transition: color 0.3s;
 }
 
 .reply-button:hover {
   text-decoration: underline;
+  color: #0056b3;
 }
 
-.related-projects-section {
-  background-color: #ffffff;
-  padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s, transform 0.3s;
+.reply-container {
+  margin-top: 15px;
 }
 
-.related-projects-section:hover {
-  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.15);
-  transform: translateY(-3px);
-}
-
-.related-projects-section h3 {
-  margin-bottom: 15px;
-  color: #333;
-  font-size: 1.5em;
-  border-bottom: 3px solid #007bff;
-  display: inline-block;
+.reply-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .loading-message {
@@ -329,5 +251,115 @@ button {
 button:disabled {
   cursor: not-allowed;
   background-color: #cccccc;
+}
+
+/* Related Projects Section */
+.related-projects-section {
+  margin-top: 50px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.related-projects-section h3 {
+  font-size: 2em;
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.related-projects-list {
+  display: flex;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  gap: 20px;
+  padding-bottom: 10px;
+  scrollbar-color: #007bff #f4f4f9;
+  scrollbar-width: thin;
+}
+
+.related-projects-list::-webkit-scrollbar {
+  height: 10px; /* Horizontal scrollbar height */
+}
+
+.related-projects-list::-webkit-scrollbar-track {
+  background: #f4f4f9;
+}
+
+.related-projects-list::-webkit-scrollbar-thumb {
+  background-color: #007bff;
+  border-radius: 10px;
+}
+
+/* Project Card Styling */
+.related-project-card {
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 300px;
+  height: 400px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-align: center;
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+.related-project-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.related-project-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.related-project-card h4 {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.related-project-card p {
+  font-size: 1em;
+  color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .related-project-card {
+    width: 280px;
+  }
+
+  .related-project-card img {
+    height: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .related-project-card {
+    width: 250px;
+    height: 350px;
+  }
+
+  .related-project-card img {
+    height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .related-project-card {
+    width: 100%;
+    height: 350px;
+  }
+
+  .related-project-card img {
+    height: 220px;
+  }
 }
 
