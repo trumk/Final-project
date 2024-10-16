@@ -125,27 +125,29 @@ function DetailPage() {
     return comments
       .filter((comment) => comment.parentId === parentId)
       .map((comment) => (
-        <div key={comment._id} className="comment-item">
-          <div className="comment-avatar">
+        <div key={comment._id} className={parentId ? "reply-item" : "comment-item"}>
+          <div className={parentId ? "reply-avatar" : "comment-avatar"}>
             <img
               src={`/imgs/avatar.png`}
               alt="Avatar"
               className="user-avatar"
             />
           </div>
-          <div className="comment-content">
-            <p className="comment-user-name">{comment.userId?.userName}</p>
-            <p className="comment-text">
+          <div className={parentId ? "reply-content" : "comment-content"}>
+            <p className={parentId ? "reply-user-name" : "comment-user-name"}>
+              {comment.userId?.userName}
+            </p>
+            <p className={parentId ? "reply-text" : "comment-text"}>
               {parentId && <strong>@{parentUserName}</strong>} {comment.comment}
             </p>
-
+  
             <button
               className="reply-button"
               onClick={() => handleReplyClick(comment._id)}
             >
               Reply
             </button>
-
+  
             {replyingTo === comment._id && (
               <form
                 onSubmit={(e) => handleReplySubmit(e, comment._id)}
@@ -163,7 +165,7 @@ function DetailPage() {
                 </button>
               </form>
             )}
-
+  
             <div className="">
               {renderComments(comment._id, comment.userId?.userName)}
             </div>
@@ -171,6 +173,7 @@ function DetailPage() {
         </div>
       ));
   };
+  
 
   const videoId = project?.video ? extractVideoId(project.video) : null;
   const videoThumbnail = videoId

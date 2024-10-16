@@ -203,12 +203,14 @@
   font-weight: bold;
   margin-bottom: 5px;
   color: #007bff;
+  text-align: left;
 }
 
 .comment-text {
   font-size: 1em;
   color: #444;
   margin-bottom: 10px;
+  text-align: left;
 }
 
 .reply-button {
@@ -220,13 +222,46 @@
   transition: color 0.3s;
 }
 
-.reply-button:hover {
+.reply-button:hover,
+.comment-submit-button:hover,
+.reply-submit-button:hover {
   text-decoration: underline;
   color: #0056b3;
 }
 
 .reply-container {
   margin-top: 15px;
+}
+
+.reply-item {
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+  gap: 15px;
+  padding: 15px;
+  margin-left: 30px; 
+  background-color: #f1f1f1; 
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.reply-text {
+  font-size: 0.95em;
+  color: #444;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.reply-avatar {
+  flex-shrink: 0;
+}
+
+.reply-content {
+  flex: 1;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
 }
 
 .reply-form {
@@ -292,7 +327,6 @@ button:disabled {
   border-radius: 10px;
 }
 
-/* Project Card Styling */
 .related-project-card {
   background-color: white;
   padding: 20px;
@@ -302,7 +336,11 @@ button:disabled {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s, box-shadow 0.3s;
   text-align: center;
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0; 
+}
+
+#root > div > div.related-projects-section > div > div > a{
+  text-decoration: none;
 }
 
 .related-project-card:hover {
