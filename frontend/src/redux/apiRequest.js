@@ -44,6 +44,7 @@ import {
 import { toast } from "react-toastify";
 import { getUserFailed, getUsersFailed, getUsersStart, getUsersSuccess, getUserStart, getUserSuccess } from "./userSlice";
 import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logoutSuccess, registerFailed, registerStart, registerSuccess } from "./authSlice";
+import { aiRequestFailed, aiRequestStart, aiRequestSuccess } from "./aiSlice";
 
 const BACKEND_URL = "http://localhost:5000";
 
@@ -316,6 +317,17 @@ export const filterProjects = (semester, department) => async (dispatch) => {
   }
 };
 
-
-
-
+export const chatWithAI = (prompt) => async (dispatch) => {
+  dispatch(aiRequestStart());
+  try {
+    const res = await axios.post(`${BACKEND_URL}/api/ai/chat`, { prompt });
+    if (res.data && res.data.response) {
+      dispatch(aiRequestSuccess(res.data.response));
+    } else {
+      throw new Error("Invalid response from AI");
+    }
+  } catch (err) {
+    console.error("Error fetching AI response:", err);
+    dispatch(aiRequestFailed(err.message));
+  }
+};

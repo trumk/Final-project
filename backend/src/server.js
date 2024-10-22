@@ -6,6 +6,8 @@ const cookieParser = require('cookie-parser');
 const projectRoutes = require('../routes/projectRoutes');
 const authRoutes = require('../routes/authRoutes')
 const userRoutes = require('../routes/userRoutes')
+const aiRoutes = require('../routes/aiRoutes');
+
 
 const app = express();
 
@@ -31,4 +33,4 @@ mongoose.connect(process.env.MONGO_URL, {
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/projects', projectRoutes);
-app.use('/uploads', express.static('uploads'));
+app.use('/api/ai', aiRoutes);
