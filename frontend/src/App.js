@@ -16,6 +16,7 @@ import Register from './Components/Login/register';
 import ProtectedRoute from './Components/ProtectedRoute';
 import UserPage from './Pages/admin/User';
 import CommentPage from './Pages/admin/Coment';
+import Profile from './Pages/Guest/[id]/Profile';
 
 function App() {
   return (
@@ -28,8 +29,8 @@ function App() {
             <Route path='/' element={<Homepage />} />
             <Route path='/projects' element={<Projectpage />} />
             <Route path='/project/:id' element={<DetailPage />} />
+            <Route path='/profile/:id' element={<Profile />} />
 
-            {/* Bảo vệ các route dành cho admin */}
             <Route
               path='/admin'
               element={

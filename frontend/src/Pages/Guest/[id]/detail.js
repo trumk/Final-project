@@ -13,6 +13,7 @@ import Navbar from "../../../Components/Navbar";
 import Footer from "../../../Components/Footer";
 import "./style.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { formatDistanceToNow } from 'date-fns';
 
 function DetailPage() {
   const { id } = useParams();
@@ -29,6 +30,7 @@ function DetailPage() {
   const [isLiked, setIsLiked] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isVideoSelected, setIsVideoSelected] = useState(false);
+  const [openReplies, setOpenReplies] = useState({});
 
   useEffect(() => {
     dispatch(getProject(id)).then(() => {
@@ -45,6 +47,13 @@ function DetailPage() {
       setIsLiked(project.likedUsers?.includes(currentUser.id));
     }
   }, [project, currentUser]);
+
+  const toggleReplies = (commentId) => {
+    setOpenReplies((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
 
   const relatedProjects = useMemo(() => {
     if (allProjects && project) {
@@ -121,32 +130,65 @@ function DetailPage() {
     return videoIdMatch ? videoIdMatch[1] : null;
   };
 
-  const renderComments = (parentId = null, parentUserName = "") => {
+  const renderComments = (parentId = null, parentUserName = "", depth = 0) => {
+    const replies = comments.filter((comment) => comment.parentId === parentId);
+  
+    const maxIndent = 4; // Giới hạn độ sâu thụt lề
+  
     return comments
       .filter((comment) => comment.parentId === parentId)
-      .map((comment) => (
-        <div key={comment._id} className={parentId ? "reply-item" : "comment-item"}>
-          <div className={parentId ? "reply-avatar" : "comment-avatar"}>
-            <img
-              src={`/imgs/avatar.png`}
-              alt="Avatar"
-              className="user-avatar"
-            />
-          </div>
-          <div className={parentId ? "reply-content" : "comment-content"}>
-            <p className={parentId ? "reply-user-name" : "comment-user-name"}>
-              {comment.userId?.userName}
-            </p>
-            <p className={parentId ? "reply-text" : "comment-text"}>
-              {parentId && <strong>@{parentUserName}</strong>} {comment.comment}
-            </p>
+      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+      .map((comment) => {
+        const hasReplies = comments.some((c) => c.parentId === comment._id); // Kiểm tra xem comment này có reply con không
   
-            <button
-              className="reply-button"
-              onClick={() => handleReplyClick(comment._id)}
-            >
-              Reply
-            </button>
+        // Lấy avatar từ dữ liệu của người dùng
+        const avatarUrl = comment.userId?.avatar;
+  
+        return (
+          <div
+            key={comment._id}
+            className={parentId ? "reply-item" : "comment-item"}
+            style={{ marginLeft: depth < maxIndent ? `${50 * depth}px` : `${50 * maxIndent}px` }}
+          >
+            <div className="comment-header">
+              <img
+                src={avatarUrl}
+                alt="Avatar"
+                className="user-avatar"
+              />
+              <div className="comment-body">
+                <div className="comment-info">
+                  <span className="comment-user-name">{comment.userId?.userName}</span>
+                  <span className="comment-time">
+                    · {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+                  </span>
+                </div>
+                <p className="comment-text">
+                  {parentId && <strong>@{parentUserName}</strong>} {comment.comment}
+                </p>
+                <div className="comment-actions">
+                  <button className="like-button">Like</button>
+                  <button
+                    className="reply-button"
+                    onClick={() => handleReplyClick(comment._id)}
+                  >
+                    Reply
+                  </button>
+                </div>
+              </div>
+            </div>
+  
+            {hasReplies && !openReplies[comment._id] && (
+              <div className="view-replies" onClick={() => toggleReplies(comment._id)}>
+                View all {comments.filter((c) => c.parentId === comment._id).length} replies
+              </div>
+            )}
+  
+            {openReplies[comment._id] && (
+              <div className="replies">
+                {renderComments(comment._id, comment.userId?.userName, depth + 1)}
+              </div>
+            )}
   
             {replyingTo === comment._id && (
               <form
@@ -165,15 +207,10 @@ function DetailPage() {
                 </button>
               </form>
             )}
-  
-            <div className="">
-              {renderComments(comment._id, comment.userId?.userName)}
-            </div>
           </div>
-        </div>
-      ));
+        );
+      });
   };
-  
 
   const videoId = project?.video ? extractVideoId(project.video) : null;
   const videoThumbnail = videoId
@@ -253,13 +290,13 @@ function DetailPage() {
                 </button>
               </div>
 
-              <div className="comments-section">
+              <div className="comment-section-container">
                 <h3>Comments:</h3>
                 <form onSubmit={handleCommentSubmit} className="comment-form">
                   <div className="comment-input-container">
                     {currentUser && (
                       <img
-                        src={`/imgs/avatar.png`}
+                        src={"https://i.pinimg.com/736x/15/63/77/156377a5341e1fa400a58c6c3fc9b438.jpg"}
                         alt="Avatar"
                         className="user-avatar"
                       />
@@ -297,17 +334,17 @@ function DetailPage() {
             relatedProjects.map((relatedProject) => {
               return (
                 <div key={relatedProject._id} className="related-project-card">
-                <a href={`/project/${relatedProject._id}`}>
-                {relatedProject.images.length > 0 && (
-                    <img
-                      src={relatedProject.images[0]}
-                      alt={`Project ${relatedProject.name}`}
-                      className="related-project-image"
-                    />
-                  )}
-                  <h4>{relatedProject.name}</h4>
-                  <p>By: {relatedProject.authors.join(", ")}</p>
-                </a>
+                  <a href={`/project/${relatedProject._id}`}>
+                    {relatedProject.images.length > 0 && (
+                      <img
+                        src={relatedProject.images[0]}
+                        alt={`Project ${relatedProject.name}`}
+                        className="related-project-image"
+                      />
+                    )}
+                    <h4>{relatedProject.name}</h4>
+                    <p>By: {relatedProject.authors.join(", ")}</p>
+                  </a>
                 </div>
               );
             })

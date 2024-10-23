@@ -5,6 +5,7 @@ const userSlice = createSlice({
   initialState: {
     allUsers: null,
     currentUser: null,
+    profile: null, 
     isFetching: false,
     error: false,
     msg: "",
@@ -28,7 +29,7 @@ const userSlice = createSlice({
     },
     getUserSuccess: (state, action) => {
       state.isFetching = false;
-      state.currentUser = action.payload;
+      state.profile = action.payload; 
       state.error = false;
     },
     getUserFailed: (state, action) => {
@@ -42,7 +43,7 @@ const userSlice = createSlice({
     },
     updateUserSuccess: (state, action) => {
       state.isFetching = false;
-      state.currentUser = action.payload;
+      state.profile = action.payload; 
       state.error = false;
       state.msg = "User updated successfully";
     },
@@ -55,7 +56,7 @@ const userSlice = createSlice({
       state.isFetching = true;
       state.error = false;
     },
-    deleteUserSuccess: (state, action) => {
+    deleteUserSuccess: (state) => {
       state.isFetching = false;
       state.error = false;
       state.msg = "User deleted successfully";

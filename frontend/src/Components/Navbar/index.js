@@ -2,25 +2,27 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./style.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faBell } from "@fortawesome/free-solid-svg-icons"; 
-import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../../redux/apiRequest';
-import { getNotifications, markNotificationsAsRead } from '../../redux/apiRequest'; 
+import { faBars, faBell } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../redux/apiRequest";
+import {
+  getNotifications,
+  markNotificationsAsRead,
+} from "../../redux/apiRequest";
 
 function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const currentUser = useSelector((state) => state.auth.currentUser); 
-  const notifications = useSelector((state) => state.project.notifications); 
-  const unreadCount = useSelector((state) => state.project.unreadCount); 
+  const currentUser = useSelector((state) => state.auth.currentUser);
+  const notifications = useSelector((state) => state.project.notifications);
+  const unreadCount = useSelector((state) => state.project.unreadCount);
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
-  // Fetch notifications when the component mounts
   useEffect(() => {
     if (currentUser) {
-      dispatch(getNotifications); // Fetch user-specific notifications
+      dispatch(getNotifications);
     }
   }, [dispatch, currentUser]);
 
@@ -31,22 +33,21 @@ function Navbar() {
     } catch (error) {
       console.error("Logout failed:", error);
     }
-    setShowLogoutModal(false); 
+    setShowLogoutModal(false);
   };
 
   const handleLogoutClick = () => {
-    setShowLogoutModal(true); 
+    setShowLogoutModal(true);
   };
 
   const closeModal = () => {
-    setShowLogoutModal(false); 
+    setShowLogoutModal(false);
   };
 
-  // Handle showing/hiding notifications and marking them as read
   const handleNotificationClick = () => {
     setShowNotifications(!showNotifications);
     if (!showNotifications) {
-      dispatch(markNotificationsAsRead); // Mark notifications as read when opening dropdown
+      dispatch(markNotificationsAsRead);
     }
   };
 
@@ -86,9 +87,16 @@ function Navbar() {
                 {currentUser && (
                   <li className="nav-item position-relative">
                     {/* Notification Bell with count */}
-                    <button className="nav-link" onClick={handleNotificationClick}>
+                    <button
+                      className="nav-link"
+                      onClick={handleNotificationClick}
+                    >
                       <FontAwesomeIcon icon={faBell} />
-                      {unreadCount > 0 && <span className="notification-count">{unreadCount}</span>}
+                      {unreadCount > 0 && (
+                        <span className="notification-count">
+                          {unreadCount}
+                        </span>
+                      )}
                     </button>
 
                     {/* Notification Dropdown */}
@@ -97,11 +105,15 @@ function Navbar() {
                         {notifications.length > 0 ? (
                           notifications.map((notif, index) => (
                             <li key={index} className="notification-item">
-                              <p>{notif.sender?.userName} {notif.message}</p>
+                              <p>
+                                {notif.sender?.userName} {notif.message}
+                              </p>
                             </li>
                           ))
                         ) : (
-                          <li className="notification-item">No new notifications</li>
+                          <li className="notification-item">
+                            No new notifications
+                          </li>
                         )}
                       </ul>
                     )}
@@ -119,14 +131,23 @@ function Navbar() {
                     >
                       {currentUser.userName}
                     </a>
-                    <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <ul
+                      className="dropdown-menu dropdown-menu-end"
+                      aria-labelledby="navbarDropdown"
+                    >
                       <li>
-                        <Link className="dropdown-item" to="/profile">
+                        <Link
+                          className="dropdown-item"
+                          to={`/profile/${currentUser.id}`}
+                        >
                           Profile
                         </Link>
                       </li>
                       <li>
-                        <button className="dropdown-item" onClick={handleLogoutClick}>
+                        <button
+                          className="dropdown-item"
+                          onClick={handleLogoutClick}
+                        >
                           Logout
                         </button>
                       </li>
@@ -152,8 +173,12 @@ function Navbar() {
             <h3>Confirm Logout</h3>
             <p>Are you sure you want to logout?</p>
             <div className="modal-actions">
-              <button className="btn btn-secondary" onClick={closeModal}>Cancel</button>
-              <button className="btn btn-logout" onClick={handleLogoutConfirm}>Logout</button>
+              <button className="btn btn-secondary" onClick={closeModal}>
+                Cancel
+              </button>
+              <button className="btn btn-logout" onClick={handleLogoutConfirm}>
+                Logout
+              </button>
             </div>
           </div>
         </div>

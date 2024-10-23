@@ -69,8 +69,6 @@ const login = async (req, res) => {
   }
 };
 
-
-
 const loginWithProvider = async (req, res) => {
   const { email, providerId } = req.body; 
   console.log("Request data:", email, providerId);
