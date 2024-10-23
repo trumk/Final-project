@@ -11,11 +11,12 @@ function Profile() {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.auth.currentUser); 
   const userProfile = useSelector((state) => state.user.profile); 
-  const [showModal, setShowModal] = useState(false); // Trạng thái để hiển thị modal
+  const [showModal, setShowModal] = useState(false);
   const [newAvatar, setNewAvatar] = useState(null);
   const [newUserName, setNewUserName] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [activeTab, setActiveTab] = useState(0); // Tab hiện tại
 
   useEffect(() => {
     if (currentUser && currentUser.id) {
@@ -84,31 +85,82 @@ function Profile() {
         <div className="modal-backdrop">
           <div className="modal-content">
             <h3>Edit Profile</h3>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleAvatarChange}
-            />
-            <input
-              type="text"
-              placeholder="New Username"
-              value={newUserName}
-              onChange={(e) => setNewUserName(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Current Password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="New Password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-            <button onClick={handleProfileUpdate}>Save Changes</button>
-            <button onClick={handleModalClose}>Cancel</button>
+            <div className="tabs">
+              <button
+                className={`tab-button ${activeTab === 0 ? 'active' : ''}`}
+                onClick={() => setActiveTab(0)}
+              >
+                Change Avatar
+              </button>
+              <button
+                className={`tab-button ${activeTab === 1 ? 'active' : ''}`}
+                onClick={() => setActiveTab(1)}
+              >
+                Change Username
+              </button>
+              <button
+                className={`tab-button ${activeTab === 2 ? 'active' : ''}`}
+                onClick={() => setActiveTab(2)}
+              >
+                Change Password
+              </button>
+            </div>
+
+            <div className="tab-content">
+              {activeTab === 0 && (
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                  className="file-input"
+                />
+              )}
+              {activeTab === 1 && (
+                <>
+                  <input
+                    type="text"
+                    placeholder="New Username"
+                    value={newUserName}
+                    onChange={(e) => setNewUserName(e.target.value)}
+                    className="input-field"
+                  />
+                  <input
+                    type="password"
+                    placeholder="Current Password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    className="input-field"
+                  />
+                </>
+              )}
+              {activeTab === 2 && (
+                <>
+                  <input
+                    type="password"
+                    placeholder="Current Password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    className="input-field"
+                  />
+                  <input
+                    type="password"
+                    placeholder="New Password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="input-field"
+                  />
+                </>
+              )}
+            </div>
+
+            <div className="modal-actions">
+              <button onClick={handleProfileUpdate} className="modal-button primary">
+                Save Changes
+              </button>
+              <button onClick={handleModalClose} className="modal-button secondary">
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
