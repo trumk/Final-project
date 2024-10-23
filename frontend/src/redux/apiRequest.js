@@ -42,7 +42,7 @@ import {
   updateProjectSuccess,
 } from "./projectSlice";
 import { toast } from "react-toastify";
-import { getUserFailed, getUsersFailed, getUsersStart, getUsersSuccess, getUserStart, getUserSuccess } from "./userSlice";
+import { getUserFailed, getUsersFailed, getUsersStart, getUsersSuccess, getUserStart, getUserSuccess, updateUserFailed, updateUserStart, updateUserSuccess } from "./userSlice";
 import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logoutSuccess, registerFailed, registerStart, registerSuccess } from "./authSlice";
 import { aiRequestFailed, aiRequestStart, aiRequestSuccess } from "./aiSlice";
 
@@ -314,6 +314,26 @@ export const filterProjects = (semester, department) => async (dispatch) => {
   } catch (err) {
     console.error(err);
     dispatch(filterProjectsFailed(err.message));
+  }
+};
+
+export const updateProfile = (userId, profileData) => async (dispatch) => {
+  dispatch(updateUserStart());
+  try {
+    const response = await axios.put(
+      `${BACKEND_URL}/api/user/${userId}`,
+      profileData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    dispatch(updateUserSuccess(response.data));
+    console.log("User updated successfully");
+  } catch (err) {
+    dispatch(updateUserFailed(err.message || "Failed to update profile"));
+    console.error("Error updating profile:", err);
   }
 };
 

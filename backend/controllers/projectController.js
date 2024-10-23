@@ -56,8 +56,6 @@ const createProject = async (req, res) => {
       images.push(publicUrl); 
     }
 
-   
-
     const newProject = new Project({
       name,
       authors: Array.isArray(authors) ? authors : [authors],
@@ -84,7 +82,6 @@ const createProject = async (req, res) => {
 
 const updateProject = async (req, res) => {
   try {
-    // Log dữ liệu nhận được từ request để kiểm tra
     console.log('Received request:', req.body);
     console.log('Files received:', req.files);
 

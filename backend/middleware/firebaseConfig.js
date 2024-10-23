@@ -33,6 +33,7 @@ const upload = multer({
   },
 }).single('file'); // Handles single file upload
 
+
 // Function to upload file to Firebase Storage
 const uploadFileToFirebase = async (file) => {
   const fileName = Date.now() + '-' + file.originalname;
