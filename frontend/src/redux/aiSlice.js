@@ -17,8 +17,8 @@ const aiSlice = createSlice({
     },
     aiRequestSuccess: (state, action) => {
       state.isFetching = false;
-      state.response = action.payload;
-      state.history.push({ prompt: action.meta.arg, response: action.payload }); 
+      state.response = action.payload.response;
+      state.history.push({ prompt: action.payload.prompt, response: action.payload.response });
       state.error = false;
       state.msg = "AI response fetched successfully";
     },
@@ -32,7 +32,8 @@ const aiSlice = createSlice({
       state.msg = "";
     },
     clearHistory: (state) => {
-      state.history = []; 
+      state.history = [];
+      state.msg = "Chat history cleared successfully";
     },
   },
 });

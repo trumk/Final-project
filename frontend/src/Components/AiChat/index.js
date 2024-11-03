@@ -1,34 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { aiChat } from "../../redux/apiRequest"; 
 import "./style.css";
 
 function AIChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const dispatch = useDispatch();
+
+  const aiResponse = useSelector((state) => state.ai.response); 
+  const isFetching = useSelector((state) => state.ai.isFetching);
+  const currentUser = useSelector((state) => state.auth.currentUser);
 
   const toggleChat = () => setIsOpen(!isOpen);
 
   const sendMessage = () => {
-    if (input.trim()) {
-      setMessages([...messages, { text: input, sender: "user" }]);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { text: "AI is thinking...", sender: "ai" },
-      ]);
+    if (input.trim() && currentUser) {
+      const userMessage = { text: input, sender: "user" };
+      setMessages([...messages, userMessage, { text: "AI is thinking...", sender: "ai" }]);
+      
+      dispatch(aiChat(input, currentUser.id)); 
       setInput(""); 
-
-      setTimeout(() => {
-        setMessages((prevMessages) => [
-          ...prevMessages.slice(0, -1), 
-          { text: "Here is AI's response!", sender: "ai" }, 
-        ]);
-      }, 1000);
     }
   };
 
+  useEffect(() => {
+    if (aiResponse) {
+      setMessages((prevMessages) => [
+        ...prevMessages.slice(0, -1), 
+        { text: aiResponse, sender: "ai" },
+      ]);
+    }
+  }, [aiResponse]);
+
   return (
     <div className={`chat-container ${isOpen ? "open" : ""}`}>
-      {/* Ẩn biểu tượng khi cuộc hội thoại mở */}
       {!isOpen && (
         <div className="chat-icon" onClick={toggleChat}>
           <img
@@ -60,6 +67,7 @@ function AIChat() {
                 <span>{msg.text}</span>
               </div>
             ))}
+            {isFetching && <div className="loading">AI is processing...</div>}
           </div>
 
           <div className="chat-footer">
@@ -68,8 +76,11 @@ function AIChat() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message..."
+              disabled={isFetching}
             />
-            <button onClick={sendMessage}>Send</button>
+            <button onClick={sendMessage} disabled={isFetching}>
+              Send
+            </button>
           </div>
         </div>
       )}

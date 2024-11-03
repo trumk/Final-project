@@ -28,13 +28,15 @@ function Navbar() {
 
   const handleLogoutConfirm = async () => {
     try {
-      await logout(dispatch);
-      navigate("/login");
+      if (currentUser) {
+        await logout(dispatch, currentUser.id); 
+        navigate("/login");
+      }
     } catch (error) {
       console.error("Logout failed:", error);
     }
     setShowLogoutModal(false);
-  };
+  };  
 
   const handleLogoutClick = () => {
     setShowLogoutModal(true);

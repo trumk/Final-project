@@ -1,49 +1,89 @@
-// // Sử dụng cú pháp import ESM
-// import generativeAi from '@google/generative-ai';
-// import Project from '../models/Project.js';
-// import User from '../models/User.js';
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const ChatHistory = require("../models/ChatHistory");
+const Project = require("../models/Project");
 
-// // Khởi tạo Google Generative AI Client
-// const client = new generativeAi.TextServiceClient({
-//     apiKey: process.env.GOOGLE_API_KEY || "AIzaSyAGzFab5Jp8cmCd9C8LSsRkN33uuz8EwVM",
-// });
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
-// const getAIResponseWithUserData = async (req, res) => {
-//     const userId = req.cookies.userId;
-//     const prompt = req.body.prompt;
+async function saveUserMessage(userId, message) {
+  let chatHistory = await ChatHistory.findOne({ userId });
+  if (!chatHistory) {
+    chatHistory = new ChatHistory({ userId, messages: [] });
+  }
+  chatHistory.messages.push({ sender: "user", message });
+  await chatHistory.save();
+}
 
-//     try {
-//         // Lấy thông tin người dùng hiện tại
-//         const currentUser = await User.findById(userId);
-//         if (!currentUser) {
-//             return res.status(404).json({ message: 'User not found' });
-//         }
+async function saveAiMessage(userId, message) {
+  const chatHistory = await ChatHistory.findOne({ userId });
+  if (chatHistory) {
+    chatHistory.messages.push({ sender: "ai", message });
+    await chatHistory.save();
+  }
+}
 
-//         // Lấy dữ liệu các dự án
-//         const projects = await Project.find();
+async function getChatHistory(userId) {
+  const chatHistory = await ChatHistory.findOne({ userId });
+  return chatHistory ? chatHistory.messages : [];
+}
 
-//         // Tạo prompt kết hợp dữ liệu người dùng và dự án
-//         const combinedPrompt = `User information: ${JSON.stringify({
-//             userName: currentUser.userName,
-//             email: currentUser.email,
-//             role: currentUser.role,
-//         })}. Project data: ${JSON.stringify(projects)}. ${prompt}`;
+const generatePrompt = async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const userPrompt = req.body.prompt;
 
-//         // Gửi yêu cầu đến Google Generative AI
-//         const [response] = await client.generateText({
-//             model: 'models/text-bison-001', // Chọn model phù hợp
-//             prompt: combinedPrompt,
-//             temperature: 0.7,
-//             maxOutputTokens: 200,
-//         });
+    if (!userId) {
+      return res.status(401).json({ message: "User is not authenticated." });
+    }
+    if (!userPrompt) {
+      return res.status(400).json({ message: "Prompt is required" });
+    }
 
-//         // Xử lý phản hồi từ Google Generative AI
-//         res.json({ response: response.candidates[0].output });
-//     } catch (error) {
-//         res.status(500).json({ message: 'Failed to process AI request', error });
-//     }
-// };
+    await saveUserMessage(userId, userPrompt);
 
-// export {
-//     getAIResponseWithUserData,
-// };
+    const projects = await Project.find();
+    let projectDetails = "Here are all the projects in the system:\n\n";
+
+    projects.forEach((project, index) => {
+      projectDetails += `Project ${index + 1}:\n`;
+      projectDetails += `Name: ${project.name}\n`;
+      projectDetails += `Authors: ${project.authors.join(", ")}\n`;
+      projectDetails += `Description: ${project.description}\n`;
+      projectDetails += `Semester: ${project.semester}\n`;
+      projectDetails += `Department: ${project.department}\n`;
+      projectDetails += `Likes: ${project.likes}\n`;
+      projectDetails += `Number of Comments: ${project.comments.length}\n\n`;
+    });
+
+    const chatHistory = await getChatHistory(userId);
+    const conversationContext = chatHistory.map(msg => `${msg.sender}: ${msg.message}`).join("\n");
+
+    const fullPrompt = `${projectDetails}${conversationContext}\nUser: ${userPrompt}\nAI: `;
+
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const result = await model.generateContent(fullPrompt);
+    const response = await result.response;
+    const aiResponse = await response.text();
+
+    await saveAiMessage(userId, aiResponse);
+
+    res.status(200).json({ text: aiResponse });
+  } catch (error) {
+    console.error("Error generating prompt with AI:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+async function clearChatHistory(userId) {
+  try {
+    const result = await ChatHistory.deleteOne({ userId });
+    if (result.deletedCount > 0) {
+      console.log(`Chat history for user ${userId} has been cleared.`);
+    } else {
+      console.log(`No chat history found for user ${userId} to delete.`);
+    }
+  } catch (error) {
+    console.error(`Error clearing chat history for user ${userId}:`, error);
+  }
+}
+
+module.exports = { generatePrompt, clearChatHistory };

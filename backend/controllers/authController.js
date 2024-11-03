@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+const { clearChatHistory } = require("./aiController");
 
 const register = async (req, res) => {
   const { userName, email, password, role } = req.body;
@@ -27,7 +28,6 @@ const register = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error: err.message });
   }
 };
-
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -126,10 +126,22 @@ const loginWithProvider = async (req, res) => {
   }
 };
 
-const logout = (req, res) => {
-  res.clearCookie("userId");
-  res.clearCookie("role");
-  return res.status(200).json({ message: "Logout successful" });
+const logout = async (req, res) => {
+  const userId = req.query.userId;
+
+  try {
+    if (userId) {
+      await clearChatHistory(userId);
+    }
+
+    res.clearCookie("userId");
+    res.clearCookie("role");
+
+    return res.status(200).json({ message: "Logout successful and chat history cleared." });
+  } catch (error) {
+    console.error("Error during logout:", error);
+    return res.status(500).json({ message: "Failed to logout and clear chat history", error: error.message });
+  }
 };
 
 module.exports = {

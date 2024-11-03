@@ -1,8 +1,8 @@
-// const express = require('express');
-// const { getAIResponseWithUserData } = require('../controllers/aiController');
+const express = require('express');
+const { generatePrompt } = require('../controllers/aiController');
 
-// const router = express.Router();
+const router = express.Router();
 
-// router.post('/chat', getAIResponseWithUserData); 
+router.post('/chat', generatePrompt); 
 
-// module.exports = router;
+module.exports = router;

@@ -44,7 +44,7 @@ import {
 import { toast } from "react-toastify";
 import { getUserFailed, getUsersFailed, getUsersStart, getUsersSuccess, getUserStart, getUserSuccess, updateUserFailed, updateUserStart, updateUserSuccess } from "./userSlice";
 import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logoutSuccess, registerFailed, registerStart, registerSuccess } from "./authSlice";
-import { aiRequestFailed, aiRequestStart, aiRequestSuccess } from "./aiSlice";
+import { aiRequestFailed, aiRequestStart, aiRequestSuccess, clearAIResponse, clearHistory } from "./aiSlice";
 
 const BACKEND_URL = "http://localhost:5000";
 
@@ -173,15 +173,24 @@ export const loginWithProvider = async (email, providerId, dispatch, navigate) =
   }
 };
 
-export const logout = async (dispatch) => {
+export const logout = async (dispatch, userId) => {
   dispatch(logoutStart());
   try {
-    await axios.post(`${BACKEND_URL}/api/auth/logout`); 
+    await axios.post(
+      `${BACKEND_URL}/api/auth/logout`,
+      {},
+      {
+        params: { userId }, 
+        withCredentials: true,
+      }
+    );
     dispatch(logoutSuccess());
+    dispatch(clearHistory());
+    dispatch(clearAIResponse()); 
     toast.success("Logout successfully");
   } catch (err) {
-    dispatch(logoutFailed());
-    console.error(err);
+    dispatch(logoutFailed(err.message || "Failed to logout"));
+    console.error("Logout failed:", err);
   }
 };
 
@@ -337,17 +346,16 @@ export const updateProfile = (userId, profileData) => async (dispatch) => {
   }
 };
 
-export const chatWithAI = (prompt) => async (dispatch) => {
+export const aiChat = (prompt, userId) => async (dispatch) => {
   dispatch(aiRequestStart());
   try {
-    const res = await axios.post(`${BACKEND_URL}/api/ai/chat`, { prompt });
-    if (res.data && res.data.response) {
-      dispatch(aiRequestSuccess(res.data.response));
-    } else {
-      throw new Error("Invalid response from AI");
-    }
-  } catch (err) {
-    console.error("Error fetching AI response:", err);
-    dispatch(aiRequestFailed(err.message));
+    const response = await axios.post(
+      `${BACKEND_URL}/api/ai/chat`,
+      { prompt, userId }, 
+      { withCredentials: true }
+    );
+    dispatch(aiRequestSuccess({ response: response.data.text, prompt }));
+  } catch (error) {
+    dispatch(aiRequestFailed(error.response?.data?.message || "Failed to fetch AI response"));
   }
 };
