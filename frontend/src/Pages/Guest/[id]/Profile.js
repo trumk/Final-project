@@ -43,7 +43,7 @@ function Profile() {
 
   const handleProfileUpdate = async () => {
     const formData = new FormData();
-    if (newAvatar) formData.append('file', newAvatar);
+    if (newAvatar) formData.append('avatar', newAvatar);
     if (newUserName) formData.append('newUserName', newUserName);
     if (currentPassword) formData.append('currentPassword', currentPassword);
     if (newPassword) formData.append('newPassword', newPassword);

@@ -25,7 +25,7 @@ const getOneUser = async (req, res) => {
 };
 
 const updateProfile = async (req, res) => {
-  const userId = req.params.id; 
+  const userId = req.params.id;
   const { newUserName, currentPassword, newPassword } = req.body;
   const newAvatar = req.file; 
 

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Footer from "../../Components/Footer";
 import Navbar from "../../Components/Navbar";
+import AIChat from "../../Components/AiChat";
 import { useEffect } from "react";
 import { getAllProjects } from "../../redux/apiRequest";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -121,6 +122,7 @@ function Projectpage() {
           </div>
         </div>
       </main>
+      <AIChat/>
       <Footer />
     </div>
   );
