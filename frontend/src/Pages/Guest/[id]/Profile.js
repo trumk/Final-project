@@ -6,6 +6,7 @@ import { faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 import Navbar from '../../../Components/Navbar';
 import Footer from '../../../Components/Footer';
 import './Profile.css';
+import AIChat from '../../../Components/AiChat';
 
 function Profile() {
   const dispatch = useDispatch();
@@ -16,7 +17,7 @@ function Profile() {
   const [newUserName, setNewUserName] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [activeTab, setActiveTab] = useState(0); // Tab hiện tại
+  const [activeTab, setActiveTab] = useState(0); 
 
   useEffect(() => {
     if (currentUser && currentUser.id) {
@@ -164,6 +165,7 @@ function Profile() {
           </div>
         </div>
       )}
+      <AIChat/>
       <Footer />
     </div>
   );
