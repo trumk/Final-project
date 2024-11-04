@@ -14,6 +14,7 @@ function Profile() {
   const userProfile = useSelector((state) => state.user.profile); 
   const [showModal, setShowModal] = useState(false);
   const [newAvatar, setNewAvatar] = useState(null);
+  const [previewAvatar, setPreviewAvatar] = useState(null); // Thêm trạng thái xem trước
   const [newUserName, setNewUserName] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -33,13 +34,16 @@ function Profile() {
   const handleModalClose = () => {
     setShowModal(false);
     setNewAvatar(null);
+    setPreviewAvatar(null); // Xóa URL xem trước khi đóng modal
     setNewUserName('');
     setCurrentPassword('');
     setNewPassword('');
   };
 
   const handleAvatarChange = (e) => {
-    setNewAvatar(e.target.files[0]);
+    const file = e.target.files[0];
+    setNewAvatar(file);
+    setPreviewAvatar(URL.createObjectURL(file)); // Tạo URL xem trước
   };
 
   const handleProfileUpdate = async () => {
@@ -51,6 +55,7 @@ function Profile() {
 
     await dispatch(updateProfile(currentUser.id, formData));
     setShowModal(false);
+    setPreviewAvatar(null); // Xóa URL xem trước sau khi lưu
   };
 
   if (!userProfile) {
@@ -109,12 +114,21 @@ function Profile() {
 
             <div className="tab-content">
               {activeTab === 0 && (
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAvatarChange}
-                  className="file-input"
-                />
+                <>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarChange}
+                    className="file-input"
+                  />
+                  {previewAvatar && (
+                    <img
+                      src={previewAvatar}
+                      alt="Avatar Preview"
+                      className="avatar-preview" // Áp dụng lớp mới
+                    />
+                  )}
+                </>
               )}
               {activeTab === 1 && (
                 <>

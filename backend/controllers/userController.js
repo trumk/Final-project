@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const { bucket } = require('../middleware/firebaseConfig'); 
 const { uploadFileToFirebase } = require("../middleware/firebaseConfig"); 
 
 const getAllUser = async (req, res) => {
@@ -27,7 +28,7 @@ const getOneUser = async (req, res) => {
 const updateProfile = async (req, res) => {
   const userId = req.params.id;
   const { newUserName, currentPassword, newPassword } = req.body;
-  const newAvatar = req.file; 
+  const newAvatar = req.file;
 
   try {
     const user = await User.findById(userId);
@@ -35,9 +36,38 @@ const updateProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    if (newAvatar && user.avatar) {
+      const oldAvatarFileName = user.avatar.split('/').pop().split('?')[0];
+      const oldAvatarFile = bucket.file(oldAvatarFileName);
+
+      const [exists] = await oldAvatarFile.exists();
+      if (exists) {
+        try {
+          await oldAvatarFile.delete();
+          console.log("Old avatar deleted:", oldAvatarFileName);
+        } catch (error) {
+          console.error("Error deleting old avatar:", error);
+          return res.status(500).json({
+            message: "Failed to delete old avatar",
+            error: error.message,
+          });
+        }
+      } else {
+        console.log("Old avatar not found:", oldAvatarFileName);
+      }
+    }
+
     if (newAvatar) {
-      const avatarUrl = await uploadFileToFirebase(newAvatar);
-      user.avatar = avatarUrl;
+      try {
+        const avatarUrl = await uploadFileToFirebase(newAvatar);
+        user.avatar = avatarUrl;
+      } catch (error) {
+        console.error("Error uploading new avatar:", error);
+        return res.status(500).json({
+          message: "Failed to upload new avatar",
+          error: error.message,
+        });
+      }
     }
 
     if (newUserName) {
@@ -67,8 +97,13 @@ const updateProfile = async (req, res) => {
       user.password = hashedPassword;
     }
 
-    const updatedUser = await user.save();
-    res.status(200).json(updatedUser);
+    if (newAvatar || newUserName || newPassword) {
+      const updatedUser = await user.save();
+      res.status(200).json(updatedUser);
+    } else {
+      res.status(400).json({ message: "No changes to update" });
+    }
+
   } catch (error) {
     console.error("Error updating profile:", error);
     res.status(500).json({
