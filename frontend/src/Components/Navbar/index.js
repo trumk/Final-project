@@ -25,10 +25,7 @@ function Navbar() {
       dispatch(getNotifications(currentUser.id)); // Truyền userId vào hàm
     }
   }, [dispatch, currentUser]);
-
-  console.log(currentUser.id)
   
-
   const handleLogoutConfirm = async () => {
     try {
       if (currentUser) {
