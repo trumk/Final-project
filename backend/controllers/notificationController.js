@@ -8,8 +8,6 @@ const getNotifications = async (req, res) => {
       return res.status(400).json({ message: 'User ID is required' });
     }
 
-    console.log('Fetching notifications for user:', userId);
-
     const notifications = await Notification.find({ 
       recipient: userId, 
       isRead: false 

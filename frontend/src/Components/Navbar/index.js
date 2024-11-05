@@ -22,7 +22,7 @@ function Navbar() {
 
   useEffect(() => {
     if (currentUser) {
-      dispatch(getNotifications(currentUser.id)); // Truyền userId vào hàm
+      dispatch(getNotifications(currentUser.id)); 
     }
   }, [dispatch, currentUser]);
   
