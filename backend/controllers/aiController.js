@@ -38,21 +38,66 @@ const generatePrompt = async (req, res) => {
       return res.status(400).json({ message: "Prompt is required" });
     }
 
+    const allowedKeywords = ["project", "comment", "comments", "compare", "rate", "evaluate", "description"];
+    const isRelevant = allowedKeywords.some(keyword => userPrompt.toLowerCase().includes(keyword));
+
+    if (!isRelevant) {
+      const aiResponse = "Sorry, I can only answer questions about this website's projects.";
+      await saveUserMessage(userId, userPrompt);
+      await saveAiMessage(userId, aiResponse);
+      return res.status(200).json({ text: aiResponse });
+    }
+
     await saveUserMessage(userId, userPrompt);
 
-    const projects = await Project.find();
-    let projectDetails = "Here are all the projects in the system:\n\n";
+    let projectDetails = "";
+    if (userPrompt.toLowerCase().includes("project with the most likes")) {
+      const mostLikedProject = await Project.findOne()
+        .sort({ likes: -1 })
+        .populate({
+          path: 'comments',
+          select: 'comment userId',
+          populate: { path: 'userId', select: 'userName' }, 
+        });
 
-    projects.forEach((project, index) => {
-      projectDetails += `Project ${index + 1}:\n`;
-      projectDetails += `Name: ${project.name}\n`;
-      projectDetails += `Authors: ${project.authors.join(", ")}\n`;
-      projectDetails += `Description: ${project.description}\n`;
-      projectDetails += `Semester: ${project.semester}\n`;
-      projectDetails += `Department: ${project.department}\n`;
-      projectDetails += `Likes: ${project.likes}\n`;
-      projectDetails += `Number of Comments: ${project.comments.length}\n\n`;
-    });
+      if (mostLikedProject) {
+        projectDetails += `Project with the most likes:\n`;
+        projectDetails += `Name: ${mostLikedProject.name}\n`;
+        projectDetails += `Likes: ${mostLikedProject.likes}\n`;
+        projectDetails += `Comments:\n`;
+        mostLikedProject.comments.forEach((comment, idx) => {
+          projectDetails += `  Comment ${idx + 1} by ${comment.userId?.userName || "Anonymous"}: ${comment.comment}\n`;
+        });
+      } else {
+        projectDetails += "No projects found.\n";
+      }
+    } else {
+      const projects = await Project.find().populate({
+        path: 'comments',
+        select: 'comment userId',
+        populate: { path: 'userId', select: 'userName' },
+      });
+
+      projectDetails += "Here are all the projects in the system:\n\n";
+      projects.forEach((project, index) => {
+        projectDetails += `Project ${index + 1}:\n`;
+        projectDetails += `Name: ${project.name}\n`;
+        projectDetails += `Authors: ${project.authors.join(", ")}\n`;
+        projectDetails += `Description: ${project.description}\n`;
+        projectDetails += `Semester: ${project.semester}\n`;
+        projectDetails += `Department: ${project.department}\n`;
+        projectDetails += `Likes: ${project.likes}\n`;
+        projectDetails += `Number of Comments: ${project.comments.length}\n`;
+
+        if (project.comments.length > 0) {
+          projectDetails += `Comments:\n`;
+          project.comments.forEach((comment, idx) => {
+            projectDetails += `  Comment ${idx + 1} by ${comment.userId?.userName || "Anonymous"}: ${comment.comment}\n`;
+          });
+        }
+        projectDetails += "\n";
+      });
+    }
 
     const chatHistory = await getChatHistory(userId);
     const conversationContext = chatHistory.map(msg => `${msg.sender}: ${msg.message}`).join("\n");

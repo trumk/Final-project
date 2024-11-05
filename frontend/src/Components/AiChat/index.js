@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { aiChat } from "../../redux/apiRequest"; 
+import { aiChat } from "../../redux/apiRequest";
 import "./style.css";
 
 function AIChat() {
@@ -9,26 +9,35 @@ function AIChat() {
   const [input, setInput] = useState("");
   const dispatch = useDispatch();
 
-  const aiResponse = useSelector((state) => state.ai.response); 
+  const aiResponse = useSelector((state) => state.ai.response);
   const isFetching = useSelector((state) => state.ai.isFetching);
   const currentUser = useSelector((state) => state.auth.currentUser);
+  const userProfile = useSelector((state) => state.user.profile);
 
   const toggleChat = () => setIsOpen(!isOpen);
 
   const sendMessage = () => {
     if (input.trim() && currentUser) {
-      const userMessage = { text: input, sender: "user" };
-      setMessages([...messages, userMessage, { text: "AI is thinking...", sender: "ai" }]);
-      
-      dispatch(aiChat(input, currentUser.id)); 
-      setInput(""); 
+      const userMessage = {
+        text: input,
+        sender: "user",
+        avatar: userProfile.avatar,
+      };
+      setMessages([
+        ...messages,
+        userMessage,
+        { text: "AI is thinking...", sender: "ai", avatar: "/imgs/meowAI.jpg" },
+      ]);
+
+      dispatch(aiChat(input, currentUser.id));
+      setInput("");
     }
   };
 
   useEffect(() => {
     if (aiResponse) {
       setMessages((prevMessages) => [
-        ...prevMessages.slice(0, -1), 
+        ...prevMessages.slice(0, -1),
         { text: aiResponse, sender: "ai" },
       ]);
     }
@@ -57,11 +66,17 @@ function AIChat() {
           <div className="chat-body">
             {messages.map((msg, index) => (
               <div key={index} className={`message ${msg.sender}`}>
-                {msg.sender === "ai" && (
+                {msg.sender === "ai" ? (
                   <img
                     src="/imgs/meowAI.jpg"
                     alt="AI Avatar"
-                    className="ai-avatar"
+                    className="chat-avatar"
+                  />
+                ) : (
+                  <img
+                    src={userProfile?.avatar}
+                    alt="User Avatar"
+                    className="chat-avatar"
                   />
                 )}
                 <span>{msg.text}</span>

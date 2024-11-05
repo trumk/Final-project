@@ -14,7 +14,7 @@ function Profile() {
   const userProfile = useSelector((state) => state.user.profile); 
   const [showModal, setShowModal] = useState(false);
   const [newAvatar, setNewAvatar] = useState(null);
-  const [previewAvatar, setPreviewAvatar] = useState(null); // Thêm trạng thái xem trước
+  const [previewAvatar, setPreviewAvatar] = useState(null); 
   const [newUserName, setNewUserName] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -34,7 +34,7 @@ function Profile() {
   const handleModalClose = () => {
     setShowModal(false);
     setNewAvatar(null);
-    setPreviewAvatar(null); // Xóa URL xem trước khi đóng modal
+    setPreviewAvatar(null); 
     setNewUserName('');
     setCurrentPassword('');
     setNewPassword('');
@@ -43,7 +43,7 @@ function Profile() {
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     setNewAvatar(file);
-    setPreviewAvatar(URL.createObjectURL(file)); // Tạo URL xem trước
+    setPreviewAvatar(URL.createObjectURL(file)); 
   };
 
   const handleProfileUpdate = async () => {
@@ -55,7 +55,7 @@ function Profile() {
 
     await dispatch(updateProfile(currentUser.id, formData));
     setShowModal(false);
-    setPreviewAvatar(null); // Xóa URL xem trước sau khi lưu
+    setPreviewAvatar(null); 
   };
 
   if (!userProfile) {
@@ -86,7 +86,6 @@ function Profile() {
         </div>
       </div>
 
-      {/* Modal */}
       {showModal && (
         <div className="modal-backdrop">
           <div className="modal-content">
@@ -125,7 +124,7 @@ function Profile() {
                     <img
                       src={previewAvatar}
                       alt="Avatar Preview"
-                      className="avatar-preview" // Áp dụng lớp mới
+                      className="avatar-preview" 
                     />
                   )}
                 </>

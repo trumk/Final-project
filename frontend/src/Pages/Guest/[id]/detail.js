@@ -23,6 +23,7 @@ function DetailPage() {
   const allProjects = useSelector((state) => state.project.allProjects);
   const comments = useSelector((state) => state.project.comments);
   const currentUser = useSelector((state) => state.auth.currentUser);
+  const userProfile = useSelector((state) => state.user.profile);
 
   const [commentText, setCommentText] = useState("");
   const [replyText, setReplyText] = useState("");
@@ -133,7 +134,7 @@ function DetailPage() {
   const renderComments = (parentId = null, parentUserName = "", depth = 0) => {
     const replies = comments.filter((comment) => comment.parentId === parentId);
   
-    const maxIndent = 4; // Giới hạn độ sâu thụt lề
+    const maxIndent = 4;
   
     return comments
       .filter((comment) => comment.parentId === parentId)
@@ -296,7 +297,7 @@ function DetailPage() {
                   <div className="comment-input-container">
                     {currentUser && (
                       <img
-                        src={"https://i.pinimg.com/736x/15/63/77/156377a5341e1fa400a58c6c3fc9b438.jpg"}
+                        src= {userProfile?.avatar}
                         alt="Avatar"
                         className="user-avatar"
                       />
