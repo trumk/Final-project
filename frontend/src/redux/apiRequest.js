@@ -18,9 +18,6 @@ import {
   getCommentsFailed,
   getCommentsStart,
   getCommentsSuccess,
-  getNotificationsFailed,
-  getNotificationsStart,
-  getNotificationsSuccess,
   getProjectFailed,
   getProjectsFailed,
   getProjectsStart,
@@ -30,7 +27,6 @@ import {
   likeProjectFailed,
   likeProjectStart,
   likeProjectSuccess,
-  markAsRead,
   searchProjectsFailed,
   searchProjectsStart,
   searchProjectsSuccess,
@@ -42,7 +38,7 @@ import {
   updateProjectSuccess,
 } from "./projectSlice";
 import { toast } from "react-toastify";
-import { getUserFailed, getUsersFailed, getUsersStart, getUsersSuccess, getUserStart, getUserSuccess, updateUserFailed, updateUserStart, updateUserSuccess } from "./userSlice";
+import { getNotificationsFailed, getNotificationsStart, getNotificationsSuccess, getUserFailed, getUsersFailed, getUsersStart, getUsersSuccess, getUserStart, getUserSuccess, updateUserFailed, updateUserStart, updateUserSuccess } from "./userSlice";
 import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logoutSuccess, registerFailed, registerStart, registerSuccess } from "./authSlice";
 import { aiRequestFailed, aiRequestStart, aiRequestSuccess, clearAIResponse, clearHistory } from "./aiSlice";
 
@@ -262,23 +258,27 @@ export const likeProject = (projectId, likeData) => async (dispatch) => {
   }
 };
 
-
-export const getNotifications = async (dispatch) => {
+export const getNotifications = (userId) => async (dispatch) => {
   dispatch(getNotificationsStart());
   try {
-    const res = await axios.get(`${BACKEND_URL}/api/notifications`);
+    const res = await axios.get(`${BACKEND_URL}/api/user/${userId}/notifications`);
     dispatch(getNotificationsSuccess(res.data));
   } catch (error) {
     dispatch(getNotificationsFailed(error.message));
   }
 };
 
-export const markNotificationsAsRead = async (dispatch) => {
+export const markNotificationsAsRead = (userId) => async (dispatch) => {
   try {
-    await axios.put(`${BACKEND_URL}/api/notifications/read`);
-    dispatch(markAsRead());
+    await axios.put(`${BACKEND_URL}/api/user/${userId}/notifications/read`);
+    console.log("Notifications marked as read");
+
+    // Bạn có thể dispatch một action để cập nhật store sau khi đánh dấu thông báo là đã đọc
+    dispatch({
+      type: "notifications/markAsRead", // Thay thế bằng action bạn muốn
+    });
   } catch (error) {
-    console.error("Error marking notifications as read:", error);
+    console.error("Error marking notifications as read:", error.message);
   }
 };
 

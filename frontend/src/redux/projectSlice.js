@@ -9,8 +9,6 @@ const projectSlice = createSlice({
     error: false,
     msg: "",
     comments: [], 
-    notifications: [], 
-    unreadCount: 0, 
   },
   reducers: {
     getProjectsStart: (state) => {
@@ -172,23 +170,6 @@ const projectSlice = createSlice({
       state.error = true;
       state.msg = action.payload || "Failed to like project";
     },
-    getNotificationsStart: (state) => {
-      state.isFetching = true;
-    },
-    getNotificationsSuccess: (state, action) => {
-      state.isFetching = false;
-      state.notifications = action.payload;
-      state.unreadCount = action.payload.filter((n) => !n.isRead).length;
-      state.error = false;
-    },
-    getNotificationsFailed: (state, action) => {
-      state.isFetching = false;
-      state.error = true;
-      state.msg = action.payload || "Failed to fetch notifications";
-    },
-    markAsRead: (state) => {
-      state.unreadCount = 0;
-    },
   },
 });
 
@@ -226,10 +207,6 @@ export const {
   likeProjectStart,
   likeProjectSuccess,
   likeProjectFailed,
-  getNotificationsStart,
-  getNotificationsSuccess,
-  getNotificationsFailed,
-  markAsRead,
   getAllCommentsStart,
   getAllCommentsSuccess,
   getAllCommentsFailed

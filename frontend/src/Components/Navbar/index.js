@@ -22,9 +22,12 @@ function Navbar() {
 
   useEffect(() => {
     if (currentUser) {
-      dispatch(getNotifications);
+      dispatch(getNotifications(currentUser.id)); // Truyền userId vào hàm
     }
   }, [dispatch, currentUser]);
+
+  console.log(currentUser.id)
+  
 
   const handleLogoutConfirm = async () => {
     try {
@@ -48,10 +51,10 @@ function Navbar() {
 
   const handleNotificationClick = () => {
     setShowNotifications(!showNotifications);
-    if (!showNotifications) {
-      dispatch(markNotificationsAsRead);
+    if (!showNotifications && currentUser) {
+      dispatch(markNotificationsAsRead(currentUser.id)); 
     }
-  };
+  };  
 
   return (
     <>
@@ -104,7 +107,7 @@ function Navbar() {
                     {/* Notification Dropdown */}
                     {showNotifications && (
                       <ul className="notification-dropdown">
-                        {notifications.length > 0 ? (
+                        {notifications?.length > 0 ? (
                           notifications.map((notif, index) => (
                             <li key={index} className="notification-item">
                               <p>
