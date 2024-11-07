@@ -9,34 +9,35 @@ import {
   getNotifications,
   markNotificationsAsRead,
 } from "../../redux/apiRequest";
+import { markAsRead } from "../../redux/userSlice";
 
 function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.auth.currentUser);
-  const notifications = useSelector((state) => state.project.notifications);
-  const unreadCount = useSelector((state) => state.project.unreadCount);
+  const notifications = useSelector((state) => state.user.notifications);
+  const unreadCount = useSelector((state) => state.user.unreadCount);
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
   useEffect(() => {
     if (currentUser) {
-      dispatch(getNotifications(currentUser.id)); 
+      dispatch(getNotifications(currentUser.id));
     }
   }, [dispatch, currentUser]);
-  
+
   const handleLogoutConfirm = async () => {
     try {
       if (currentUser) {
-        await logout(dispatch, currentUser.id); 
+        await logout(dispatch, currentUser.id);
         navigate("/login");
       }
     } catch (error) {
       console.error("Logout failed:", error);
     }
     setShowLogoutModal(false);
-  };  
+  };
 
   const handleLogoutClick = () => {
     setShowLogoutModal(true);
@@ -47,11 +48,12 @@ function Navbar() {
   };
 
   const handleNotificationClick = () => {
-    setShowNotifications(!showNotifications);
+    setShowNotifications((prev) => !prev);
     if (!showNotifications && currentUser) {
-      dispatch(markNotificationsAsRead(currentUser.id)); 
+      dispatch(markAsRead());
+      dispatch(markNotificationsAsRead(currentUser.id));
     }
-  };  
+  };
 
   return (
     <>
@@ -108,8 +110,9 @@ function Navbar() {
                           notifications.map((notif, index) => (
                             <li key={index} className="notification-item">
                               <p>
-                                {notif.sender?.userName} {notif.message}
-                              </p>
+                               {notif.message}
+                              </p>{" "}
+                              {/* Đảm bảo message hiển thị đúng */}
                             </li>
                           ))
                         ) : (

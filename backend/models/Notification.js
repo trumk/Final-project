@@ -30,10 +30,16 @@ const notificationSchema = new Schema({
   isRead: {
     type: Boolean,
     default: false,
-  }
+  },
+  message: { 
+    type: String,
+    required: false,
+  },
 }, {
   timestamps: true,
 });
+
+notificationSchema.index({ recipient: 1, isRead: 1 }); 
 
 const Notification = mongoose.model('Notification', notificationSchema);
 module.exports = Notification;

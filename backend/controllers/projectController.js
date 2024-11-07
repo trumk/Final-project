@@ -231,53 +231,45 @@ const deleteProject = async (req, res) => {
 
 const likeProject = async (req, res) => {
   try {
-    // Lấy userId từ body hoặc từ Firebase (nếu có)
     const { userId } = req.body;
-    if (!req.user && !userId) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
     const senderId = req.user?.uid || userId;
 
-    // Tìm dự án
     const project = await Project.findById(req.params.projectId);
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    // Kiểm tra xem người dùng đã like dự án trước đó hay chưa
+    const senderUser = await User.findById(senderId);
+    if (!senderUser) {
+      return res.status(404).json({ message: "Sender not found" });
+    }
+
     const hasLiked = project.likedUsers.includes(senderId);
 
-    if (hasLiked) {
-      // Nếu đã like thì dislike (trừ đi 1)
+    if (!hasLiked) {
+      project.likes += 1;
+      project.likedUsers.push(senderId);
+
+      const adminUsers = await User.find({ role: 'admin' });
+      
+      for (const admin of adminUsers) {
+        const notification = new Notification({
+          recipient: admin._id,
+          sender: senderId,
+          project: project._id,
+          type: "like",
+          message: `${senderUser.userName} liked project "${project.name}".`,
+        });
+        await notification.save();
+      }
+    } else {
       project.likes -= 1;
       project.likedUsers = project.likedUsers.filter(
         (user) => user.toString() !== senderId.toString()
       );
-    } else {
-      // Nếu chưa like thì thêm like
-      project.likes += 1;
-      project.likedUsers.push(senderId);
-
-      // Tìm thông tin người nhận (tác giả của dự án)
-      const recipientUser = await User.findOne({
-        userName: project.authors[0],
-      });
-
-      if (recipientUser) {
-        // Tạo thông báo like nếu người dùng chưa like trước đó
-        const notification = new Notification({
-          recipient: recipientUser._id, // Sử dụng _id của người dùng, không sử dụng tên
-          sender: senderId,
-          project: project._id,
-          type: "like",
-        });
-        await notification.save();
-      }
     }
 
     await project.save();
-
     res.status(200).json({
       message: hasLiked
         ? "Project disliked successfully"
@@ -299,6 +291,11 @@ const addComment = async (req, res) => {
 
     const senderId = req.user?.uid || userId;
 
+    const senderUser = await User.findById(senderId);
+    if (!senderUser) {
+      return res.status(404).json({ message: "Sender not found" });
+    }
+
     const newComment = new Comment({
       projectId: req.params.projectId,
       userId: senderId,
@@ -314,14 +311,29 @@ const addComment = async (req, res) => {
 
     if (parentId) {
       const parentComment = await Comment.findById(parentId);
-      if (parentComment) {
+      if (parentComment && parentComment.userId.toString() !== senderId) {
         const notification = new Notification({
           recipient: parentComment.userId,
           sender: senderId,
           comment: newComment._id,
           type: "reply",
+          message: `${senderUser.userName} replied to your comment.`,
         });
         await notification.save();
+      }
+    } else {
+      const adminUsers = await User.find({ role: 'admin' });
+      for (const admin of adminUsers) {
+        if (admin._id.toString() !== senderId) { 
+          const notification = new Notification({
+            recipient: admin._id,
+            sender: senderId,
+            project: project._id,
+            type: "comment",
+            message: `${senderUser.userName} commented on project "${project.name}".`,
+          });
+          await notification.save();
+        }
       }
     }
 

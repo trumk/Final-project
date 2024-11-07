@@ -268,8 +268,8 @@ export const addComment = (projectId, commentData) => async (dispatch) => {
 export const likeProject = (projectId, likeData) => async (dispatch) => {
   dispatch(likeProjectStart());
   try {
-    await axios.post(`${BACKEND_URL}/api/projects/${projectId}/like`, likeData);
-    dispatch(likeProjectSuccess());
+    const response = await axios.post(`${BACKEND_URL}/api/projects/${projectId}/like`, likeData);
+    dispatch(likeProjectSuccess(response.data));
   } catch (error) {
     dispatch(likeProjectFailed(error.message));
   }
@@ -289,10 +289,8 @@ export const markNotificationsAsRead = (userId) => async (dispatch) => {
   try {
     await axios.put(`${BACKEND_URL}/api/user/${userId}/notifications/read`);
     console.log("Notifications marked as read");
-
-    // Bạn có thể dispatch một action để cập nhật store sau khi đánh dấu thông báo là đã đọc
     dispatch({
-      type: "notifications/markAsRead", // Thay thế bằng action bạn muốn
+      type: "notifications/markAsRead", 
     });
   } catch (error) {
     console.error("Error marking notifications as read:", error.message);

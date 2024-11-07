@@ -12,7 +12,6 @@ router.get("/", getAllUser);
 router.get("/:id", getOneUser); 
 router.put('/:id', upload.single('avatar'), updateProfile);
 
-// Notification routes
 router.get('/:id/notifications', middleware.verifyFirebaseToken, getNotifications);
 router.put('/:id/notifications/read', middleware.verifyFirebaseToken, markNotificationAsRead);
 

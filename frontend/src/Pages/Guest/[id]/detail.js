@@ -11,6 +11,7 @@ import {
 import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "../../../Components/Navbar";
 import Footer from "../../../Components/Footer";
+import AIChat from "../../../Components/AiChat";
 import "./style.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { formatDistanceToNow } from 'date-fns';
@@ -138,31 +139,31 @@ function DetailPage() {
   };
 
   const renderComments = (parentId = null, parentUserName = "", depth = 0) => {
-    const replies = comments.filter((comment) => comment.parentId === parentId);
-  
-    const maxIndent = 4;
+    const maxIndent = 4; // Giới hạn độ sâu lề tối đa
   
     return comments
       .filter((comment) => comment.parentId === parentId)
       .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
       .map((comment) => {
-        const hasReplies = comments.some((c) => c.parentId === comment._id); // Kiểm tra xem comment này có reply con không
-  
-        // Lấy avatar từ dữ liệu của người dùng
-        const avatarUrl = comment.userId?.avatar;
+        const hasReplies = comments.some((c) => c.parentId === comment._id);
+        
+        // Kiểm soát độ thụt lề và giới hạn độ rộng tối đa cho các phần tử reply
+        const currentDepth = Math.min(depth, maxIndent);
+        const marginLeft = `${50 * currentDepth}px`;
   
         return (
           <div
             key={comment._id}
             className={parentId ? "reply-item" : "comment-item"}
-            style={{ marginLeft: depth < maxIndent ? `${50 * depth}px` : `${50 * maxIndent}px` }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              maxWidth: `calc(100% - ${marginLeft})`, // Giới hạn độ rộng tối đa
+              marginLeft,
+            }}
           >
             <div className="comment-header">
-              <img
-                src={avatarUrl}
-                alt="Avatar"
-                className="user-avatar"
-              />
+              <img src={comment.userId?.avatar} alt="Avatar" className="user-avatar" />
               <div className="comment-body">
                 <div className="comment-info">
                   <span className="comment-user-name">{comment.userId?.userName}</span>
@@ -175,10 +176,7 @@ function DetailPage() {
                 </p>
                 <div className="comment-actions">
                   <button className="like-button">Like</button>
-                  <button
-                    className="reply-button"
-                    onClick={() => handleReplyClick(comment._id)}
-                  >
+                  <button className="reply-button" onClick={() => handleReplyClick(comment._id)}>
                     Reply
                   </button>
                 </div>
@@ -193,15 +191,12 @@ function DetailPage() {
   
             {openReplies[comment._id] && (
               <div className="replies">
-                {renderComments(comment._id, comment.userId?.userName, depth + 1)}
+                {renderComments(comment._id, comment.userId?.userName, currentDepth + 1)}
               </div>
             )}
   
             {replyingTo === comment._id && (
-              <form
-                onSubmit={(e) => handleReplySubmit(e, comment._id)}
-                className="reply-form"
-              >
+              <form onSubmit={(e) => handleReplySubmit(e, comment._id)} className="reply-form">
                 <textarea
                   placeholder="Write a reply..."
                   value={replyText}
@@ -218,7 +213,8 @@ function DetailPage() {
         );
       });
   };
-
+   
+  
   const videoId = project?.video ? extractVideoId(project.video) : null;
   const videoThumbnail = videoId
     ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
@@ -360,6 +356,7 @@ function DetailPage() {
           )}
         </div>
       </div>
+      <AIChat/>
       <Footer />
     </div>
   );

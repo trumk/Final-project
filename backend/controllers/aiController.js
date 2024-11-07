@@ -38,7 +38,7 @@ const generatePrompt = async (req, res) => {
       return res.status(400).json({ message: "Prompt is required" });
     }
 
-    const allowedKeywords = ["project", "comment", "comments", "compare", "rate", "evaluate", "description"];
+    const allowedKeywords = ["project", "comment", "comments", "compare", "rate", "evaluate", "description", "about", "views", "view"];
     const isRelevant = allowedKeywords.some(keyword => userPrompt.toLowerCase().includes(keyword));
 
     if (!isRelevant) {
@@ -88,6 +88,7 @@ const generatePrompt = async (req, res) => {
         projectDetails += `Department: ${project.department}\n`;
         projectDetails += `Likes: ${project.likes}\n`;
         projectDetails += `Number of Comments: ${project.comments.length}\n`;
+        projectDetails += `Views: ${project.views}\n`;
 
         if (project.comments.length > 0) {
           projectDetails += `Comments:\n`;

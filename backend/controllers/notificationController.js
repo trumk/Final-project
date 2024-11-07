@@ -2,16 +2,15 @@ const Notification = require('../models/Notification');
 
 const getNotifications = async (req, res) => {
   try {
-    const userId = req.params.id; 
+    const userId = req.params.id;
 
     if (!userId) {
       return res.status(400).json({ message: 'User ID is required' });
     }
 
     const notifications = await Notification.find({ 
-      recipient: userId, 
-      isRead: false 
-    }).populate('sender', 'userName');
+      recipient: userId 
+    }).populate('sender', 'userName'); 
 
     res.status(200).json(notifications);
   } catch (error) {
@@ -28,7 +27,6 @@ const markNotificationAsRead = async (req, res) => {
       return res.status(400).json({ message: 'User ID is required' });
     }
 
-    console.log('Marking notifications as read for user:', userId);
 
     await Notification.updateMany({ recipient: userId }, { isRead: true });
     res.status(200).json({ message: 'Notifications marked as read' });

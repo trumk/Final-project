@@ -240,10 +240,8 @@ button:disabled {
 }
 
 .reply-item {
-  position: relative;
-  margin-top: 10px; 
-  padding-left: 10px;
-  border-left: 2px solid #ccc;
+  max-width: 95%; 
+  overflow: hidden;
 }
 
 .comment-header {
@@ -262,11 +260,11 @@ button:disabled {
   background-color: #f0f2f5;
   padding: 10px 15px;
   border-radius: 18px;
-  max-width: 100%; /* Đảm bảo chiếm toàn bộ chiều rộng */
+  max-width: 100%; 
 }
 
 .reply-item .comment-body {
-  background-color: #e4e6eb; /* Màu nền khác cho reply */
+  background-color: #e4e6eb; 
 }
 
 .comment-info {
@@ -439,4 +437,3 @@ button:disabled {
     height: 220px;
   }
 }
-
