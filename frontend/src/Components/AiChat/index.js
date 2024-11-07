@@ -21,7 +21,7 @@ function AIChat() {
       const userMessage = {
         text: input,
         sender: "user",
-        avatar: userProfile.avatar,
+        avatar: userProfile?.avatar,
       };
       setMessages([
         ...messages,
@@ -34,11 +34,22 @@ function AIChat() {
     }
   };
 
+  const formatResponse = (text) => {
+    return text
+      .replace(/\*\s*/g, "")
+      .replace(/([A-Za-z\s]+):/g, "<strong>$1</strong>: ")
+      .replace(/([a-z])([A-Z])/g, "$1 $2")
+      .replace(/([A-Za-z]+)([A-Z][a-z])/g, "$1 $2")
+      .replace(/([A-Za-z])project/g, "$1 project") 
+      .replace(/\s+/g, " ")
+      .trim();
+  };
+
   useEffect(() => {
     if (aiResponse) {
       setMessages((prevMessages) => [
         ...prevMessages.slice(0, -1),
-        { text: aiResponse, sender: "ai" },
+        { text: formatResponse(aiResponse), sender: "ai" },
       ]);
     }
   }, [aiResponse]);
@@ -79,7 +90,7 @@ function AIChat() {
                     className="chat-avatar"
                   />
                 )}
-                <span>{msg.text}</span>
+                <span dangerouslySetInnerHTML={{ __html: msg.text }}></span>
               </div>
             ))}
             {isFetching && <div className="loading">AI is processing...</div>}

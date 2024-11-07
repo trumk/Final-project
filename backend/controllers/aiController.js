@@ -38,7 +38,7 @@ const generatePrompt = async (req, res) => {
       return res.status(400).json({ message: "Prompt is required" });
     }
 
-    const allowedKeywords = ["hi","project", "comment", "comments", "compare", "rate", "evaluate", "description", "about", "views", "view", "department", "semester"];
+    const allowedKeywords = ["hi", "project", "comment", "comments", "compare", "rate", "evaluate", "description", "about", "views", "view", "department", "semester", "author", "authors"];
     const isRelevant = allowedKeywords.some(keyword => userPrompt.toLowerCase().includes(keyword));
 
     if (!isRelevant) {
@@ -57,17 +57,11 @@ const generatePrompt = async (req, res) => {
         .populate({
           path: 'comments',
           select: 'comment userId',
-          populate: { path: 'userId', select: 'userName' }, 
+          populate: { path: 'userId', select: 'userName' },
         });
 
       if (mostLikedProject) {
-        projectDetails += `Project with the most likes:\n`;
-        projectDetails += `Name: ${mostLikedProject.name}\n`;
-        projectDetails += `Likes: ${mostLikedProject.likes}\n`;
-        projectDetails += `Comments:\n`;
-        mostLikedProject.comments.forEach((comment, idx) => {
-          projectDetails += `  Comment ${idx + 1} by ${comment.userId?.userName || "Anonymous"}: ${comment.comment}\n`;
-        });
+        projectDetails += `The project with the most likes is "${mostLikedProject.name} " with ${mostLikedProject.likes} likes.\n`; // thêm khoảng trắng cuối tên dự án
       } else {
         projectDetails += "No projects found.\n";
       }
@@ -78,10 +72,9 @@ const generatePrompt = async (req, res) => {
         populate: { path: 'userId', select: 'userName' },
       });
 
-      projectDetails += "Here are all the projects in the website:\n\n";
-      projects.forEach((project, index) => {
-        projectDetails += `Project ${index + 1}:\n`;
-        projectDetails += `Name: ${project.name}\n`;
+      projectDetails += "Here are all the projects on the website:\n\n";
+      projects.forEach((project) => {
+        projectDetails += `Name: ${project.name} \n`; // thêm khoảng trắng cuối tên dự án
         projectDetails += `Authors: ${project.authors.join(", ")}\n`;
         projectDetails += `Description: ${project.description}\n`;
         projectDetails += `Semester: ${project.semester}\n`;
@@ -118,6 +111,7 @@ const generatePrompt = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 async function clearChatHistory(userId) {
   try {
