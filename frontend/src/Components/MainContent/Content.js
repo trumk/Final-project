@@ -7,7 +7,7 @@ import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 
 const MainContent = () => {
   const dispatch = useDispatch();
-  const projects = useSelector((state) => state.project?.allProjects || []); // Default to empty array if undefined or null
+  const projects = useSelector((state) => state.project?.allProjects || []);
   const [topProjects, setTopProjects] = useState([]);
 
   useEffect(() => {
@@ -26,41 +26,33 @@ const MainContent = () => {
   return (
     <section className="top-projects section-padding">
       <div className="container">
-        <div className="row">
-          <div className="col-lg-8">
-            <div className="section-title">
-              <h2>Top Projects</h2>
-              <p>Discover our most outstanding projects just for you.</p>
-            </div>
-            <div className="project-list">
-              {topProjects.map((project) => (
-                <div key={project._id} className="project-item">
-                  {project.images.length > 0 && (
-                    <img
-                      src={project.images[0]}
-                      alt={`Project ${project.name}`}
-                      className="project-image"
-                    />
-                  )}
-                  <div className="project-content">
-                    <h3>{project.name}</h3>
-                    <h5>{project.authors.join(", ")}</h5>
-                    <div className="project-likes">
-                      <FontAwesomeIcon icon={faThumbsUp} />
-                      <span>{project.likes}</span>
-                    </div>
-                    <a
-                      href={`/project/${project._id}`}
-                      className="btn btn-project"
-                    >
-                      View More
-                    </a>
-                  </div>
+        <div className="section-header">
+          <h2>Top Projects</h2>
+          <p>Explore the most popular projects chosen just for you.</p>
+        </div>
+        <div className="project-list">
+          {topProjects.map((project) => (
+            <div key={project._id} className="project-card">
+              <img
+                src={project.images[0]}
+                alt={`Project ${project.name}`}
+                className="project-image"
+              />
+              <div className="project-details">
+                <h3 className="project-title">{project.name}</h3>
+                <p className="project-authors">{project.authors.join(", ")}</p>
+                <div className="project-actions">
+                  <span className="project-likes">
+                    <FontAwesomeIcon icon={faThumbsUp} />
+                    {project.likes}
+                  </span>
+                  <a href={`/project/${project._id}`} className="btn-project">
+                    View Project
+                  </a>
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
-          <div className="col-lg-4"></div>
+          ))}
         </div>
       </div>
     </section>
