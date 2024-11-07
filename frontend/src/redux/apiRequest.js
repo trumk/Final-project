@@ -41,7 +41,7 @@ import {
   updateProjectSuccess,
 } from "./projectSlice";
 import { toast } from "react-toastify";
-import { getNotificationsFailed, getNotificationsStart, getNotificationsSuccess, getUserFailed, getUsersFailed, getUsersStart, getUsersSuccess, getUserStart, getUserSuccess, updateUserFailed, updateUserStart, updateUserSuccess } from "./userSlice";
+import { clearNotificationsFailed, clearNotificationsStart, clearNotificationsSuccess, getNotificationsFailed, getNotificationsStart, getNotificationsSuccess, getUserFailed, getUsersFailed, getUsersStart, getUsersSuccess, getUserStart, getUserSuccess, updateUserFailed, updateUserStart, updateUserSuccess } from "./userSlice";
 import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logoutSuccess, registerFailed, registerStart, registerSuccess } from "./authSlice";
 import { aiRequestFailed, aiRequestStart, aiRequestSuccess, clearAIResponse, clearHistory } from "./aiSlice";
 
@@ -294,6 +294,16 @@ export const markNotificationsAsRead = (userId) => async (dispatch) => {
     });
   } catch (error) {
     console.error("Error marking notifications as read:", error.message);
+  }
+};
+
+export const clearNotifications = (userId) => async (dispatch) => {
+  dispatch(clearNotificationsStart());
+  try {
+    await axios.delete(`${BACKEND_URL}/api/user/${userId}/notifications/clear`);
+    dispatch(clearNotificationsSuccess());
+  } catch (error) {
+    dispatch(clearNotificationsFailed(error.message));
   }
 };
 

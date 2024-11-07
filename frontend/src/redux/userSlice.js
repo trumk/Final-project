@@ -89,6 +89,22 @@ const userSlice = createSlice({
         isRead: true,
       }));
     },
+    clearNotificationsStart: (state) => {
+      state.isFetching = true;
+      state.error = false;
+    },
+    clearNotificationsSuccess: (state) => {
+      state.isFetching = false;
+      state.notifications = [];
+      state.unreadCount = 0;
+      state.error = false;
+      state.msg = "All notifications cleared successfully";
+    },
+    clearNotificationsFailed: (state, action) => {
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to clear notifications";
+    },
   },
 });
 
@@ -109,6 +125,9 @@ export const {
   getNotificationsSuccess,
   getNotificationsFailed,
   markAsRead,
+  clearNotificationsStart,
+  clearNotificationsSuccess,
+  clearNotificationsFailed,
 } = userSlice.actions;
 
 export default userSlice.reducer;

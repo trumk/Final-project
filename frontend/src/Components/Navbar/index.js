@@ -4,11 +4,7 @@ import "./style.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faBell } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../redux/apiRequest";
-import {
-  getNotifications,
-  markNotificationsAsRead,
-} from "../../redux/apiRequest";
+import { logout, getNotifications, markNotificationsAsRead, clearNotifications } from "../../redux/apiRequest";
 import { markAsRead } from "../../redux/userSlice";
 
 function Navbar() {
@@ -55,6 +51,12 @@ function Navbar() {
     }
   };
 
+  const handleClearNotifications = () => {
+    if (currentUser) {
+      dispatch(clearNotifications(currentUser.id));
+    }
+  };
+
   return (
     <>
       <header className="header">
@@ -90,7 +92,6 @@ function Navbar() {
               <ul className="navbar-nav right-nav">
                 {currentUser && (
                   <li className="nav-item position-relative">
-                    {/* Notification Bell with count */}
                     <button
                       className="nav-link"
                       onClick={handleNotificationClick}
@@ -103,18 +104,19 @@ function Navbar() {
                       )}
                     </button>
 
-                    {/* Notification Dropdown */}
                     {showNotifications && (
                       <ul className="notification-dropdown">
                         {notifications?.length > 0 ? (
-                          notifications.map((notif, index) => (
-                            <li key={index} className="notification-item">
-                              <p>
-                               {notif.message}
-                              </p>{" "}
-                              {/* Đảm bảo message hiển thị đúng */}
+                          <>
+                            {notifications.map((notif, index) => (
+                              <li key={index} className="notification-item">
+                                <p>{notif.message}</p>
+                              </li>
+                            ))}
+                            <li className="clear-notifications">
+                            <button onClick={handleClearNotifications} className="clear-notifications-button">Clear Notifications</button>
                             </li>
-                          ))
+                          </>
                         ) : (
                           <li className="notification-item">
                             No new notifications
@@ -171,7 +173,6 @@ function Navbar() {
         </nav>
       </header>
 
-      {/* Modal to confirm logout */}
       {showLogoutModal && (
         <div className="modal-backdrop">
           <div className="modal-content">
