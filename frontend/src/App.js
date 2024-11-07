@@ -17,6 +17,7 @@ import ProtectedRoute from './Components/ProtectedRoute';
 import UserPage from './Pages/admin/User';
 import CommentPage from './Pages/admin/Coment';
 import Profile from './Pages/Guest/[id]/Profile';
+import About from './Pages/Guest/about';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path='/register' element={<Register />} />
             <Route path='/login' element={<Login />} />
             <Route path='/' element={<Homepage />} />
+            <Route path='/about' element={<About />} />
             <Route path='/projects' element={<Projectpage />} />
             <Route path='/project/:id' element={<DetailPage />} />
             <Route path='/profile/:id' element={<Profile />} />
