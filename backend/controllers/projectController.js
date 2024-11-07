@@ -251,16 +251,18 @@ const likeProject = async (req, res) => {
       project.likedUsers.push(senderId);
 
       const adminUsers = await User.find({ role: 'admin' });
-      
+
       for (const admin of adminUsers) {
-        const notification = new Notification({
-          recipient: admin._id,
-          sender: senderId,
-          project: project._id,
-          type: "like",
-          message: `${senderUser.userName} liked project "${project.name}".`,
-        });
-        await notification.save();
+        if (admin._id.toString() !== senderId.toString()) {
+          const notification = new Notification({
+            recipient: admin._id,
+            sender: senderId,
+            project: project._id,
+            type: "like",
+            message: `${senderUser.userName} liked project "${project.name}".`,
+          });
+          await notification.save();
+        }
       }
     } else {
       project.likes -= 1;

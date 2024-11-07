@@ -79,19 +79,16 @@ const loginWithProvider = async (req, res) => {
 
     if (!user) {
       const userName = email.split('@')[0]; 
+      const defaultPassword = await bcrypt.hash(userName, 10);
       console.log("Creating new user with userName:", userName); 
 
       const newUser = {
         userName,
         email,
-        role: "user", 
+        password: defaultPassword, 
+        role: "user",
+        googleId: email, 
       };
-
-      if (providerId === 'google') {
-        newUser.googleId = email;
-      } else if (providerId === 'github') {
-        newUser.githubId = email;
-      }
 
       user = new User(newUser);
       await user.save(); 

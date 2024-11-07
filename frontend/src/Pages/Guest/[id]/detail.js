@@ -8,7 +8,7 @@ import {
   getCommentsByProject,
   getAllProjects,
 } from "../../../redux/apiRequest";
-import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import { faThumbsUp, faEye } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "../../../Components/Navbar";
 import Footer from "../../../Components/Footer";
 import AIChat from "../../../Components/AiChat";
@@ -139,7 +139,7 @@ function DetailPage() {
   };
 
   const renderComments = (parentId = null, parentUserName = "", depth = 0) => {
-    const maxIndent = 4; // Giới hạn độ sâu lề tối đa
+    const maxIndent = 4; 
   
     return comments
       .filter((comment) => comment.parentId === parentId)
@@ -147,7 +147,6 @@ function DetailPage() {
       .map((comment) => {
         const hasReplies = comments.some((c) => c.parentId === comment._id);
         
-        // Kiểm soát độ thụt lề và giới hạn độ rộng tối đa cho các phần tử reply
         const currentDepth = Math.min(depth, maxIndent);
         const marginLeft = `${50 * currentDepth}px`;
   
@@ -158,7 +157,7 @@ function DetailPage() {
             style={{
               display: "flex",
               flexDirection: "column",
-              maxWidth: `calc(100% - ${marginLeft})`, // Giới hạn độ rộng tối đa
+              maxWidth: `calc(100% - ${marginLeft})`, 
               marginLeft,
             }}
           >
@@ -229,6 +228,10 @@ function DetailPage() {
             <div className="main-content">
               <div className="project-details-section">
                 <h1 className="project-title">{project.name}</h1>
+                <div className="project-views">
+                            <FontAwesomeIcon icon={faEye} className="icon" />
+                            <span> {project.views} view(s)</span>
+                          </div>
                 <div className="media-container">
                   {!isVideoSelected && project.images.length > 0 && (
                     <img

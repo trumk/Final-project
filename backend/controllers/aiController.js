@@ -38,7 +38,7 @@ const generatePrompt = async (req, res) => {
       return res.status(400).json({ message: "Prompt is required" });
     }
 
-    const allowedKeywords = ["project", "comment", "comments", "compare", "rate", "evaluate", "description", "about", "views", "view"];
+    const allowedKeywords = ["hi","project", "comment", "comments", "compare", "rate", "evaluate", "description", "about", "views", "view", "department", "semester"];
     const isRelevant = allowedKeywords.some(keyword => userPrompt.toLowerCase().includes(keyword));
 
     if (!isRelevant) {
@@ -78,7 +78,7 @@ const generatePrompt = async (req, res) => {
         populate: { path: 'userId', select: 'userName' },
       });
 
-      projectDetails += "Here are all the projects in the system:\n\n";
+      projectDetails += "Here are all the projects in the website:\n\n";
       projects.forEach((project, index) => {
         projectDetails += `Project ${index + 1}:\n`;
         projectDetails += `Name: ${project.name}\n`;

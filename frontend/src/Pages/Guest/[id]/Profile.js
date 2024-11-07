@@ -82,6 +82,7 @@ function Profile() {
             <h2 className="profile-username">{userProfile.userName}</h2>
             <p className="profile-email">Email: {userProfile.email}</p>
             <p className="profile-role">Role: {userProfile.role}</p>
+            <p className="profile-note">Note: If you logged in via <strong>Google</strong>, your <strong>default password</strong> corresponds to the characters in your email address <strong>before the '@' symbol.</strong></p>
           </div>
         </div>
       </div>

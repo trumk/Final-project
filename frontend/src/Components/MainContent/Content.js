@@ -44,7 +44,7 @@ const MainContent = () => {
                   )}
                   <div className="project-content">
                     <h3>{project.name}</h3>
-                    <h5>- {project.authors} -</h5>
+                    <h5>{project.authors.join(", ")}</h5>
                     <div className="project-likes">
                       <FontAwesomeIcon icon={faThumbsUp} />
                       <span>{project.likes}</span>
@@ -60,7 +60,7 @@ const MainContent = () => {
               ))}
             </div>
           </div>
-          <div className="col-lg-4">{/* Placeholder for custom content */}</div>
+          <div className="col-lg-4"></div>
         </div>
       </div>
     </section>

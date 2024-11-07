@@ -10,7 +10,7 @@ import {
   faThumbsUp,
   faCommentAlt,
   faShare,
-  faEye, // Import icon for views
+  faEye, 
 } from "@fortawesome/free-solid-svg-icons";
 import "./style.css";
 import SearchSortFilter from "../../Components/SearchSortFilter";

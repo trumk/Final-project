@@ -42,6 +42,14 @@
   color: #007bff;
 }
 
+.project-views {
+  font-size: 16px;
+  color: #004f7d;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+
 .project-image {
   width: 70%;
   height: auto;
