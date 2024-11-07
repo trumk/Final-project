@@ -10,6 +10,7 @@ import {
   faThumbsUp,
   faCommentAlt,
   faShare,
+  faEye, // Import icon for views
 } from "@fortawesome/free-solid-svg-icons";
 import "./style.css";
 import SearchSortFilter from "../../Components/SearchSortFilter";
@@ -61,7 +62,7 @@ function Projectpage() {
                       )}
                       <div className="project-info">
                         <h5 className="project-name">{project.name}</h5>
-                        <p className="project-author">By {project.authors}</p>
+                        <p className="project-author">By {project.authors.join(', ')}</p>
                         <div className="project-actions">
                           <div className="action-buttons">
                             <button className="btn btn-link">
@@ -110,6 +111,10 @@ function Projectpage() {
                               )}
                             </div>
                           </div>
+                          <div className="view-count">
+                            <FontAwesomeIcon icon={faEye} className="icon" />
+                            <span> {project.views} view(s)</span>
+                          </div>
                         </div>
                       </div>
                     </a>
@@ -122,7 +127,7 @@ function Projectpage() {
           </div>
         </div>
       </main>
-      <AIChat/>
+      <AIChat />
       <Footer />
     </div>
   );

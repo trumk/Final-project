@@ -6,6 +6,7 @@
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
+  overflow: hidden; 
 }
 
 .project-card a {
@@ -38,9 +39,9 @@
 
 .action-buttons {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center; 
+  gap: 10px;
 }
 
 .action-buttons .btn-link {
@@ -76,7 +77,6 @@
   background-color: #f0f0f0;
 }
 
-/* Position the modal relative to the share button */
 .share-button-wrapper {
   position: relative;
 }
@@ -139,7 +139,10 @@
   background-color: #0056b3;
 }
 
-/* Responsive Design */
+.project-card .view-count {
+  padding-top: 10px;
+}
+
 @media (max-width: 768px) {
   .project-card {
     width: 100%;
@@ -156,21 +159,27 @@
   }
 
   .action-buttons {
-    flex-direction: column; /* Các nút sẽ xếp dọc nhau khi màn hình nhỏ */
-    gap: 10px;
-  }
-
-  .share-modal {
-    width: 100%; /* Modal sẽ chiếm hết chiều rộng */
-    top: -150%;
+    flex-direction: column; 
+    align-items: center; 
   }
 
   .action-buttons .btn-link {
-    padding: 8px 10px;
+    width: 100%; 
+    text-align: center;
+    padding: 8px;
+  }
+
+  .share-modal {
+    width: 90%;
+    top: -150%;
   }
 }
 
 @media (max-width: 480px) {
+  .project-card {
+    padding: 8px;
+  }
+
   .project-name {
     font-size: 1rem;
   }
@@ -180,7 +189,7 @@
   }
 
   .share-modal {
-    top: -100%; /* Điều chỉnh vị trí modal cho màn hình nhỏ */
+    top: -100%; 
     padding: 5px;
   }
 

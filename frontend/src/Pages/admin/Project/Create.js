@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { createProject } from '../../../redux/apiRequest';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'react-quill/dist/quill.snow.css';  // Import CSS của React Quill
-import ReactQuill from 'react-quill';  // Import React Quill
+import 'react-quill/dist/quill.snow.css'; 
+import ReactQuill from 'react-quill';  
 import './style.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,7 +12,7 @@ const CreateProject = () => {
   const navigate = useNavigate();
   
   const [name, setName] = useState('');
-  const [authors, setAuthors] = useState('');
+  const [authors, setAuthors] = useState(['']); // Khởi tạo với một tác giả rỗng
   const [description, setDescription] = useState('');  
   const [semester, setSemester] = useState('Spring'); 
   const [department, setDepartment] = useState('IT');  
@@ -23,12 +23,31 @@ const CreateProject = () => {
     setImages(e.target.files);
   };
 
+  // Xử lý thay đổi của từng trường tác giả
+  const handleAuthorChange = (index, value) => {
+    const newAuthors = [...authors];
+    newAuthors[index] = value;
+    setAuthors(newAuthors);
+  };
+
+  // Thêm trường tác giả mới
+  const addAuthorField = () => {
+    setAuthors([...authors, '']);
+  };
+
+  // Xóa trường tác giả
+  const removeAuthorField = (index) => {
+    const newAuthors = [...authors];
+    newAuthors.splice(index, 1);
+    setAuthors(newAuthors);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
   
     const formData = new FormData();
     formData.append('name', name);
-    formData.append('authors', authors);
+    authors.forEach((author) => formData.append('authors', author));
     formData.append('description', description);  
     formData.append('semester', semester);
     formData.append('department', department);
@@ -62,15 +81,30 @@ const CreateProject = () => {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="authors" className="form-label">Authors</label>
-          <input
-            type="text"
-            id="authors"
-            className="form-control"
-            value={authors}
-            onChange={(e) => setAuthors(e.target.value)}
-            required
-          />
+          <label className="form-label">Authors</label>
+          {authors.map((author, index) => (
+            <div key={index} className="input-group mb-2">
+              <input
+                type="text"
+                className="form-control"
+                value={author}
+                onChange={(e) => handleAuthorChange(index, e.target.value)}
+                required
+              />
+              {authors.length > 1 && (
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => removeAuthorField(index)}
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          ))}
+          <button type="button" className="btn btn-secondary" onClick={addAuthorField}>
+            Add More
+          </button>
         </div>
         <div className="mb-3">
           <label htmlFor="description" className="form-label">Description</label>

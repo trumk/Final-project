@@ -18,6 +18,9 @@ import {
   getCommentsFailed,
   getCommentsStart,
   getCommentsSuccess,
+  getProjectAdminFailed,
+  getProjectAdminStart,
+  getProjectAdminSuccess,
   getProjectFailed,
   getProjectsFailed,
   getProjectsStart,
@@ -55,10 +58,24 @@ export const getAllProjects = () => async (dispatch) => {
   }
 };
 
-export const getProject = (id) => async (dispatch) => {
+export const getProjectForAdmin = (id) => async (dispatch) => {
+  dispatch(getProjectAdminStart());
+  try {
+    const response = await axios.get(`${BACKEND_URL}/api/projects/admin/${id}`);
+    dispatch(getProjectAdminSuccess(response.data));
+  } catch (err) {
+    dispatch(getProjectAdminFailed(err.message));
+  }
+};
+
+export const getProject = (id, userId = null) => async (dispatch) => {
   dispatch(getProjectStart());
   try {
-    const response = await axios.get(`${BACKEND_URL}/api/projects/${id}`);
+    const url = userId 
+      ? `${BACKEND_URL}/api/projects/${id}?userId=${userId}`
+      : `${BACKEND_URL}/api/projects/${id}`;
+    
+    const response = await axios.get(url);
     dispatch(getProjectSuccess(response.data));
   } catch (err) {
     dispatch(getProjectFailed(err.message));

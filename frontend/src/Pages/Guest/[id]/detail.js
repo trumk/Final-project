@@ -34,14 +34,20 @@ function DetailPage() {
   const [openReplies, setOpenReplies] = useState({});
 
   useEffect(() => {
-    dispatch(getProject(id)).then(() => {
-      dispatch(getCommentsByProject(id));
-    });
-
+    if (currentUser) {
+      dispatch(getProject(id, currentUser.id)).then(() => {
+        dispatch(getCommentsByProject(id));
+      });
+    } else {
+      dispatch(getProject(id)).then(() => {
+        dispatch(getCommentsByProject(id));
+      });
+    }
+  
     if (!allProjects) {
       dispatch(getAllProjects());
     }
-  }, [dispatch, id, allProjects]);
+  }, [dispatch, id, allProjects, currentUser]);  
 
   useEffect(() => {
     if (project && currentUser) {

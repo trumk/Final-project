@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
-import { deleteProject, getProject, updateProject } from "../../../../redux/apiRequest";
+import { deleteProject, getProjectForAdmin, updateProject } from "../../../../redux/apiRequest";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-quill/dist/quill.snow.css"; 
 import ReactQuill from "react-quill"; 
@@ -13,7 +13,7 @@ const EditProject = () => {
   const project = useSelector((state) => state.project?.currentProject);
 
   const [name, setName] = useState("");
-  const [authors, setAuthors] = useState("");
+  const [authors, setAuthors] = useState([""]);
   const [description, setDescription] = useState(""); 
   const [semester, setSemester] = useState("Spring");
   const [department, setDepartment] = useState("IT");
@@ -23,13 +23,13 @@ const EditProject = () => {
   const [removedImages, setRemovedImages] = useState(new Set());
 
   useEffect(() => {
-    dispatch(getProject(id));
+    dispatch(getProjectForAdmin(id));
   }, [dispatch, id]);
 
   useEffect(() => {
     if (project) {
       setName(project.name);
-      setAuthors(project.authors);
+      setAuthors(project.authors || [""]);
       setDescription(project.description);
       setSemester(project.semester || "Spring");
       setDepartment(project.department || "IT");
@@ -40,12 +40,10 @@ const EditProject = () => {
 
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
-    const filePreviews = files.map((file) => {
-      return {
-        file: file,
-        preview: URL.createObjectURL(file),
-      };
-    });
+    const filePreviews = files.map((file) => ({
+      file: file,
+      preview: URL.createObjectURL(file),
+    }));
     setNewImages((prevImages) => [...prevImages, ...filePreviews]);
   };
 
@@ -66,12 +64,28 @@ const EditProject = () => {
     });
   };
 
+  const handleAuthorChange = (index, value) => {
+    const newAuthors = [...authors];
+    newAuthors[index] = value;
+    setAuthors(newAuthors);
+  };
+
+  const addAuthorField = () => {
+    setAuthors([...authors, ""]);
+  };
+
+  const removeAuthorField = (index) => {
+    const newAuthors = [...authors];
+    newAuthors.splice(index, 1);
+    setAuthors(newAuthors);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
     const formData = new FormData();
     formData.append("name", name);
-    formData.append("authors", authors);
+    authors.forEach((author) => formData.append("authors", author));
     formData.append("description", description);
     formData.append("semester", semester);
     formData.append("department", department);
@@ -118,9 +132,7 @@ const EditProject = () => {
       <h1 className="mb-4">Edit Project</h1>
       <form onSubmit={handleSubmit} className="form">
         <div className="mb-3">
-          <label htmlFor="name" className="form-label">
-            Name
-          </label>
+          <label htmlFor="name" className="form-label">Name</label>
           <input
             type="text"
             id="name"
@@ -131,22 +143,33 @@ const EditProject = () => {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="authors" className="form-label">
-            Authors
-          </label>
-          <input
-            type="text"
-            id="authors"
-            className="form-control"
-            value={authors}
-            onChange={(e) => setAuthors(e.target.value)}
-            required
-          />
+          <label className="form-label">Authors</label>
+          {authors.map((author, index) => (
+            <div key={index} className="input-group mb-2">
+              <input
+                type="text"
+                className="form-control"
+                value={author}
+                onChange={(e) => handleAuthorChange(index, e.target.value)}
+                required
+              />
+              {authors.length > 1 && (
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => removeAuthorField(index)}
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          ))}
+          <button type="button" className="btn btn-secondary" onClick={addAuthorField}>
+            Add More
+          </button>
         </div>
         <div className="mb-3">
-          <label htmlFor="description" className="form-label">
-            Description
-          </label>
+          <label htmlFor="description" className="form-label">Description</label>
           <ReactQuill
             value={description}
             onChange={setDescription}
@@ -155,9 +178,7 @@ const EditProject = () => {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="semester" className="form-label">
-            Semester
-          </label>
+          <label htmlFor="semester" className="form-label">Semester</label>
           <select
             id="semester"
             className="form-control"
@@ -171,9 +192,7 @@ const EditProject = () => {
           </select>
         </div>
         <div className="mb-3">
-          <label htmlFor="department" className="form-label">
-            Department
-          </label>
+          <label htmlFor="department" className="form-label">Department</label>
           <select
             id="department"
             className="form-control"
@@ -187,9 +206,7 @@ const EditProject = () => {
           </select>
         </div>
         <div className="mb-3">
-          <label htmlFor="videoUrl" className="form-label">
-            Video URL (Optional)
-          </label>
+          <label htmlFor="videoUrl" className="form-label">Video URL (Optional)</label>
           <input
             type="url"
             id="videoUrl"
@@ -200,135 +217,41 @@ const EditProject = () => {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="images" className="form-label">
-            Images
-          </label>
+          <label htmlFor="images" className="form-label">Images</label>
+          {/* Existing images */}
           <div style={{ display: "flex", flexWrap: "wrap" }}>
             {images.map((image, index) => (
-              <div
-                key={index}
-                style={{
-                  position: "relative",
-                  marginRight: "10px",
-                  marginBottom: "10px",
-                }}
-              >
+              <div key={index} style={{ position: "relative", marginRight: "10px", marginBottom: "10px" }}>
                 <img
                   src={image}
                   alt={`image-${index}`}
-                  style={{
-                    width: "100px",
-                    height: "100px",
-                    objectFit: "cover",
-                    border: "1px solid #ddd",
-                    borderRadius: "8px",
-                    transition: "transform 0.2s ease-in-out",
-                  }}
-                  className="image-preview"
+                  style={{ width: "100px", height: "100px", objectFit: "cover", border: "1px solid #ddd", borderRadius: "8px" }}
                 />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(image)}
-                  style={{
-                    position: "absolute",
-                    top: "0",
-                    right: "0",
-                    backgroundColor: "red",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "50%",
-                    width: "20px",
-                    height: "20px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "pointer",
-                  }}
-                >
+                <button type="button" onClick={() => handleRemoveImage(image)} style={{ position: "absolute", top: "0", right: "0", backgroundColor: "red", color: "white", border: "none", borderRadius: "50%", width: "20px", height: "20px" }}>
                   -
                 </button>
               </div>
             ))}
             {newImages.map((image, index) => (
-              <div
-                key={`new-${index}`}
-                style={{
-                  position: "relative",
-                  marginRight: "10px",
-                  marginBottom: "10px",
-                }}
-              >
+              <div key={`new-${index}`} style={{ position: "relative", marginRight: "10px", marginBottom: "10px" }}>
                 <img
                   src={image.preview}
                   alt={`new-image-${index}`}
-                  style={{
-                    width: "100px",
-                    height: "100px",
-                    objectFit: "cover",
-                    border: "1px solid #ddd",
-                    borderRadius: "8px",
-                    transition: "transform 0.2s ease-in-out",
-                  }}
-                  className="image-preview"
+                  style={{ width: "100px", height: "100px", objectFit: "cover", border: "1px solid #ddd", borderRadius: "8px" }}
                 />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveNewImage(index)}
-                  style={{
-                    position: "absolute",
-                    top: "0",
-                    right: "0",
-                    backgroundColor: "red",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "50%",
-                    width: "20px",
-                    height: "20px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "pointer",
-                  }}
-                >
+                <button type="button" onClick={() => handleRemoveNewImage(index)} style={{ position: "absolute", top: "0", right: "0", backgroundColor: "red", color: "white", border: "none", borderRadius: "50%", width: "20px", height: "20px" }}>
                   -
                 </button>
               </div>
             ))}
-
-            <label
-              htmlFor="newImages"
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100px",
-                height: "100px",
-                border: "1px solid #ddd",
-                cursor: "pointer",
-                backgroundColor: "#f8f9fa",
-              }}
-            >
-              <input
-                type="file"
-                id="newImages"
-                multiple
-                style={{ display: "none" }}
-                onChange={handleFileChange}
-              />
+            <label htmlFor="newImages" style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100px", height: "100px", border: "1px solid #ddd", cursor: "pointer", backgroundColor: "#f8f9fa" }}>
+              <input type="file" id="newImages" multiple style={{ display: "none" }} onChange={handleFileChange} />
               <span style={{ color: "#6c757d" }}>Upload more</span>
             </label>
           </div>
         </div>
-        <button type="submit" className="btn btn-primary me-2">
-          Update Project
-        </button>
-        <button
-          type="button"
-          className="btn btn-danger btn-sm"
-          onClick={handleDelete}
-        >
-          Delete
-        </button>
+        <button type="submit" className="btn btn-primary me-2">Update Project</button>
+        <button type="button" className="btn btn-danger btn-sm" onClick={handleDelete}>Delete</button>
       </form>
     </div>
   );

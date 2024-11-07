@@ -37,6 +37,19 @@ const projectSlice = createSlice({
       state.error = true;
       state.msg = action.payload || "Failed to fetch the project";
     },
+    getProjectAdminStart: (state) => {
+      state.isFetching = true;
+    },
+    getProjectAdminSuccess: (state, action) => {
+      state.isFetching = false;
+      state.currentProject = action.payload;
+      state.error = false;
+    },
+    getProjectAdminFailed: (state, action) => {
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to fetch the project";
+    },
     searchProjectsStart: (state) => {
       state.isFetching = true;
     },
@@ -180,6 +193,9 @@ export const {
   getProjectStart,
   getProjectSuccess,
   getProjectFailed,
+  getProjectAdminStart,
+  getProjectAdminSuccess,
+  getProjectAdminFailed,
   searchProjectsStart,
   searchProjectsSuccess,
   searchProjectsFailed,

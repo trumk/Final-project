@@ -34,15 +34,43 @@ const getAllProjects = async (req, res) => {
 
 const getOneProject = async (req, res) => {
   try {
-    const project = await Project.findById(req.params.id);
+    const projectId = req.params.id;
+    const userId = req.query.userId; 
+
+    const project = await Project.findById(projectId);
+    
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
+
+    if (userId && !project.viewedByUsers.includes(userId)) {
+      project.views += 1;
+      project.viewedByUsers.push(userId);
+      await project.save();
+    }
+
     res.status(200).json(project);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch the project", error });
   }
 };
+
+const getOneProjectForAdmin = async (req, res) => {
+  try {
+    const projectId = req.params.id;
+
+    const project = await Project.findById(projectId); 
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    res.status(200).json(project);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch the project", error });
+  }
+};
+
 
 const createProject = async (req, res) => {
   try {
@@ -397,6 +425,7 @@ const filterProjects = async (req, res) => {
 module.exports = {
   getAllProjects,
   getOneProject,
+  getOneProjectForAdmin,
   createProject,
   updateProject,
   deleteProject,

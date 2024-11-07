@@ -20,6 +20,7 @@ router.get('/:projectId/comments', projectController.getCommentsByProject);
 // CRUD for Projects
 router.get('/', projectController.getAllProjects);
 router.get('/:id', projectController.getOneProject); 
+router.get('/admin/:id', projectController.getOneProjectForAdmin); 
 router.put('/:id', upload.array('images', 5), projectController.updateProject);
 router.delete('/:id', projectController.deleteProject);
 router.post('/', upload.array('images', 5), projectController.createProject);
