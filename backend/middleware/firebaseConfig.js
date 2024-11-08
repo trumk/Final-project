@@ -92,48 +92,43 @@ const setCooPHeaders = (req, res, next) => {
 const mongodumpPath =
   "C:\\Users\\nguye\\Downloads\\mongodb-database-tools-windows-x86_64-100.10.0\\mongodb-database-tools-windows-x86_64-100.10.0\\bin\\mongodump.exe";
 
-const backupDatabaseToFirebase = async () => {
-  const backupFileName = `backup-${Date.now()}.gz`;
-  const backupPath = `./${backupFileName}`;
-  const mongoUrl = process.env.MONGO_URL; // Lấy URL từ biến môi trường
-
-  try {
-    // Thực hiện backup với mongodump và URL từ .env
-    await execPromise(`${mongodumpPath} --uri="${mongoUrl}" --archive=${backupPath} --gzip`);
-
-    // Đọc file backup vừa tạo
-    const fileBuffer = fs.readFileSync(backupPath);
-
-    // Tải file lên Firebase Storage
-    const firebaseFile = bucket.file(`backups/${backupFileName}`);
-    const downloadToken = uuidv4();
-
-    await firebaseFile.save(fileBuffer, {
-      metadata: {
-        contentType: "application/gzip",
+  const backupDatabaseToFirebase = async () => {
+    const backupFileName = `backup-${Date.now()}.gz`;
+    const backupPath = `./${backupFileName}`;
+    const mongoUrl = process.env.MONGO_URL; 
+  
+    try {
+      await execPromise(`${mongodumpPath} --uri="${mongoUrl}" --archive=${backupPath} --gzip`);
+  
+      const fileBuffer = fs.readFileSync(backupPath);
+  
+      const firebaseFile = bucket.file(`backups/${backupFileName}`);
+      const downloadToken = uuidv4();
+  
+      await firebaseFile.save(fileBuffer, {
         metadata: {
-          firebaseStorageDownloadTokens: downloadToken,
+          contentType: "application/gzip",
+          metadata: {
+            firebaseStorageDownloadTokens: downloadToken,
+          },
         },
-      },
-    });
-
-    // Xóa file backup khỏi hệ thống sau khi tải lên Firebase Storage
-    fs.unlinkSync(backupPath);
-
-    // Tạo URL công khai cho file backup
-    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
-      bucket.name
-    }/o/${encodeURIComponent(
-      `backups/${backupFileName}`
-    )}?alt=media&token=${downloadToken}`;
-
-    console.log("Backup thành công và đã tải lên Firebase:", publicUrl);
-    return publicUrl;
-  } catch (error) {
-    console.error("Lỗi khi backup và tải lên Firebase:", error);
-    throw new Error("Backup thất bại");
-  }
-};
+      });
+  
+      fs.unlinkSync(backupPath);
+  
+      const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
+        bucket.name
+      }/o/${encodeURIComponent(
+        `backups/${backupFileName}`
+      )}?alt=media&token=${downloadToken}`;
+  
+      console.log("Backup successfully created and uploaded to Firebase:", publicUrl);
+      return publicUrl;
+    } catch (error) {
+      console.error("Error during backup and upload to Firebase:", error);
+      throw new Error("Backup failed");
+    }
+  };  
 
 // Xuất các hàm và cấu hình
 module.exports = {
