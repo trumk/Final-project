@@ -7,6 +7,7 @@ const projectRoutes = require('../routes/projectRoutes');
 const authRoutes = require('../routes/authRoutes')
 const userRoutes = require('../routes/userRoutes')
 const aiRoutes = require('../routes/aiRoutes');
+const backupRoute = require('../routes/backupRoute');
 
 const app = express();
 
@@ -34,3 +35,4 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/backup', backupRoute);

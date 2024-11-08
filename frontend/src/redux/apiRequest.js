@@ -44,6 +44,7 @@ import { toast } from "react-toastify";
 import { clearNotificationsFailed, clearNotificationsStart, clearNotificationsSuccess, getNotificationsFailed, getNotificationsStart, getNotificationsSuccess, getUserFailed, getUsersFailed, getUsersStart, getUsersSuccess, getUserStart, getUserSuccess, updateUserFailed, updateUserStart, updateUserSuccess } from "./userSlice";
 import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logoutSuccess, registerFailed, registerStart, registerSuccess } from "./authSlice";
 import { aiRequestFailed, aiRequestStart, aiRequestSuccess, clearAIResponse, clearHistory } from "./aiSlice";
+import { backupRequestFailed, backupRequestStart, backupRequestSuccess } from "./backupSlice";
 
 const BACKEND_URL = "http://localhost:5000";
 
@@ -381,5 +382,15 @@ export const aiChat = (prompt, userId) => async (dispatch) => {
     dispatch(aiRequestSuccess({ response: response.data.text, prompt }));
   } catch (error) {
     dispatch(aiRequestFailed(error.response?.data?.message || "Failed to fetch AI response"));
+  }
+};
+
+export const initiateBackup = () => async (dispatch) => {
+  dispatch(backupRequestStart());
+  try {
+    const response = await axios.post(`${BACKEND_URL}/api/backup`);
+    dispatch(backupRequestSuccess(response.data)); 
+  } catch (error) {
+    dispatch(backupRequestFailed(error.response?.data?.message || "Backup failed"));
   }
 };

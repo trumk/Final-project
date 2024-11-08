@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllComments, getAllProjects, getAllUsers, logout } from '../../redux/apiRequest';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faProjectDiagram, faUser, faComments, faPlus, faSignOutAlt, faCog } from '@fortawesome/free-solid-svg-icons';
+import { faProjectDiagram, faUser, faComments, faPlus, faSignOutAlt, faCog, faDatabase  } from '@fortawesome/free-solid-svg-icons';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -128,6 +128,9 @@ const Dashboard = () => {
               </button>
               <button className="btn btn-secondary mb-2 me-2">Manage Users</button>
               <button className="btn btn-danger mb-2">Settings</button>
+              <button className="btn btn-warning" onClick={() => navigate('/admin/backup')}>
+                <FontAwesomeIcon icon={faDatabase} /> Backup Database
+              </button>
             </div>
           </div>
         </div>

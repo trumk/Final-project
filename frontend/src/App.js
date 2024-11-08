@@ -19,6 +19,7 @@ import CommentPage from './Pages/admin/Coment';
 import Profile from './Pages/Guest/[id]/Profile';
 import About from './Pages/Guest/about';
 import Contact from './Pages/Guest/contact';
+import BackupPage from './Pages/admin/Backup';
 
 function App() {
   return (
@@ -48,6 +49,14 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="admin">
                   <ProjectPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path='/admin/backup'
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <BackupPage />
                 </ProtectedRoute>
               }
             />

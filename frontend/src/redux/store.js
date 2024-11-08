@@ -5,6 +5,7 @@ import projectReducer from './projectSlice';
 import userReducer from './userSlice';
 import authReducer from './authSlice'
 import aiReducer from './aiSlice'
+import backupReducer from './backupSlice'
 
 
 const persistConfig = {
@@ -17,7 +18,8 @@ const rootReducer = combineReducers({
   project: projectReducer,
   user: userReducer,
   auth: authReducer,
-  ai: aiReducer
+  ai: aiReducer,
+  backup: backupReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
