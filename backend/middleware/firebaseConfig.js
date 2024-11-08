@@ -5,7 +5,9 @@ const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const { exec } = require("child_process");
 const fs = require("fs");
+const BSON = require("bson");
 const util = require("util");
+const archiver = require("archiver");
 
 const execPromise = util.promisify(exec);
 
@@ -75,7 +77,7 @@ const verifyFirebaseToken = async (req, res, next) => {
 
   try {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
-    req.user = decodedToken; // Gán thông tin người dùng từ Firebase token
+    req.user = decodedToken; 
     next();
   } catch (error) {
     console.error("Token verification failed:", error);
@@ -83,52 +85,68 @@ const verifyFirebaseToken = async (req, res, next) => {
   }
 };
 
-// Thiết lập CORS Headers
-const setCooPHeaders = (req, res, next) => {
-  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
-  next();
-};
-
 const mongodumpPath =
   "C:\\Users\\nguye\\Downloads\\mongodb-database-tools-windows-x86_64-100.10.0\\mongodb-database-tools-windows-x86_64-100.10.0\\bin\\mongodump.exe";
 
-  const backupDatabaseToFirebase = async () => {
-    const backupFileName = `backup-${Date.now()}.gz`;
-    const backupPath = `./${backupFileName}`;
-    const mongoUrl = process.env.MONGO_URL; 
-  
-    try {
-      await execPromise(`${mongodumpPath} --uri="${mongoUrl}" --archive=${backupPath} --gzip`);
-  
-      const fileBuffer = fs.readFileSync(backupPath);
-  
-      const firebaseFile = bucket.file(`backups/${backupFileName}`);
-      const downloadToken = uuidv4();
-  
-      await firebaseFile.save(fileBuffer, {
-        metadata: {
-          contentType: "application/gzip",
-          metadata: {
-            firebaseStorageDownloadTokens: downloadToken,
-          },
-        },
+const backupDatabaseToFirebase = async () => {
+  const backupDir = `./backup-${Date.now()}`;
+  const zipFileName = `backup-${Date.now()}.zip`;
+  const zipFilePath = `./${zipFileName}`;
+  const mongoUrl = process.env.MONGO_URL;
+
+  try {
+    await execPromise(
+      `${mongodumpPath} --uri="${mongoUrl}" --out=${backupDir}`
+    );
+
+    await new Promise((resolve, reject) => {
+      const output = fs.createWriteStream(zipFilePath);
+      const archive = archiver("zip", {
+        zlib: { level: 9 },
       });
-  
-      fs.unlinkSync(backupPath);
-  
-      const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
-        bucket.name
-      }/o/${encodeURIComponent(
-        `backups/${backupFileName}`
-      )}?alt=media&token=${downloadToken}`;
-  
-      console.log("Backup successfully created and uploaded to Firebase:", publicUrl);
-      return publicUrl;
-    } catch (error) {
-      console.error("Error during backup and upload to Firebase:", error);
-      throw new Error("Backup failed");
-    }
-  };  
+
+      output.on("close", resolve);
+      archive.on("error", reject);
+
+      archive.pipe(output);
+      archive.directory(backupDir, false);
+      archive.finalize();
+    });
+
+    const fileBuffer = fs.readFileSync(zipFilePath);
+
+    const firebaseFile = bucket.file(`backups/${zipFileName}`);
+    const downloadToken = uuidv4();
+
+    await firebaseFile.save(fileBuffer, {
+      metadata: {
+        contentType: "application/zip",
+        metadata: {
+          firebaseStorageDownloadTokens: downloadToken,
+        },
+      },
+    });
+
+    fs.unlinkSync(zipFilePath);
+    fs.rmSync(backupDir, { recursive: true, force: true });
+
+    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
+      bucket.name
+    }/o/${encodeURIComponent(
+      `backups/${zipFileName}`
+    )}?alt=media&token=${downloadToken}`;
+
+    console.log(
+      "Backup successfully created and uploaded to Firebase:",
+      publicUrl
+    );
+    return publicUrl;
+  } catch (error) {
+    console.error("Error during backup and upload to Firebase:", error);
+    throw new Error("Backup failed");
+  }
+};
+
 
 module.exports = {
   admin,
@@ -136,6 +154,5 @@ module.exports = {
   upload,
   uploadFileToFirebase,
   verifyFirebaseToken,
-  setCooPHeaders,
-  backupDatabaseToFirebase, 
+  backupDatabaseToFirebase,
 };
