@@ -61,7 +61,7 @@ const generatePrompt = async (req, res) => {
         });
 
       if (mostLikedProject) {
-        projectDetails += `The project with the most likes is "${mostLikedProject.name} " with ${mostLikedProject.likes} likes.\n`; // Add space after project name
+        projectDetails += `The project with the most like is "${mostLikedProject.name} " with ${mostLikedProject.likes} likes.\n`; 
       } else {
         projectDetails += "No projects found.\n";
       }

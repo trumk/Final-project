@@ -126,8 +126,6 @@ const Dashboard = () => {
                 <FontAwesomeIcon icon={faPlus} />{' '}
                 <a href='/admin/project/create' className="text-white">Add new project</a>
               </button>
-              <button className="btn btn-secondary mb-2 me-2">Manage Users</button>
-              <button className="btn btn-danger mb-2 me-2">Settings</button>
               <button className="btn btn-warning mb-2" onClick={() => navigate('/admin/backup')}>
                 <FontAwesomeIcon icon={faDatabase} /> Backup Database
               </button>
