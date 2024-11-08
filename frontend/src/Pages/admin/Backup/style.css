@@ -1,27 +1,131 @@
+/* Đặt kiểu nền và căn giữa nội dung chính */
 .backup-page {
-    padding: 20px;
-    max-width: 600px;
-    margin: auto;
-    text-align: center;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f5f7fa;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+/* Tiêu đề trang */
+.backup-page h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* Mô tả bên dưới tiêu đề */
+.backup-page p {
+  color: #555;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+/* Nút quay lại */
+.backup-page .btn-primary.mb-2 {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.backup-page .btn-primary.mb-2 a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.backup-page .btn-primary.mb-2:hover {
+  background-color: #0056b3;
+}
+
+/* Nút Backup */
+.backup-page .btn-primary {
+  background-color: #28a745;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.backup-page .btn-primary:hover {
+  background-color: #218838;
+}
+
+.backup-page .btn-primary:disabled {
+  background-color: #b3e3c6;
+  cursor: not-allowed;
+}
+
+/* Thông báo */
+.alert {
+  padding: 15px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 5px;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* Thông báo thành công */
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* Thông báo lỗi */
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Liên kết tải về */
+.alert a {
+  color: #007bff;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.alert a:hover {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+/* Hiệu ứng toàn trang */
+.backup-page button, .backup-page a {
+  cursor: pointer;
+  text-align: center;
+}
+
+.backup-page .container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
   .backup-page h2 {
-    font-size: 2rem;
-    color: #343a40;
+    font-size: 1.8rem;
   }
-  
+
   .backup-page p {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
+    font-size: 1rem;
   }
-  
+
   .backup-page .btn-primary {
-    font-size: 1rem;
-    padding: 10px 20px;
+    font-size: 0.9rem;
   }
-  
-  .alert {
-    font-size: 1rem;
-    margin-top: 20px;
-  }
-  
+}
