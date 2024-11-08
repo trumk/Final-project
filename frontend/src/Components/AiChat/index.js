@@ -44,6 +44,7 @@ function AIChat() {
 
   const formatResponse = (text) => {
     return text
+      .replace(/\*\*(.*?)\*\*/g, "$1") 
       .replace(/\*\s*/g, "")
       .replace(/([A-Za-z\s]+):/g, "$1: ")
       .replace(/([a-z])([A-Z])/g, "$1 $2")

@@ -86,7 +86,7 @@ const generatePrompt = async (req, res) => {
         if (project.comments.length > 0) {
           projectDetails += `Comments:\n`;
           project.comments.forEach((comment, idx) => {
-            projectDetails += `  Comment ${idx + 1} by ${comment.userId?.userName || "Anonymous"}: ${comment.comment} \n`; // Space added here
+            projectDetails += `  Comment ${idx + 1} by ${comment.userId?.userName || "Anonymous"}: ${comment.comment} \n`; 
           });
         }
         projectDetails += "\n";
