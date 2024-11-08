@@ -61,7 +61,7 @@ const generatePrompt = async (req, res) => {
         });
 
       if (mostLikedProject) {
-        projectDetails += `The project with the most likes is "${mostLikedProject.name} " with ${mostLikedProject.likes} likes.\n`; // thêm khoảng trắng cuối tên dự án
+        projectDetails += `The project with the most likes is "${mostLikedProject.name} " with ${mostLikedProject.likes} likes.\n`; // Add space after project name
       } else {
         projectDetails += "No projects found.\n";
       }
@@ -74,19 +74,19 @@ const generatePrompt = async (req, res) => {
 
       projectDetails += "Here are all the projects on the website:\n\n";
       projects.forEach((project) => {
-        projectDetails += `Name: ${project.name} \n`; // thêm khoảng trắng cuối tên dự án
+        projectDetails += `Name: ${project.name} \n`; 
         projectDetails += `Authors: ${project.authors.join(", ")}\n`;
-        projectDetails += `Description: ${project.description}\n`;
-        projectDetails += `Semester: ${project.semester}\n`;
-        projectDetails += `Department: ${project.department}\n`;
-        projectDetails += `Likes: ${project.likes}\n`;
-        projectDetails += `Number of Comments: ${project.comments.length}\n`;
-        projectDetails += `Views: ${project.views}\n`;
+        projectDetails += `Description: ${project.description} \n`; 
+        projectDetails += `Semester: ${project.semester} \n`;
+        projectDetails += `Department: ${project.department} \n`; 
+        projectDetails += `Likes: ${project.likes} \n`; 
+        projectDetails += `Number of Comments: ${project.comments.length} \n`;
+        projectDetails += `Views: ${project.views} \n`; 
 
         if (project.comments.length > 0) {
           projectDetails += `Comments:\n`;
           project.comments.forEach((comment, idx) => {
-            projectDetails += `  Comment ${idx + 1} by ${comment.userId?.userName || "Anonymous"}: ${comment.comment}\n`;
+            projectDetails += `  Comment ${idx + 1} by ${comment.userId?.userName || "Anonymous"}: ${comment.comment} \n`; // Space added here
           });
         }
         projectDetails += "\n";
@@ -111,7 +111,6 @@ const generatePrompt = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 async function clearChatHistory(userId) {
   try {
