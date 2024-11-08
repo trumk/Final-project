@@ -5,7 +5,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { faFaceSmile } from '@fortawesome/free-regular-svg-icons'; 
 import './style.css'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getOneUser, login, loginWithProvider } from '../../redux/apiRequest';
+import { login, loginWithProvider } from '../../redux/apiRequest';
 import { useDispatch } from 'react-redux';
 
 function Login() {
