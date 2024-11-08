@@ -18,10 +18,8 @@ function Login() {
   const handleGoogleLogin = () => {
     signInWithPopup(auth, googleProvider)
       .then((result) => {
-        console.log(result); 
         const email = result.user.email;
         const providerId = 'google';
-  
         loginWithProvider(email, providerId, dispatch, navigate);
       })
       .catch((error) => {
@@ -29,15 +27,19 @@ function Login() {
       });
   };
 
-  const handleLogin = async () => {
-    try {
-      const user = { email, password };
-      await login(user, dispatch, navigate);  
-      await getOneUser(dispatch);    
-      navigate("/");                
-    } catch (error) {
-      console.error("Error during login:", error);
-      setErrorMessage("Login failed");
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    
+    if (!email || !password) {
+      setErrorMessage("Please fill in all fields.");
+      return;
+    }
+    
+    const user = { email, password };
+    const success = await login(user, dispatch, navigate); // Nhận kết quả đăng nhập
+    
+    if (!success) {
+      setErrorMessage("Incorrect email or password. Please try again.");
     }
   };
   
@@ -50,7 +52,7 @@ function Login() {
     <div className="login-container">
       <div className="login-box">
         <div className="welcome-section">
-          <h1>Welcome! <FontAwesomeIcon icon={faFaceSmile}/></h1>
+          <h1>Welcome! <FontAwesomeIcon icon={faFaceSmile} /></h1>
           <p>Hi! Please login to access your account</p>
         </div>
         <div className="login-form">

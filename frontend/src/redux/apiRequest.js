@@ -151,23 +151,22 @@ export const login = async (user, dispatch, navigate) => {
     if (res.data && res.data.user) {
       console.log("User role:", res.data.user.role); 
       dispatch(loginSuccess(res.data.user));
-      
+
       if (res.data.user.role === 'admin') {
-        setTimeout(() => {
-          navigate('/admin');
-        }, 30);  
+        navigate('/admin');
       } else {
-        setTimeout(() => {
-          navigate('/');
-        }, 30);  
+        navigate('/');
       }
+      
       toast.success("Login successfully");
+      return true; 
     } else {
       throw new Error("No user data returned");
     }
   } catch (err) {
     dispatch(loginFailed(err.message || "Failed to login"));
-    console.error(err);
+    console.error("Login error:", err);
+    return false; 
   }
 };
 

@@ -24,6 +24,17 @@
   margin-bottom: 20px;
 }
 
+@media (max-width: 768px) {
+  /* Stacks the main content on top of each other */
+  .main-content {
+    flex-direction: column;
+  }
+
+  .project-details-section {
+    flex: 1;
+  }
+}
+
 /* Project details section */
 .project-details-section {
   flex: 0 0 60%;
@@ -49,9 +60,8 @@
   text-align: left;
 }
 
-
 .project-image {
-  width: 70%;
+  width: 100%;
   height: auto;
   margin: 20px auto;
   display: block;
@@ -59,16 +69,28 @@
   object-fit: cover;
 }
 
+@media (max-width: 480px) {
+  .project-title {
+    font-size: 1.5em;
+  }
+
+  .project-description {
+    font-size: 1em;
+  }
+}
+
+/* Image Previews */
 .image-previews {
   display: flex;
   justify-content: center;
   margin-top: 10px;
+  flex-wrap: wrap;
 }
 
 .preview-image {
   width: 70px;
   height: 70px;
-  margin-right: 10px;
+  margin: 5px;
   border-radius: 4px;
   cursor: pointer;
   object-fit: cover;
@@ -81,6 +103,13 @@
 
 .preview-image.active {
   border: 2px solid #007bff;
+}
+
+@media (max-width: 480px) {
+  .preview-image {
+    width: 50px;
+    height: 50px;
+  }
 }
 
 .project-author {
@@ -96,6 +125,7 @@
   margin-bottom: 25px;
 }
 
+/* Like Button */
 .like-button {
   padding: 12px 24px;
   background-color: #acb5ae;
@@ -117,6 +147,7 @@
   transform: translateY(-2px);
 }
 
+/* Loading Message */
 .loading-message {
   text-align: center;
   font-size: 1.5em;
@@ -125,6 +156,7 @@
   font-weight: bold;
 }
 
+/* Buttons */
 button {
   outline: none;
   cursor: pointer;
@@ -135,9 +167,10 @@ button:disabled {
   background-color: #cccccc;
 }
 
+/* Comment Section */
 .comment-section-container {
   width: 100%;
-  margin: 20px auto 20px 0; 
+  margin: 20px auto;
   padding: 20px;
   background-color: #ffffff;
   border-radius: 8px;
@@ -149,6 +182,12 @@ button:disabled {
   font-weight: bold;
   color: #333;
   margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .comment-section-container h3 {
+    font-size: 1.2em;
+  }
 }
 
 .comment-form {
@@ -187,9 +226,9 @@ button:disabled {
 }
 
 .comment-item {
-  display: block; 
+  display: block;
   margin-bottom: 15px;
-  margin-left: 0; 
+  margin-left: 0;
 }
 
 .reply-form {
@@ -248,7 +287,7 @@ button:disabled {
 }
 
 .reply-item {
-  max-width: 95%; 
+  max-width: 95%;
   overflow: hidden;
 }
 
@@ -268,11 +307,11 @@ button:disabled {
   background-color: #f0f2f5;
   padding: 10px 15px;
   border-radius: 18px;
-  max-width: 100%; 
+  max-width: 100%;
 }
 
 .reply-item .comment-body {
-  background-color: #e4e6eb; 
+  background-color: #e4e6eb;
 }
 
 .comment-info {
@@ -344,54 +383,51 @@ button:disabled {
 }
 
 .related-projects-section h3 {
-  font-size: 2em;
-  font-weight: bold;
+  font-size: 1.8em;
   color: #007bff;
-  margin-bottom: 20px;
   text-align: center;
 }
 
 .related-projects-list {
   display: flex;
-  overflow-x: auto; 
+  overflow-x: auto;
   gap: 20px;
-  padding-bottom: 10px;
-  scrollbar-color: #007bff #f4f4f9;
-  scrollbar-width: thin;
-}
-
-.related-projects-list::-webkit-scrollbar {
-  height: 10px; 
-}
-
-.related-projects-list::-webkit-scrollbar-track {
-  background: #f4f4f9;
-}
-
-.related-projects-list::-webkit-scrollbar-thumb {
-  background-color: #007bff;
-  border-radius: 10px;
 }
 
 .related-project-card {
-  background-color: white;
+  background-color: rgb(207, 235, 231);
   padding: 20px;
   border-radius: 12px;
   width: 300px;
   height: 400px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s, box-shadow 0.3s;
+  flex-shrink: 0;
   text-align: center;
-  flex-shrink: 0; 
 }
 
-#root > div > div.related-projects-section > div > div > a{
+.related-project-card a {
   text-decoration: none;
+  color: inherit; 
 }
 
-.related-project-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+@media (max-width: 1024px) {
+  .related-project-card {
+    width: 280px;
+  }
+}
+
+@media (max-width: 768px) {
+  .related-project-card {
+    width: 250px;
+    height: 350px;
+  }
+}
+
+@media (max-width: 480px) {
+  .related-project-card {
+    width: 100%;
+    height: auto;
+  }
 }
 
 .related-project-card img {
@@ -414,34 +450,15 @@ button:disabled {
   color: #666;
 }
 
-@media (max-width: 1024px) {
-  .related-project-card {
-    width: 280px;
-  }
-
-  .related-project-card img {
-    height: 200px;
-  }
+.related-projects-list::-webkit-scrollbar {
+  height: 10px;
 }
 
-@media (max-width: 768px) {
-  .related-project-card {
-    width: 250px;
-    height: 350px;
-  }
-
-  .related-project-card img {
-    height: 200px;
-  }
+.related-projects-list::-webkit-scrollbar-track {
+  background: #f4f4f9;
 }
 
-@media (max-width: 480px) {
-  .related-project-card {
-    width: 100%;
-    height: 350px;
-  }
-
-  .related-project-card img {
-    height: 220px;
-  }
+.related-projects-list::-webkit-scrollbar-thumb {
+  background-color: #007bff;
+  border-radius: 10px;
 }

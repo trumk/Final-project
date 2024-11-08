@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { faFaceSmile } from "@fortawesome/free-regular-svg-icons";
+import { faFaceSmile, faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import "./register.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { register } from "../../redux/apiRequest";
@@ -10,11 +10,26 @@ function Register() {
   const [userName, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); 
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleRegister = async () => {
+  const handleRegister = async (e) => {
+    e.preventDefault(); 
+
+    if (!userName || !email || !password || !confirmPassword) {
+      setErrorMessage("Please fill in all fields.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setErrorMessage("Passwords do not match.");
+      return;
+    }
+
     try {
       const user = { userName, email, password };
       console.log("User data:", user); 
@@ -25,7 +40,6 @@ function Register() {
       setErrorMessage("Registration failed. Please try again.");
     }
   };
-  
 
   return (
     <div className="register-container">
@@ -36,7 +50,7 @@ function Register() {
           </h1>
           <p>Hi! Please register to create your account</p>
         </div>
-        <div className="register-form">
+        <form className="register-form" onSubmit={handleRegister}>
           <input
             className="input-field"
             type="text"
@@ -51,14 +65,35 @@ function Register() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <input
-            className="input-field"
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button className="register-btn" onClick={handleRegister}>
+          <div className="password-container">
+            <input
+              className="input-field"
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <FontAwesomeIcon
+              icon={showPassword ? faEyeSlash : faEye}
+              onClick={() => setShowPassword(!showPassword)}
+              className="password-toggle-icon"
+            />
+          </div>
+          <div className="password-container">
+            <input
+              className="input-field"
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Confirm your password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            <FontAwesomeIcon
+              icon={showConfirmPassword ? faEyeSlash : faEye}
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="password-toggle-icon"
+            />
+          </div>
+          <button type="submit" className="register-btn">
             Register
           </button>
           {errorMessage && <p className="error-message">{errorMessage}</p>}
@@ -66,7 +101,7 @@ function Register() {
           <p>
             Already have an account? <a href="/login">Sign-in here</a>
           </p>
-        </div>
+        </form>
       </div>
     </div>
   );

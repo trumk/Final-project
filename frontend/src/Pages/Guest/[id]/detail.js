@@ -12,6 +12,7 @@ import { faThumbsUp, faEye } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "../../../Components/Navbar";
 import Footer from "../../../Components/Footer";
 import AIChat from "../../../Components/AiChat";
+import LoginModal from "../../../Components/LoginModal/LoginModal";
 import "./style.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { formatDistanceToNow } from 'date-fns';
@@ -33,6 +34,7 @@ function DetailPage() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isVideoSelected, setIsVideoSelected] = useState(false);
   const [openReplies, setOpenReplies] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false); 
 
   useEffect(() => {
     if (currentUser) {
@@ -77,7 +79,7 @@ function DetailPage() {
   const handleCommentSubmit = (e) => {
     e.preventDefault();
     if (!currentUser) {
-      alert("You need to login to comment.");
+      setIsModalOpen(true); 
       return;
     }
     const commentData = {
@@ -93,7 +95,7 @@ function DetailPage() {
   const handleReplySubmit = (e, parentId) => {
     e.preventDefault();
     if (!currentUser) {
-      alert("You need to login to reply.");
+      setIsModalOpen(true); 
       return;
     }
     const replyData = {
@@ -114,7 +116,7 @@ function DetailPage() {
 
   const handleLike = () => {
     if (!currentUser) {
-      alert("You need to login to like.");
+      setIsModalOpen(true); 
       return;
     }
     const likeData = {
@@ -359,6 +361,7 @@ function DetailPage() {
           )}
         </div>
       </div>
+      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <AIChat/>
       <Footer />
     </div>

@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { aiChat } from "../../redux/apiRequest";
 import "./style.css";
+import LoginModal from "../LoginModal/LoginModal"; 
 
 function AIChat() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false); 
   const dispatch = useDispatch();
 
   const aiResponse = useSelector((state) => state.ai.response);
@@ -17,7 +19,12 @@ function AIChat() {
   const toggleChat = () => setIsOpen(!isOpen);
 
   const sendMessage = () => {
-    if (input.trim() && currentUser) {
+    if (!currentUser) {
+      setIsModalOpen(true); 
+      return;
+    }
+    
+    if (input.trim()) {
       const userMessage = {
         text: input,
         sender: "user",
@@ -110,6 +117,8 @@ function AIChat() {
           </div>
         </div>
       )}
+
+      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }
