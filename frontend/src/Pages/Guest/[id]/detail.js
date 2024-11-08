@@ -25,7 +25,6 @@ function DetailPage() {
   const allProjects = useSelector((state) => state.project.allProjects);
   const comments = useSelector((state) => state.project.comments);
   const currentUser = useSelector((state) => state.auth.currentUser);
-  const userProfile = useSelector((state) => state.user.profile);
 
   const [commentText, setCommentText] = useState("");
   const [replyText, setReplyText] = useState("");
@@ -304,7 +303,7 @@ function DetailPage() {
                   <div className="comment-input-container">
                     {currentUser && (
                       <img
-                        src= {userProfile?.avatar}
+                        src= {currentUser?.avatar}
                         alt="Avatar"
                         className="user-avatar"
                       />

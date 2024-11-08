@@ -30,7 +30,7 @@ function AIChat() {
       const userMessage = {
         text: input,
         sender: "user",
-        avatar: userProfile?.avatar,
+        avatar: currentUser?.avatar,
       };
       setMessages([
         ...messages,
@@ -95,7 +95,7 @@ function AIChat() {
                   />
                 ) : (
                   <img
-                    src={userProfile?.avatar}
+                    src={currentUser?.avatar}
                     alt="User Avatar"
                     className="chat-avatar"
                   />

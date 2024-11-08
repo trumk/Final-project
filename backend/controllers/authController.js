@@ -61,6 +61,7 @@ const login = async (req, res) => {
         userName: user.userName,
         email: user.email,
         role: user.role,
+        avatar: user.avatar,
       },
     });
 
@@ -115,6 +116,7 @@ const loginWithProvider = async (req, res) => {
         userName: user.userName,
         email: user.email,
         role: user.role,
+        avatar: user.avatar,
       },
     });
   } catch (error) {
