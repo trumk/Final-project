@@ -99,7 +99,7 @@ export const createProject = (formData, navigate) => async (dispatch) => {
     navigate("/admin/project");
   } catch (err) {
     dispatch(createProjectFailed(err.message));
-    toast.error("Failed to add new project: " + err.message);
+    toast.error("Failed to add new project");
   }
 };
 
@@ -121,6 +121,7 @@ export const updateProject =
       navigate("/admin/project");
     } catch (err) {
       dispatch(updateProjectFailed(err.message));
+      toast.error("Failed to edit project");
     }
   };
 
@@ -129,9 +130,10 @@ export const deleteProject = (id) => async (dispatch) => {
   try {
     await axios.delete(`${BACKEND_URL}/api/projects/${id}`);
     dispatch(deleteProjectSuccess(id));
-    alert(`Project with id ${id} is deleted`);
+    toast.success("Project deleted");
   } catch (err) {
     dispatch(deleteProjectFailed(err.message));
+    toast.error("Failed to delete project");
   }
 };
 
@@ -143,7 +145,7 @@ export const register = async (user, dispatch) => {
     toast.success("Register successfully");
   } catch (err) {
     dispatch(registerFailed());
-    console.error(err);
+    toast.error("Failed to register");
   }
 };
 
@@ -161,7 +163,6 @@ export const login = async (user, dispatch, navigate) => {
       } else {
         navigate('/');
       }
-      
       toast.success("Login successfully");
       return true; 
     } else {
@@ -169,7 +170,7 @@ export const login = async (user, dispatch, navigate) => {
     }
   } catch (err) {
     dispatch(loginFailed(err.message || "Failed to login"));
-    console.error("Login error:", err);
+    toast.error("Failed to login");
     return false; 
   }
 };
@@ -181,11 +182,12 @@ export const loginWithProvider = async (email, providerId, dispatch, navigate) =
 
     if (res.data.user) {
       dispatch(loginSuccess(res.data.user)); 
-      navigate('/'); 
+      navigate('/');
+      toast.success("Login successfully");
     }
   } catch (error) {
     dispatch(loginFailed(error.message || "Failed to login with provider"));
-    console.error("Login with provider failed:", error);
+    toast.error("Failed to login");
   }
 };
 
@@ -206,7 +208,7 @@ export const logout = async (dispatch, userId) => {
     toast.success("Logout successfully");
   } catch (err) {
     dispatch(logoutFailed(err.message || "Failed to logout"));
-    console.error("Logout failed:", err);
+    toast.error("Failed to logout");
   }
 };
 
@@ -263,8 +265,10 @@ export const addComment = (projectId, commentData) => async (dispatch) => {
       commentData
     );
     dispatch(addCommentSuccess(res.data));
+    toast.success("Comment added successfully");
   } catch (error) {
     dispatch(addCommentFailed(error.message));
+    toast.error("Failed to add comment");
   }
 };
 
@@ -281,7 +285,7 @@ export const deleteComment = (commentId, userId) => async (dispatch) => {
     toast.success("Comment deleted successfully");
   } catch (error) {
     dispatch(deleteCommentFailed(error.message || "Failed to delete comment"));
-    toast.error("Failed to delete comment: " + error.message);
+    toast.error("Failed to delete comment");
   }
 };
 
@@ -290,8 +294,10 @@ export const likeProject = (projectId, likeData) => async (dispatch) => {
   try {
     const response = await axios.post(`${BACKEND_URL}/api/projects/${projectId}/like`, likeData);
     dispatch(likeProjectSuccess(response.data));
+    toast.success("Like successfully");
   } catch (error) {
     dispatch(likeProjectFailed(error.message));
+    toast.error("Failed to like project");
   }
 };
 
@@ -322,8 +328,10 @@ export const clearNotifications = (userId) => async (dispatch) => {
   try {
     await axios.delete(`${BACKEND_URL}/api/user/${userId}/notifications/clear`);
     dispatch(clearNotificationsSuccess());
+    toast.success("Notification cleared successfully");
   } catch (error) {
     dispatch(clearNotificationsFailed(error.message));
+    toast.error("Failed to clear notification");
   }
 };
 
@@ -384,10 +392,10 @@ export const updateProfile = (userId, profileData) => async (dispatch) => {
       }
     );
     dispatch(updateUserSuccess(response.data));
-    console.log("User updated successfully");
+    toast.success("Profile updated successfully");
   } catch (err) {
     dispatch(updateUserFailed(err.message || "Failed to update profile"));
-    console.error("Error updating profile:", err);
+    toast.error("Failed to update profile");
   }
 };
 
@@ -410,7 +418,9 @@ export const initiateBackup = () => async (dispatch) => {
   try {
     const response = await axios.post(`${BACKEND_URL}/api/backup`);
     dispatch(backupRequestSuccess(response.data)); 
+    toast.success("Database backup successfully");
   } catch (error) {
     dispatch(backupRequestFailed(error.response?.data?.message || "Backup failed"));
+    toast.error("Failed to backup database");
   }
 };
