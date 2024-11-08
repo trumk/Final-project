@@ -18,6 +18,7 @@ import UserPage from './Pages/admin/User';
 import CommentPage from './Pages/admin/Coment';
 import Profile from './Pages/Guest/[id]/Profile';
 import About from './Pages/Guest/about';
+import Contact from './Pages/Guest/contact';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             <Route path='/login' element={<Login />} />
             <Route path='/' element={<Homepage />} />
             <Route path='/about' element={<About />} />
+            <Route path='/contact' element={<Contact />} />
             <Route path='/projects' element={<Projectpage />} />
             <Route path='/project/:id' element={<DetailPage />} />
             <Route path='/profile/:id' element={<Profile />} />
