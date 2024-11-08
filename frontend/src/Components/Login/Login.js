@@ -36,7 +36,7 @@ function Login() {
     }
     
     const user = { email, password };
-    const success = await login(user, dispatch, navigate); // Nhận kết quả đăng nhập
+    const success = await login(user, dispatch, navigate); 
     
     if (!success) {
       setErrorMessage("Incorrect email or password. Please try again.");
@@ -55,7 +55,7 @@ function Login() {
           <h1>Welcome! <FontAwesomeIcon icon={faFaceSmile} /></h1>
           <p>Hi! Please login to access your account</p>
         </div>
-        <div className="login-form">
+        <form className="login-form" onSubmit={handleLogin}> {/* Add form and onSubmit */}
           <input 
             className="input-field" 
             type="email" 
@@ -70,16 +70,16 @@ function Login() {
             value={password || ''} 
             onChange={(e) => setPassword(e.target.value)} 
           />
-          <button className="login-btn" onClick={handleLogin}>Login</button> 
+          <button type="submit" className="login-btn">Login</button>
           {errorMessage && <p className="error-message">{errorMessage}</p>} 
           <p>Or</p>
-          <button className="google-btn" onClick={handleGoogleLogin}>
+          <button type="button" className="google-btn" onClick={handleGoogleLogin}>
             Login with Google
           </button>
           <p className="register-link">
             Don't have an account? <Link to="/register">Create here</Link> 
           </p>
-        </div>
+        </form>
       </div>
     </div>
   );

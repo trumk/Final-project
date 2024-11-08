@@ -384,18 +384,23 @@ button:disabled {
 
 .related-projects-section h3 {
   font-size: 1.8em;
+  font-weight: bold;
   color: #007bff;
   text-align: center;
+  margin-bottom: 20px;
 }
 
 .related-projects-list {
   display: flex;
-  overflow-x: auto;
   gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: #007bff #f4f4f9;
 }
 
 .related-project-card {
-  background-color: rgb(207, 235, 231);
+  background-color: #e8f6f9;
   padding: 20px;
   border-radius: 12px;
   width: 300px;
@@ -403,11 +408,57 @@ button:disabled {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   flex-shrink: 0;
   text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.related-project-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 .related-project-card a {
   text-decoration: none;
-  color: inherit; 
+  color: inherit;
+  display: block;
+}
+
+.related-project-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  transition: opacity 0.3s;
+}
+
+.related-project-card:hover img {
+  opacity: 0.9;
+}
+
+.related-project-card h4 {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.related-project-card p {
+  font-size: 1em;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.related-projects-list::-webkit-scrollbar {
+  height: 10px;
+}
+
+.related-projects-list::-webkit-scrollbar-track {
+  background: #f4f4f9;
+}
+
+.related-projects-list::-webkit-scrollbar-thumb {
+  background-color: #007bff;
+  border-radius: 10px;
 }
 
 @media (max-width: 1024px) {
@@ -428,21 +479,6 @@ button:disabled {
     width: 100%;
     height: auto;
   }
-}
-
-.related-project-card img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 15px;
-}
-
-.related-project-card h4 {
-  font-size: 1.5em;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10px;
 }
 
 .related-project-card p {

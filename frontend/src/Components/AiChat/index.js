@@ -18,7 +18,9 @@ function AIChat() {
 
   const toggleChat = () => setIsOpen(!isOpen);
 
-  const sendMessage = () => {
+  const sendMessage = (e) => {
+    e.preventDefault(); 
+    
     if (!currentUser) {
       setIsModalOpen(true); 
       return;
@@ -103,7 +105,7 @@ function AIChat() {
             {isFetching && <div className="loading">AI is processing...</div>}
           </div>
 
-          <div className="chat-footer">
+          <form className="chat-footer" onSubmit={sendMessage}> 
             <input
               type="text"
               value={input}
@@ -111,10 +113,10 @@ function AIChat() {
               placeholder="Type your message..."
               disabled={isFetching}
             />
-            <button onClick={sendMessage} disabled={isFetching}>
+            <button type="submit" disabled={isFetching}>
               Send
             </button>
-          </div>
+          </form>
         </div>
       )}
 

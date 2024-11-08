@@ -6,25 +6,31 @@
 }
 
 .chat-icon {
-  width: 50px;
-  height: 50px;
-  background-color: #1a9cad;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #40ad90, #34bccb);
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
 }
 
 .chat-icon:hover {
-  transform: scale(1.1);
+  transform: scale(1.1) rotate(10deg); 
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); 
 }
 
 .chat-icon img {
   width: 28px;
   height: 28px;
+  filter: brightness(0) invert(1); 
 }
 
 .chat-box {
@@ -41,6 +47,7 @@
   transition: width 0.3s ease, height 0.3s ease;
 }
 
+/* Chat header */
 .chat-header {
   background-color: #1a9cad;
   padding: 15px;
@@ -65,6 +72,7 @@
   color: #ff4d4d;
 }
 
+/* Chat body */
 .chat-body {
   flex: 1;
   padding: 10px;
@@ -74,13 +82,70 @@
   gap: 10px;
 }
 
+/* Message styling */
 .message {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
   max-width: 80%;
   font-size: 0.9rem;
   line-height: 1.4;
+  padding: 10px;
+  border-radius: 15px;
+  position: relative;
+}
+
+/* AI message bubble */
+.message.ai {
+  background-color: #f0f2f5;
+  align-self: flex-start;
+  border-top-left-radius: 0;
+}
+
+.message.ai .chat-avatar {
+  margin-right: 8px;
+}
+
+/* User message bubble */
+.message.user {
+  background-color: #e1f3fb;
+  align-self: flex-end;
+  border-top-right-radius: 0;
+  flex-direction: row-reverse; /* Avatar on the right */
+}
+
+.message.user .chat-avatar {
+  margin-left: 8px;
+}
+
+/* Avatar styling */
+.chat-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.message:after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 10px solid transparent;
+}
+
+.message.ai:after {
+  border-right-color: #f0f2f5;
+  border-left: none;
+  left: -10px;
+  top: 10px;
+}
+
+.message.user:after {
+  border-left-color: #e1f3fb;
+  border-right: none;
+  right: -10px;
+  top: 10px;
 }
 
 .chat-footer {
@@ -89,6 +154,7 @@
   align-items: center;
   border-top: 1px solid #ddd;
   flex-shrink: 0; 
+  background-color: #f9f9f9;
 }
 
 .chat-footer input {
