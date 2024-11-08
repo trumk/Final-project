@@ -130,7 +130,6 @@ const mongodumpPath =
     }
   };  
 
-// Xuất các hàm và cấu hình
 module.exports = {
   admin,
   bucket,
@@ -138,5 +137,5 @@ module.exports = {
   uploadFileToFirebase,
   verifyFirebaseToken,
   setCooPHeaders,
-  backupDatabaseToFirebase, // Hàm backup
+  backupDatabaseToFirebase, 
 };
