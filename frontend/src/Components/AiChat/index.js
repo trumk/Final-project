@@ -14,7 +14,6 @@ function AIChat() {
   const aiResponse = useSelector((state) => state.ai.response);
   const isFetching = useSelector((state) => state.ai.isFetching);
   const currentUser = useSelector((state) => state.auth.currentUser);
-  const userProfile = useSelector((state) => state.user.profile);
 
   const toggleChat = () => setIsOpen(!isOpen);
 
@@ -49,7 +48,7 @@ function AIChat() {
       .replace(/([A-Za-z\s]+):/g, "$1: ")
       .replace(/([a-z])([A-Z])/g, "$1 $2")
       .replace(/([A-Za-z]+)([A-Z][a-z])/g, "$1 $2")
-      .replace(/([a-zA-Z])\b(with|projects)\b/g, "$1 $2")
+      .replace(/([a-zA-Z])\b(with)\b/g, "$1 $2")
       .replace(/(\d)([a-zA-Z])/g, "$1 $2")  
       .replace(/\s+/g, " ")
       .trim();

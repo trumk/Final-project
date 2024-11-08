@@ -294,6 +294,7 @@ button:disabled {
 .comment-header {
   display: flex;
   align-items: flex-start;
+  padding-top: 17px;
 }
 
 .user-avatar {
@@ -459,6 +460,73 @@ button:disabled {
 .related-projects-list::-webkit-scrollbar-thumb {
   background-color: #007bff;
   border-radius: 10px;
+}
+
+.delete-confirmation-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 400px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  text-align: center;
+}
+
+.delete-confirmation-modal p {
+  font-size: 1.1em;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.confirm-delete-button,
+.cancel-delete-button {
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s;
+}
+
+.confirm-delete-button {
+  background-color: #ff4d4f;
+  color: #ffffff;
+}
+
+.confirm-delete-button:hover {
+  background-color: #e63946;
+}
+
+.cancel-delete-button {
+  background-color: #cccccc;
+  color: #333333;
+}
+
+.cancel-delete-button:hover {
+  background-color: #b3b3b3;
+}
+
+@media (max-width: 480px) {
+  .delete-confirmation-modal {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .delete-confirmation-modal p {
+    font-size: 1em;
+  }
+
+  .confirm-delete-button,
+  .cancel-delete-button {
+    font-size: 0.9em;
+    padding: 8px 15px;
+  }
 }
 
 @media (max-width: 1024px) {

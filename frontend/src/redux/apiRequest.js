@@ -6,6 +6,9 @@ import {
   createProjectFailed,
   createProjectStart,
   createProjectSuccess,
+  deleteCommentFailed,
+  deleteCommentStart,
+  deleteCommentSuccess,
   deleteProjectFailed,
   deleteProjectStart,
   deleteProjectSuccess,
@@ -262,6 +265,23 @@ export const addComment = (projectId, commentData) => async (dispatch) => {
     dispatch(addCommentSuccess(res.data));
   } catch (error) {
     dispatch(addCommentFailed(error.message));
+  }
+};
+
+export const deleteComment = (commentId, userId) => async (dispatch) => {
+  dispatch(deleteCommentStart());
+  try {
+    const config = {
+      withCredentials: true,
+      data: { userId }, 
+    };
+
+    await axios.delete(`${BACKEND_URL}/api/projects/comments/${commentId}`, config);
+    dispatch(deleteCommentSuccess(commentId));
+    toast.success("Comment deleted successfully");
+  } catch (error) {
+    dispatch(deleteCommentFailed(error.message || "Failed to delete comment"));
+    toast.error("Failed to delete comment: " + error.message);
   }
 };
 

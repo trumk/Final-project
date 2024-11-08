@@ -346,6 +346,40 @@ const addComment = async (req, res) => {
   }
 };
 
+const deleteComment = async (req, res) => {
+  try {
+    const commentId = req.params.id;
+
+    const userId = req.user?.uid || req.body.userId || req.cookies.userId;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized. Please log in." });
+    }
+
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    if (comment.userId.toString() !== userId) {
+      return res.status(403).json({ message: "You can only delete your own comments" });
+    }
+
+    await Comment.findByIdAndDelete(commentId);
+
+    const project = await Project.findById(comment.projectId);
+    if (project) {
+      project.comments = project.comments.filter((id) => id.toString() !== commentId);
+      await project.save();
+    }
+
+    res.status(200).json({ message: "Comment deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    res.status(500).json({ message: "Failed to delete comment", error });
+  }
+};
+
 const getCommentsByProject = async (req, res) => {
   try {
     const comments = await Comment.find({
@@ -444,6 +478,7 @@ module.exports = {
   updateProject,
   deleteProject,
   addComment,
+  deleteComment,
   getCommentsByProject,
   getAllComments,
   likeProject,

@@ -7,6 +7,7 @@ import {
   likeProject,
   getCommentsByProject,
   getAllProjects,
+  deleteComment,
 } from "../../../redux/apiRequest";
 import { faThumbsUp, faEye } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "../../../Components/Navbar";
@@ -15,7 +16,7 @@ import AIChat from "../../../Components/AiChat";
 import LoginModal from "../../../Components/LoginModal/LoginModal";
 import "./style.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from "date-fns";
 
 function DetailPage() {
   const { id } = useParams();
@@ -33,7 +34,8 @@ function DetailPage() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isVideoSelected, setIsVideoSelected] = useState(false);
   const [openReplies, setOpenReplies] = useState({});
-  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null);
 
   useEffect(() => {
     if (currentUser) {
@@ -45,11 +47,11 @@ function DetailPage() {
         dispatch(getCommentsByProject(id));
       });
     }
-  
+
     if (!allProjects) {
       dispatch(getAllProjects());
     }
-  }, [dispatch, id, allProjects, currentUser]);  
+  }, [dispatch, id, allProjects, currentUser]);
 
   useEffect(() => {
     if (project && currentUser) {
@@ -73,12 +75,11 @@ function DetailPage() {
     }
     return [];
   }, [allProjects, project]);
-  console.log("Related Projects to Render:", relatedProjects);
 
   const handleCommentSubmit = (e) => {
     e.preventDefault();
     if (!currentUser) {
-      setIsModalOpen(true); 
+      setIsModalOpen(true);
       return;
     }
     const commentData = {
@@ -94,7 +95,7 @@ function DetailPage() {
   const handleReplySubmit = (e, parentId) => {
     e.preventDefault();
     if (!currentUser) {
-      setIsModalOpen(true); 
+      setIsModalOpen(true);
       return;
     }
     const replyData = {
@@ -109,13 +110,28 @@ function DetailPage() {
     setReplyingTo(null);
   };
 
+  const handleDeleteComment = () => {
+    if (!currentUser || !commentToDelete) {
+      setIsModalOpen(true);
+      return;
+    }
+    dispatch(deleteComment(commentToDelete, currentUser.id)).then(() => {
+      dispatch(getCommentsByProject(id));
+      setCommentToDelete(null);
+    });
+  };
+
+  const confirmDeleteComment = (commentId) => {
+    setCommentToDelete(commentId);
+  };
+
   const handleReplyClick = (commentId) => {
     setReplyingTo(commentId);
   };
 
   const handleLike = () => {
     if (!currentUser) {
-      setIsModalOpen(true); 
+      setIsModalOpen(true);
       return;
     }
     const likeData = {
@@ -140,17 +156,17 @@ function DetailPage() {
   };
 
   const renderComments = (parentId = null, parentUserName = "", depth = 0) => {
-    const maxIndent = 4; 
-  
+    const maxIndent = 4;
+
     return comments
       .filter((comment) => comment.parentId === parentId)
       .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
       .map((comment) => {
         const hasReplies = comments.some((c) => c.parentId === comment._id);
-        
+
         const currentDepth = Math.min(depth, maxIndent);
         const marginLeft = `${50 * currentDepth}px`;
-  
+
         return (
           <div
             key={comment._id}
@@ -158,45 +174,77 @@ function DetailPage() {
             style={{
               display: "flex",
               flexDirection: "column",
-              maxWidth: `calc(100% - ${marginLeft})`, 
+              maxWidth: `calc(100% - ${marginLeft})`,
               marginLeft,
             }}
           >
             <div className="comment-header">
-              <img src={comment.userId?.avatar} alt="Avatar" className="user-avatar" />
+              <img
+                src={comment.userId?.avatar}
+                alt="Avatar"
+                className="user-avatar"
+              />
               <div className="comment-body">
                 <div className="comment-info">
-                  <span className="comment-user-name">{comment.userId?.userName}</span>
+                  <span className="comment-user-name">
+                    {comment.userId?.userName}
+                  </span>
                   <span className="comment-time">
-                    · {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+                    ·{" "}
+                    {formatDistanceToNow(new Date(comment.createdAt), {
+                      addSuffix: true,
+                    })}
                   </span>
                 </div>
                 <p className="comment-text">
-                  {parentId && <strong>@{parentUserName}</strong>} {comment.comment}
+                  {parentId && <strong>@{parentUserName}</strong>}{" "}
+                  {comment.comment}
                 </p>
                 <div className="comment-actions">
-                  <button className="like-button">Like</button>
-                  <button className="reply-button" onClick={() => handleReplyClick(comment._id)}>
+                  <button
+                    className="reply-button"
+                    onClick={() => handleReplyClick(comment._id)}
+                  >
                     Reply
                   </button>
+                  {currentUser && comment.userId._id === currentUser.id && (
+                    <button
+                      className="delete-button"
+                      onClick={() => confirmDeleteComment(comment._id)} 
+                    >
+                      Delete
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
-  
+
             {hasReplies && !openReplies[comment._id] && (
-              <div className="view-replies" onClick={() => toggleReplies(comment._id)}>
-                View all {comments.filter((c) => c.parentId === comment._id).length} replies
+              <div
+                className="view-replies"
+                onClick={() => toggleReplies(comment._id)}
+              >
+                View all{" "}
+                {comments.filter((c) => c.parentId === comment._id).length}{" "}
+                replies
               </div>
             )}
-  
+
             {openReplies[comment._id] && (
               <div className="replies">
-                {renderComments(comment._id, comment.userId?.userName, currentDepth + 1)}
+                {renderComments(
+                  comment._id,
+                  comment.userId?.userName,
+                  currentDepth + 1
+                )}
               </div>
             )}
-  
+
             {replyingTo === comment._id && (
-              <form onSubmit={(e) => handleReplySubmit(e, comment._id)} className="reply-form">
+              <form
+                onSubmit={(e) => handleReplySubmit(e, comment._id)}
+                className="reply-form"
+              >
                 <textarea
                   placeholder="Write a reply..."
                   value={replyText}
@@ -213,158 +261,156 @@ function DetailPage() {
         );
       });
   };
-   
-  
+
   const videoId = project?.video ? extractVideoId(project.video) : null;
   const videoThumbnail = videoId
     ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
     : null;
 
-  return (
-    <div className="detail-page">
-      <Navbar />
-      <div className="content-container">
-        {project ? (
-          <>
-            <div className="main-content">
-              <div className="project-details-section">
-                <h1 className="project-title">{project.name}</h1>
-                <div className="project-views">
-                            <FontAwesomeIcon icon={faEye} className="icon" />
-                            <span> {project.views} view(s)</span>
-                          </div>
-                <div className="media-container">
-                  {!isVideoSelected && project.images.length > 0 && (
-                    <img
-                      src={project.images[selectedIndex]}
-                      alt={`Project ${project.name}`}
-                      className="project-image"
-                    />
-                  )}
-                  {isVideoSelected && project.video && (
-                    <div className="project-image" style={{}}>
-                      <iframe
-                        width="600"
-                        height="380"
-                        src={project.video}
-                        title="Project Video"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      ></iframe>
+    return (
+      <div className="detail-page">
+        <Navbar />
+        <div className="content-container">
+          {project ? (
+            <>
+              <div className="main-content">
+                <div className="project-details-section">
+                  <h1 className="project-title">{project.name}</h1>
+                  <div className="project-views">
+                    <FontAwesomeIcon icon={faEye} className="icon" />
+                    <span> {project.views} view(s)</span>
+                  </div>
+                  <div className="media-container">
+                    {!isVideoSelected && project.images.length > 0 && (
+                      <img
+                        src={project.images[selectedIndex]}
+                        alt={`Project ${project.name}`}
+                        className="project-image"
+                      />
+                    )}
+                    {isVideoSelected && project.video && (
+                      <div className="project-image">
+                        <iframe
+                          width="600"
+                          height="380"
+                          src={project.video}
+                          title="Project Video"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        ></iframe>
+                      </div>
+                    )}
+                    <div className="image-previews">
+                      {project.images.map((image, index) => (
+                        <img
+                          key={index}
+                          src={image}
+                          alt={`Preview ${index}`}
+                          className={`preview-image ${selectedIndex === index && !isVideoSelected ? "active" : ""}`}
+                          onClick={() => handleMediaSelect(index)}
+                        />
+                      ))}
+                      {project.video && videoThumbnail && (
+                        <img
+                          src={videoThumbnail}
+                          alt="Video preview"
+                          className={`preview-image ${isVideoSelected ? "active" : ""}`}
+                          onClick={() => handleMediaSelect(null, true)}
+                        />
+                      )}
+                    </div>
+                  </div>
+    
+                  <p className="project-author">By: {project.authors.join(", ")}</p>
+                  <div className="project-description" dangerouslySetInnerHTML={{ __html: project.description }} />
+                  <button
+                    className={`like-button ${isLiked ? "liked" : ""}`}
+                    onClick={handleLike}
+                  >
+                    <FontAwesomeIcon icon={faThumbsUp} /> ({project.likes})
+                  </button>
+                </div>
+    
+                <div className="comment-section-container">
+                  {/* Modal xác nhận xóa */}
+                  {commentToDelete && (
+                    <div className="delete-confirmation-modal">
+                      <p>Are you sure you want to delete this comment?</p>
+                      <button onClick={handleDeleteComment} className="confirm-delete-button">
+                        Yes, delete
+                      </button>
+                      <button onClick={() => setCommentToDelete(null)} className="cancel-delete-button">
+                        Cancel
+                      </button>
                     </div>
                   )}
-
-                  <div className="image-previews">
-                    {project.images.map((image, index) => (
-                      <img
-                        key={index}
-                        src={image}
-                        alt={`Preview ${index}`}
-                        className={`preview-image ${
-                          selectedIndex === index && !isVideoSelected
-                            ? "active"
-                            : ""
-                        }`}
-                        onClick={() => handleMediaSelect(index)}
+    
+                  <h3>Comments:</h3>
+                  <form onSubmit={handleCommentSubmit} className="comment-form">
+                    <div className="comment-input-container">
+                      {currentUser && (
+                        <img
+                          src={currentUser?.avatar}
+                          alt="Avatar"
+                          className="user-avatar"
+                        />
+                      )}
+                      <textarea
+                        placeholder="Write a comment..."
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
+                        required
+                        className="comment-input"
                       />
-                    ))}
-
-                    {project.video && videoThumbnail && (
-                      <img
-                        src={videoThumbnail}
-                        alt="Video preview"
-                        className={`preview-image ${
-                          isVideoSelected ? "active" : ""
-                        }`}
-                        onClick={() => handleMediaSelect(null, true)}
-                      />
-                    )}
-                  </div>
+                    </div>
+                    <button type="submit" className="comment-submit-button">Comment</button>
+                  </form>
+    
+                  {comments.length > 0 ? (
+                    <div>{renderComments()}</div>
+                  ) : (
+                    <p>No comments yet. Be the first to comment!</p>
+                  )}
                 </div>
-
-                <p className="project-author">
-                  By: {project.authors.join(", ")}
-                </p>
-                <div
-                  className="project-description"
-                  dangerouslySetInnerHTML={{ __html: project.description }}
-                />
-                <button
-                  className={`like-button ${isLiked ? "liked" : ""}`}
-                  onClick={handleLike}
-                >
-                  <FontAwesomeIcon icon={faThumbsUp} /> ({project.likes})
-                </button>
               </div>
-
-              <div className="comment-section-container">
-                <h3>Comments:</h3>
-                <form onSubmit={handleCommentSubmit} className="comment-form">
-                  <div className="comment-input-container">
-                    {currentUser && (
-                      <img
-                        src= {currentUser?.avatar}
-                        alt="Avatar"
-                        className="user-avatar"
-                      />
-                    )}
-                    <textarea
-                      placeholder="Write a comment..."
-                      value={commentText}
-                      onChange={(e) => setCommentText(e.target.value)}
-                      required
-                      className="comment-input"
-                    />
-                  </div>
-                  <button type="submit" className="comment-submit-button">
-                    Comment
-                  </button>
-                </form>
-
-                {comments.length > 0 ? (
-                  <div>{renderComments()}</div>
-                ) : (
-                  <p>No comments yet. Be the first to comment!</p>
-                )}
-              </div>
-            </div>
-          </>
-        ) : (
-          <p className="loading-message">Loading project details...</p>
-        )}
-      </div>
-
-      <div className="related-projects-section">
-        <h3>Related Projects</h3>
-        <div className="related-projects-list">
-          {relatedProjects && relatedProjects.length > 0 ? (
-            relatedProjects.map((relatedProject) => {
-              return (
-                <div key={relatedProject._id} className="related-project-card">
-                  <a href={`/project/${relatedProject._id}`}>
-                    {relatedProject.images.length > 0 && (
-                      <img
-                        src={relatedProject.images[0]}
-                        alt={`Project ${relatedProject.name}`}
-                        className="related-project-image"
-                      />
-                    )}
-                    <h4>{relatedProject.name}</h4>
-                    <p>By: {relatedProject.authors.join(", ")}</p>
-                  </a>
-                </div>
-              );
-            })
+            </>
           ) : (
-            <p>No related projects found.</p>
+            <p className="loading-message">Loading project details...</p>
           )}
         </div>
+    
+        <div className="related-projects-section">
+          <h3>Related Projects</h3>
+          <div className="related-projects-list">
+            {relatedProjects && relatedProjects.length > 0 ? (
+              relatedProjects.map((relatedProject) => {
+                return (
+                  <div key={relatedProject._id} className="related-project-card">
+                    <a href={`/project/${relatedProject._id}`}>
+                      {relatedProject.images.length > 0 && (
+                        <img
+                          src={relatedProject.images[0]}
+                          alt={`Project ${relatedProject.name}`}
+                          className="related-project-image"
+                        />
+                      )}
+                      <h4>{relatedProject.name}</h4>
+                      <p>By: {relatedProject.authors.join(", ")}</p>
+                    </a>
+                  </div>
+                );
+              })
+            ) : (
+              <p>No related projects found.</p>
+            )}
+          </div>
+        </div>
+        
+        <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+        <AIChat />
+        <Footer />
       </div>
-      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      <AIChat/>
-      <Footer />
-    </div>
-  );
+    );    
 }
 
 export default DetailPage;

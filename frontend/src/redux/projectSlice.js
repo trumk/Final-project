@@ -170,6 +170,23 @@ const projectSlice = createSlice({
       state.error = true;
       state.msg = action.payload || "Failed to add comment";
     },
+    deleteCommentStart: (state) => {
+      state.isFetching = true;
+      state.error = false;
+    },
+    deleteCommentSuccess: (state, action) => {
+      state.isFetching = false;
+      state.error = false;
+      state.comments = state.comments.filter(
+        (comment) => comment._id !== action.payload
+      );
+      state.msg = "Comment deleted successfully";
+    },
+    deleteCommentFailed: (state, action) => {
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to delete comment";
+    },
     likeProjectStart: (state) => {
       state.isFetching = true;
     },
@@ -220,6 +237,9 @@ export const {
   addCommentStart,
   addCommentSuccess,
   addCommentFailed,
+  deleteCommentStart,
+  deleteCommentSuccess,
+  deleteCommentFailed,
   likeProjectStart,
   likeProjectSuccess,
   likeProjectFailed,

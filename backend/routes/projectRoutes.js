@@ -16,6 +16,7 @@ router.get('/filter', projectController.filterProjects);
 router.get('/comments', projectController.getAllComments); 
 router.post('/:projectId/comments', middleware.verifyFirebaseToken, projectController.addComment);
 router.get('/:projectId/comments', projectController.getCommentsByProject);
+router.delete('/comments/:id', middleware.verifyFirebaseToken, projectController.deleteComment); 
 
 // CRUD for Projects
 router.get('/', projectController.getAllProjects);
