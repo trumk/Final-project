@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllComments, getAllProjects, getAllUsers, logout } from '../../redux/apiRequest';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faProjectDiagram, faUser, faComments, faSignOutAlt, faDatabase, faChartLine } from '@fortawesome/free-solid-svg-icons';
+import { faProjectDiagram, faUser, faComments, faSignOutAlt, faDatabase, faChartLine, faUsers } from '@fortawesome/free-solid-svg-icons';
 import Chart from '../../Components/Chart/Chart';
 
 const Dashboard = () => {
@@ -50,6 +50,9 @@ const Dashboard = () => {
           </li>
           <li onClick={() => navigate('/admin/backup')} title="Backup Database">
             <FontAwesomeIcon icon={faDatabase} /> <span>Backup</span>
+          </li>
+          <li onClick={() => navigate('/')} title="Customer side">
+            <FontAwesomeIcon icon={faUsers} /> <span>Customer side</span>
           </li>
           <li onClick={() => setShowLogoutModal(true)} title="Logout">
             <FontAwesomeIcon icon={faSignOutAlt} /> <span>Logout</span>
