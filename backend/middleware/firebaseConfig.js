@@ -8,8 +8,8 @@ const fs = require("fs");
 const BSON = require("bson");
 const util = require("util");
 const archiver = require("archiver");
+const mongoose = require("mongoose");
 
-const execPromise = util.promisify(exec);
 
 admin.initializeApp({
   credential: admin.credential.cert({
@@ -81,36 +81,42 @@ const verifyFirebaseToken = async (req, res, next) => {
   }
 };
 
-const mongodumpPath =
-  "C:\\Users\\nguye\\Downloads\\mongodb-database-tools-windows-x86_64-100.10.0\\mongodb-database-tools-windows-x86_64-100.10.0\\bin\\mongodump.exe";
-
 const backupDatabaseToFirebase = async () => {
-  const backupDir = `./backup-${Date.now()}`;
+  const backupFileName = `backup-${Date.now()}.json`;
   const zipFileName = `backup-${Date.now()}.zip`;
   const zipFilePath = `./${zipFileName}`;
-  const mongoUrl = process.env.MONGO_URL;
 
   try {
-    await execPromise(
-      `${mongodumpPath} --uri="${mongoUrl}" --out=${backupDir}`
-    );
+    const collections = await mongoose.connection.db.listCollections().toArray();
+    const data = {};
 
+    for (const collection of collections) {
+      const collectionName = collection.name;
+      const collectionData = await mongoose.connection.db
+        .collection(collectionName)
+        .find()
+        .toArray();
+      data[collectionName] = collectionData;
+    }
+
+    // Lưu dữ liệu dưới dạng JSON
+    fs.writeFileSync(backupFileName, JSON.stringify(data, null, 2));
+
+    // Nén tệp JSON thành tệp zip
     await new Promise((resolve, reject) => {
       const output = fs.createWriteStream(zipFilePath);
-      const archive = archiver("zip", {
-        zlib: { level: 9 },
-      });
+      const archive = archiver("zip", { zlib: { level: 9 } });
 
       output.on("close", resolve);
       archive.on("error", reject);
 
       archive.pipe(output);
-      archive.directory(backupDir, false);
+      archive.file(backupFileName, { name: backupFileName });
       archive.finalize();
     });
 
+    // Tải lên Firebase
     const fileBuffer = fs.readFileSync(zipFilePath);
-
     const firebaseFile = bucket.file(`backups/${zipFileName}`);
     const downloadToken = uuidv4();
 
@@ -123,19 +129,14 @@ const backupDatabaseToFirebase = async () => {
       },
     });
 
+    fs.unlinkSync(backupFileName);
     fs.unlinkSync(zipFilePath);
-    fs.rmSync(backupDir, { recursive: true, force: true });
 
     const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
       bucket.name
-    }/o/${encodeURIComponent(
-      `backups/${zipFileName}`
-    )}?alt=media&token=${downloadToken}`;
+    }/o/${encodeURIComponent(`backups/${zipFileName}`)}?alt=media&token=${downloadToken}`;
 
-    console.log(
-      "Backup successfully created and uploaded to Firebase:",
-      publicUrl
-    );
+    console.log("Backup successfully created and uploaded to Firebase:", publicUrl);
     return publicUrl;
   } catch (error) {
     console.error("Error during backup and upload to Firebase:", error);
