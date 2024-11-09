@@ -36,6 +36,27 @@ function DetailPage() {
   const [openReplies, setOpenReplies] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState(null);
+  const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
+  const [warningMessage, setWarningMessage] = useState("");
+
+  const bannedWords = ["fuck", "nigga", "idiot", "shit", "bitch"]; 
+
+  const containsBannedWords = (text) => {
+    const words = text.split(" ");
+    return words.some((word) => bannedWords.includes(word.toLowerCase()));
+  };
+
+  const WarningModal = ({ message, onClose }) => (
+    <div className="modal-backdrop">
+      <div className="modal-content">
+        <h3>Warning</h3>
+        <p>{message}</p>
+        <button onClick={onClose} className="modal-close-button">
+          Close
+        </button>
+      </div>
+    </div>
+  );
 
   useEffect(() => {
     if (currentUser) {
@@ -68,10 +89,9 @@ function DetailPage() {
 
   const relatedProjects = useMemo(() => {
     if (allProjects && project) {
-      const filteredProjects = allProjects.filter(
+      return allProjects.filter(
         (p) => p._id !== project._id && p.department === project.department
       );
-      return filteredProjects;
     }
     return [];
   }, [allProjects, project]);
@@ -80,6 +100,11 @@ function DetailPage() {
     e.preventDefault();
     if (!currentUser) {
       setIsModalOpen(true);
+      return;
+    }
+    if (containsBannedWords(commentText)) {
+      setWarningMessage("Your comment contains inappropriate words.");
+      setIsWarningModalOpen(true);
       return;
     }
     const commentData = {
@@ -148,23 +173,15 @@ function DetailPage() {
     setIsVideoSelected(isVideo);
   };
 
-  const extractVideoId = (url) => {
-    const videoIdMatch = url.match(
-      /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]+)/
-    );
-    return videoIdMatch ? videoIdMatch[1] : null;
-  };
-
   const renderComments = (parentId = null, parentUserName = "", depth = 0) => {
-    const maxIndent = 4;
+    const maxDepth = 2; // Limit the nesting depth
 
     return comments
       .filter((comment) => comment.parentId === parentId)
       .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
       .map((comment) => {
         const hasReplies = comments.some((c) => c.parentId === comment._id);
-
-        const currentDepth = Math.min(depth, maxIndent);
+        const currentDepth = Math.min(depth, maxDepth);
         const marginLeft = `${50 * currentDepth}px`;
 
         return (
@@ -210,7 +227,7 @@ function DetailPage() {
                   {currentUser && comment.userId._id === currentUser.id && (
                     <button
                       className="delete-button"
-                      onClick={() => confirmDeleteComment(comment._id)} 
+                      onClick={() => confirmDeleteComment(comment._id)}
                     >
                       Delete
                     </button>
@@ -235,7 +252,7 @@ function DetailPage() {
                 {renderComments(
                   comment._id,
                   comment.userId?.userName,
-                  currentDepth + 1
+                  depth + 1
                 )}
               </div>
             )}
@@ -262,155 +279,179 @@ function DetailPage() {
       });
   };
 
-  const videoId = project?.video ? extractVideoId(project.video) : null;
+  const videoId = project?.video
+    ? project.video.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]+)/)?.[1]
+    : null;
   const videoThumbnail = videoId
     ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
     : null;
 
-    return (
-      <div className="detail-page">
-        <Navbar />
-        <div className="content-container">
-          {project ? (
-            <>
-              <div className="main-content">
-                <div className="project-details-section">
-                  <h1 className="project-title">{project.name}</h1>
-                  <div className="project-views">
-                    <FontAwesomeIcon icon={faEye} className="icon" />
-                    <span> {project.views} view(s)</span>
-                  </div>
-                  <div className="media-container">
-                    {!isVideoSelected && project.images.length > 0 && (
+  return (
+    <div className="detail-page">
+      <Navbar />
+      <div className="content-container">
+        {project ? (
+          <>
+            <div className="main-content">
+              <div className="project-details-section">
+                <h1 className="project-title">{project.name}</h1>
+                <div className="project-views">
+                  <FontAwesomeIcon icon={faEye} className="icon" />
+                  <span> {project.views} view(s)</span>
+                </div>
+                <div className="media-container">
+                  {!isVideoSelected && project.images.length > 0 && (
+                    <img
+                      src={project.images[selectedIndex]}
+                      alt={`Project ${project.name}`}
+                      className="project-image"
+                    />
+                  )}
+                  {isVideoSelected && project.video && (
+                    <div className="project-image">
+                      <iframe
+                        width="600"
+                        height="380"
+                        src={project.video}
+                        title="Project Video"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                  )}
+                  <div className="image-previews">
+                    {project.images.map((image, index) => (
                       <img
-                        src={project.images[selectedIndex]}
-                        alt={`Project ${project.name}`}
-                        className="project-image"
+                        key={index}
+                        src={image}
+                        alt={`Preview ${index}`}
+                        className={`preview-image ${
+                          selectedIndex === index && !isVideoSelected
+                            ? "active"
+                            : ""
+                        }`}
+                        onClick={() => handleMediaSelect(index)}
+                      />
+                    ))}
+                    {project.video && videoThumbnail && (
+                      <img
+                        src={videoThumbnail}
+                        alt="Video preview"
+                        className={`preview-image ${
+                          isVideoSelected ? "active" : ""
+                        }`}
+                        onClick={() => handleMediaSelect(null, true)}
                       />
                     )}
-                    {isVideoSelected && project.video && (
-                      <div className="project-image">
-                        <iframe
-                          width="600"
-                          height="380"
-                          src={project.video}
-                          title="Project Video"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        ></iframe>
-                      </div>
-                    )}
-                    <div className="image-previews">
-                      {project.images.map((image, index) => (
-                        <img
-                          key={index}
-                          src={image}
-                          alt={`Preview ${index}`}
-                          className={`preview-image ${selectedIndex === index && !isVideoSelected ? "active" : ""}`}
-                          onClick={() => handleMediaSelect(index)}
-                        />
-                      ))}
-                      {project.video && videoThumbnail && (
-                        <img
-                          src={videoThumbnail}
-                          alt="Video preview"
-                          className={`preview-image ${isVideoSelected ? "active" : ""}`}
-                          onClick={() => handleMediaSelect(null, true)}
-                        />
-                      )}
-                    </div>
                   </div>
-    
-                  <p className="project-author">By: {project.authors.join(", ")}</p>
-                  <div className="project-description" dangerouslySetInnerHTML={{ __html: project.description }} />
-                  <button
-                    className={`like-button ${isLiked ? "liked" : ""}`}
-                    onClick={handleLike}
-                  >
-                    <FontAwesomeIcon icon={faThumbsUp} /> ({project.likes})
-                  </button>
                 </div>
-    
-                <div className="comment-section-container">
-                  {/* Modal xác nhận xóa */}
-                  {commentToDelete && (
-                    <div className="delete-confirmation-modal">
-                      <p>Are you sure you want to delete this comment?</p>
-                      <button onClick={handleDeleteComment} className="confirm-delete-button">
-                        Yes, delete
-                      </button>
-                      <button onClick={() => setCommentToDelete(null)} className="cancel-delete-button">
-                        Cancel
-                      </button>
-                    </div>
-                  )}
-    
-                  <h3>Comments:</h3>
-                  <form onSubmit={handleCommentSubmit} className="comment-form">
-                    <div className="comment-input-container">
-                      {currentUser && (
-                        <img
-                          src={currentUser?.avatar}
-                          alt="Avatar"
-                          className="user-avatar"
-                        />
-                      )}
-                      <textarea
-                        placeholder="Write a comment..."
-                        value={commentText}
-                        onChange={(e) => setCommentText(e.target.value)}
-                        required
-                        className="comment-input"
-                      />
-                    </div>
-                    <button type="submit" className="comment-submit-button">Comment</button>
-                  </form>
-    
-                  {comments.length > 0 ? (
-                    <div>{renderComments()}</div>
-                  ) : (
-                    <p>No comments yet. Be the first to comment!</p>
-                  )}
-                </div>
+
+                <p className="project-author">
+                  By: {project.authors.join(", ")}
+                </p>
+                <div
+                  className="project-description"
+                  dangerouslySetInnerHTML={{ __html: project.description }}
+                />
+                <button
+                  className={`like-button ${isLiked ? "liked" : ""}`}
+                  onClick={handleLike}
+                >
+                  <FontAwesomeIcon icon={faThumbsUp} /> ({project.likes})
+                </button>
               </div>
-            </>
+
+              <div className="comment-section-container">
+                {commentToDelete && (
+                  <div className="delete-confirmation-modal">
+                    <p>Are you sure you want to delete this comment?</p>
+                    <button
+                      onClick={handleDeleteComment}
+                      className="confirm-delete-button"
+                    >
+                      Yes, delete
+                    </button>
+                    <button
+                      onClick={() => setCommentToDelete(null)}
+                      className="cancel-delete-button"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
+
+                <h3>Comments:</h3>
+                <form onSubmit={handleCommentSubmit} className="comment-form">
+                  <div className="comment-input-container">
+                    {currentUser && (
+                      <img
+                        src={currentUser?.avatar}
+                        alt="Avatar"
+                        className="user-avatar"
+                      />
+                    )}
+                    <textarea
+                      placeholder="Write a comment..."
+                      value={commentText}
+                      onChange={(e) => setCommentText(e.target.value)}
+                      required
+                      className="comment-input"
+                    />
+                  </div>
+                  <button type="submit" className="comment-submit-button">
+                    Comment
+                  </button>
+                </form>
+
+                {comments.length > 0 ? (
+                  <div>{renderComments()}</div>
+                ) : (
+                  <p>No comments yet. Be the first to comment!</p>
+                )}
+              </div>
+            </div>
+          </>
+        ) : (
+          <p className="loading-message">Loading project details...</p>
+        )}
+      </div>
+
+      <div className="related-projects-section">
+        <h3>Related Projects</h3>
+        <div className="related-projects-list">
+          {relatedProjects.length > 0 ? (
+            relatedProjects.map((relatedProject) => (
+              <div key={relatedProject._id} className="related-project-card">
+                <a href={`/project/${relatedProject._id}`}>
+                  {relatedProject.images.length > 0 && (
+                    <img
+                      src={relatedProject.images[0]}
+                      alt={`Project ${relatedProject.name}`}
+                      className="related-project-image"
+                    />
+                  )}
+                  <h4>{relatedProject.name}</h4>
+                  <p>By: {relatedProject.authors.join(", ")}</p>
+                </a>
+              </div>
+            ))
           ) : (
-            <p className="loading-message">Loading project details...</p>
+            <p>No related projects found.</p>
           )}
         </div>
-    
-        <div className="related-projects-section">
-          <h3>Related Projects</h3>
-          <div className="related-projects-list">
-            {relatedProjects && relatedProjects.length > 0 ? (
-              relatedProjects.map((relatedProject) => {
-                return (
-                  <div key={relatedProject._id} className="related-project-card">
-                    <a href={`/project/${relatedProject._id}`}>
-                      {relatedProject.images.length > 0 && (
-                        <img
-                          src={relatedProject.images[0]}
-                          alt={`Project ${relatedProject.name}`}
-                          className="related-project-image"
-                        />
-                      )}
-                      <h4>{relatedProject.name}</h4>
-                      <p>By: {relatedProject.authors.join(", ")}</p>
-                    </a>
-                  </div>
-                );
-              })
-            ) : (
-              <p>No related projects found.</p>
-            )}
-          </div>
-        </div>
-        
-        <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-        <AIChat />
-        <Footer />
       </div>
-    );    
+
+      {isWarningModalOpen && (
+        <WarningModal
+          message={warningMessage}
+          onClose={() => setIsWarningModalOpen(false)}
+        />
+      )}
+      <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <AIChat />
+      <Footer />
+    </div>
+  );
 }
 
 export default DetailPage;
