@@ -5,8 +5,6 @@ const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const { exec } = require("child_process");
 const fs = require("fs");
-const BSON = require("bson");
-const util = require("util");
 const archiver = require("archiver");
 const mongoose = require("mongoose");
 
@@ -62,12 +60,11 @@ const uploadFileToFirebase = async (file) => {
   }
 };
 
-// Xác minh token Firebase
 const verifyFirebaseToken = async (req, res, next) => {
   const idToken = req.headers.authorization?.split(" ")[1];
 
   if (!idToken) {
-    req.user = null; // Không có req.user nếu không có token
+    req.user = null;
     return next();
   }
 
@@ -99,10 +96,8 @@ const backupDatabaseToFirebase = async () => {
       data[collectionName] = collectionData;
     }
 
-    // Lưu dữ liệu dưới dạng JSON
     fs.writeFileSync(backupFileName, JSON.stringify(data, null, 2));
 
-    // Nén tệp JSON thành tệp zip
     await new Promise((resolve, reject) => {
       const output = fs.createWriteStream(zipFilePath);
       const archive = archiver("zip", { zlib: { level: 9 } });
@@ -115,7 +110,6 @@ const backupDatabaseToFirebase = async () => {
       archive.finalize();
     });
 
-    // Tải lên Firebase
     const fileBuffer = fs.readFileSync(zipFilePath);
     const firebaseFile = bucket.file(`backups/${zipFileName}`);
     const downloadToken = uuidv4();
