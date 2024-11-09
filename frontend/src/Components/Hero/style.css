@@ -1,32 +1,36 @@
 .hero {
-    background: url('../../../public/imgs/gre.jpg') no-repeat center center;
-    background-size: cover;
-    padding: 200px 0;
-    text-align: center;
-    color: rgb(52, 132, 132);
-  }
-  
-  .hero h1 {
-    font-size: 48px;
-    margin-bottom: 20px;
-  }
-  
-  .hero p {
-    font-size: 20px;
-    margin-bottom: 40px;
-    color: black;
-  }
-  
-  .hero button {
-    padding: 15px 30px;
-    background-color: #17a498;
-    color: white;
-    border: none;
-    border-radius: 30px;
-    transition: background-color 0.3s;
-  }
-  
-  .hero button:hover {
-    background-color: #11707c;
-  }
-  
+  background-position: center;
+  background-size: cover;
+  padding: 200px 0;
+  text-align: center;
+  color: rgb(52, 132, 132);
+  transition: background-image 1s ease-in-out; 
+}
+
+.hero h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 20px;
+  margin-bottom: 40px;
+  color: black;
+}
+
+.hero button {
+  padding: 15px 30px;
+  background-color: #17a498;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  transition: background-color 0.3s;
+}
+
+.hero button:hover {
+  background-color: #11707c;
+}
+
+#root > div:nth-child(1) > section.hero > button > a {
+  text-decoration: none;
+}
