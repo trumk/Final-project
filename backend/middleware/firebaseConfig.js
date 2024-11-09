@@ -34,31 +34,27 @@ const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // Giới hạn 5MB
+    fileSize: 5 * 1024 * 1024, 
   },
-}).single("file"); // Xử lý tải lên một file duy nhất
+}).fields([
+  { name: "images", maxCount: 10 }, 
+  { name: "reports", maxCount: 10 } 
+]);
 
-// Hàm tải file lên Firebase Storage
 const uploadFileToFirebase = async (file) => {
   const fileName = Date.now() + "-" + file.originalname;
-  const firebaseFile = bucket.file(fileName);
-  const downloadToken = uuidv4(); // Tạo một token mới
+  const firebaseFile = admin.storage().bucket().file(fileName);
+  const downloadToken = uuidv4();
 
   try {
-    // Tải file lên Firebase Storage cùng với token trong metadata
     await firebaseFile.save(file.buffer, {
       metadata: {
         contentType: file.mimetype,
-        metadata: {
-          firebaseStorageDownloadTokens: downloadToken, // Thêm token vào metadata
-        },
+        metadata: { firebaseStorageDownloadTokens: downloadToken },
       },
     });
-    // Tạo URL với token download
-    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${
-      bucket.name
-    }/o/${encodeURIComponent(fileName)}?alt=media&token=${downloadToken}`;
 
+    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${admin.storage().bucket().name}/o/${encodeURIComponent(fileName)}?alt=media&token=${downloadToken}`;
     return publicUrl;
   } catch (error) {
     console.error("Error uploading file to Firebase:", error);

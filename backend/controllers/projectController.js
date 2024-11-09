@@ -74,18 +74,19 @@ const getOneProjectForAdmin = async (req, res) => {
 const createProject = async (req, res) => {
   try {
     const { name, authors, description, semester, department, video } = req.body;
-    const newImages = req.files.images ? req.files.images : [];
-    const reportFile = req.files.report ? req.files.report[0] : null;
+    const newImages = req.files.images || [];
+    const reportFiles = req.files.reports || [];
     let images = [];
-    let reportUrl = "";
+    let reports = [];
 
     for (const file of newImages) {
       const publicUrl = await uploadFileToFirebase(file);
       images.push(publicUrl);
     }
 
-    if (reportFile) {
-      reportUrl = await uploadFileToFirebase(reportFile);
+    for (const file of reportFiles) {
+      const reportUrl = await uploadFileToFirebase(file);
+      reports.push(reportUrl);
     }
 
     const newProject = new Project({
@@ -96,7 +97,7 @@ const createProject = async (req, res) => {
       department,
       images,
       video,
-      report: reportUrl 
+      reports,
     });
 
     const savedProject = await newProject.save();
@@ -109,22 +110,19 @@ const createProject = async (req, res) => {
 
 const updateProject = async (req, res) => {
   try {
-    console.log("Received request:", req.body);
-    console.log("Files received:", req.files);
-
-    const { removedImages, removeReport } = req.body;
+    const { removedImages, removedReports } = req.body;
     const newImages = req.files.images || [];
-    const newReport = req.files.report ? req.files.report[0] : null;
+    const newReports = req.files.reports || [];
     let images = [];
+    let reports = [];
 
     const oldProject = await Project.findById(req.params.id);
     if (!oldProject) {
-      console.log("Project not found:", req.params.id);
       return res.status(404).json({ message: "Project not found" });
     }
 
     let oldImages = [...oldProject.images];
-    let reportUrl = oldProject.report;
+    let oldReports = [...oldProject.reports];
 
     for (const file of newImages) {
       const publicUrl = await uploadFileToFirebase(file);
@@ -135,23 +133,25 @@ const updateProject = async (req, res) => {
     for (const imageUrl of removedImagesList) {
       await deleteFileFromFirebase(imageUrl);
     }
-
     oldImages = oldImages.filter((image) => !removedImagesList.includes(image));
     images = [...oldImages, ...images];
 
-    if (removeReport && reportUrl) {
+    const removedReportsList = JSON.parse(removedReports || "[]");
+    for (const reportUrl of removedReportsList) {
       await deleteFileFromFirebase(reportUrl);
-      reportUrl = ""; 
     }
+    oldReports = oldReports.filter((report) => !removedReportsList.includes(report));
 
-    if (newReport) {
-      reportUrl = await uploadFileToFirebase(newReport);
+    for (const file of newReports) {
+      const reportUrl = await uploadFileToFirebase(file);
+      reports.push(reportUrl);
     }
+    reports = [...oldReports, ...reports];
 
     const updateData = {
       ...req.body,
       images,
-      report: reportUrl,
+      reports,
     };
 
     const updatedProject = await Project.findByIdAndUpdate(req.params.id, updateData, {
@@ -172,15 +172,10 @@ const updateProject = async (req, res) => {
 
 const deleteProject = async (req, res) => {
   try {
-    console.log("Starting project deletion process for ID:", req.params.id);
-
     const project = await Project.findById(req.params.id);
     if (!project) {
-      console.log("Project not found for ID:", req.params.id);
       return res.status(404).json({ message: "Project not found" });
     }
-
-    console.log("Project found:", project);
 
     for (const imageUrl of project.images) {
       const fileName = imageUrl.split("/").pop().split("?")[0];
@@ -189,32 +184,21 @@ const deleteProject = async (req, res) => {
       const [exists] = await file.exists();
       if (exists) {
         await file.delete();
-        console.log("Deleted image from Firebase:", fileName);
-      } else {
-        console.log("Image not found on Firebase:", fileName);
       }
     }
 
-    if (project.report) {
-      const pdfFileName = project.report.split("/").pop().split("?")[0];
-      const pdfFile = bucket.file(pdfFileName);
+    for (const reportUrl of project.reports) {
+      const reportFileName = reportUrl.split("/").pop().split("?")[0];
+      const reportFile = bucket.file(reportFileName);
 
-      const [pdfExists] = await pdfFile.exists();
-      if (pdfExists) {
-        await pdfFile.delete();
-        console.log("Deleted PDF file from Firebase:", pdfFileName);
-      } else {
-        console.log("PDF file not found on Firebase:", pdfFileName);
+      const [exists] = await reportFile.exists();
+      if (exists) {
+        await reportFile.delete();
       }
     }
 
-    console.log("Deleting project from database with ID:", req.params.id);
     await Project.findByIdAndDelete(req.params.id);
-
-    console.log("Project deleted successfully");
-    res.status(200).json({
-      message: "Project and associated images/PDF deleted successfully",
-    });
+    res.status(200).json({ message: "Project and associated images/reports deleted successfully" });
   } catch (error) {
     console.error("Error during project deletion:", error);
     res.status(500).json({ message: "Failed to delete project", error });

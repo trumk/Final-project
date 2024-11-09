@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
-import { deleteProject, getProjectForAdmin, updateProject } from "../../../../redux/apiRequest";
+import {
+  deleteProject,
+  getProjectForAdmin,
+  updateProject,
+} from "../../../../redux/apiRequest";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "react-quill/dist/quill.snow.css"; 
-import ReactQuill from "react-quill"; 
+import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill";
 
 const EditProject = () => {
   const dispatch = useDispatch();
@@ -14,16 +18,16 @@ const EditProject = () => {
 
   const [name, setName] = useState("");
   const [authors, setAuthors] = useState([""]);
-  const [description, setDescription] = useState(""); 
+  const [description, setDescription] = useState("");
   const [semester, setSemester] = useState("Spring");
   const [department, setDepartment] = useState("IT");
   const [videoUrl, setVideoUrl] = useState("");
   const [images, setImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
   const [removedImages, setRemovedImages] = useState(new Set());
-  const [report, setReport] = useState(""); 
-  const [newReport, setNewReport] = useState(null); 
-  const [removeReport, setRemoveReport] = useState(false); 
+  const [reports, setReports] = useState([]);
+  const [newReports, setNewReports] = useState([]);
+  const [removedReports, setRemovedReports] = useState(new Set());
 
   useEffect(() => {
     dispatch(getProjectForAdmin(id));
@@ -38,7 +42,7 @@ const EditProject = () => {
       setDepartment(project.department || "IT");
       setVideoUrl(project.video || "");
       setImages(project.images);
-      setReport(project.report || ""); 
+      setReports(project.reports || []);
     }
   }, [project]);
 
@@ -52,12 +56,14 @@ const EditProject = () => {
   };
 
   const handleReportChange = (event) => {
-    setNewReport(event.target.files[0]);
-    setRemoveReport(false); 
+    const files = Array.from(event.target.files);
+    setNewReports((prevReports) => [...prevReports, ...files]);
   };
 
   const handleRemoveImage = (imageToRemove) => {
-    setImages((prevImages) => prevImages.filter((image) => image !== imageToRemove));
+    setImages((prevImages) =>
+      prevImages.filter((image) => image !== imageToRemove)
+    );
     setRemovedImages((prevRemovedImages) => {
       const updatedSet = new Set(prevRemovedImages);
       updatedSet.add(imageToRemove);
@@ -65,9 +71,15 @@ const EditProject = () => {
     });
   };
 
-  const handleRemoveReport = () => {
-    setRemoveReport(true);
-    setNewReport(null); 
+  const handleRemoveReport = (reportToRemove) => {
+    setReports((prevReports) =>
+      prevReports.filter((report) => report !== reportToRemove)
+    );
+    setRemovedReports((prevRemovedReports) => {
+      const updatedSet = new Set(prevRemovedReports);
+      updatedSet.add(reportToRemove);
+      return updatedSet;
+    });
   };
 
   const handleRemoveNewImage = (index) => {
@@ -75,6 +87,14 @@ const EditProject = () => {
       const updatedImages = [...prevImages];
       updatedImages.splice(index, 1);
       return updatedImages;
+    });
+  };
+
+  const handleRemoveNewReport = (index) => {
+    setNewReports((prevReports) => {
+      const updatedReports = [...prevReports];
+      updatedReports.splice(index, 1);
+      return updatedReports;
     });
   };
 
@@ -105,7 +125,7 @@ const EditProject = () => {
     formData.append("department", department);
 
     if (videoUrl) {
-      formData.append("video", videoUrl);  
+      formData.append("video", videoUrl);
     }
 
     newImages.forEach((file) => {
@@ -113,13 +133,10 @@ const EditProject = () => {
     });
     formData.append("removedImages", JSON.stringify([...removedImages]));
 
-    if (newReport) {
-      formData.append("report", newReport);
-    }
-
-    if (removeReport) {
-      formData.append("removeReport", true);
-    }
+    newReports.forEach((report) => {
+      formData.append("reports", report);
+    });
+    formData.append("removedReports", JSON.stringify([...removedReports]));
 
     dispatch(updateProject(id, formData, navigate));
   };
@@ -137,7 +154,7 @@ const EditProject = () => {
   };
 
   const getFileNameFromUrl = (url) => {
-    return url.split('/').pop().split('?')[0];
+    return url.split("/").pop().split("?")[0];
   };
 
   return (
@@ -190,7 +207,11 @@ const EditProject = () => {
               )}
             </div>
           ))}
-          <button type="button" className="btn btn-secondary" onClick={addAuthorField}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={addAuthorField}
+          >
             Add More
           </button>
         </div>
@@ -244,65 +265,155 @@ const EditProject = () => {
         </div>
         <div className="mb-3">
           <label htmlFor="images" className="form-label">Images</label>
-          {/* Existing images */}
           <div style={{ display: "flex", flexWrap: "wrap" }}>
             {images.map((image, index) => (
-              <div key={index} style={{ position: "relative", marginRight: "10px", marginBottom: "10px" }}>
+              <div
+                key={index}
+                style={{
+                  position: "relative",
+                  marginRight: "10px",
+                  marginBottom: "10px",
+                }}
+              >
                 <img
                   src={image}
                   alt={`image-${index}`}
-                  style={{ width: "100px", height: "100px", objectFit: "cover", border: "1px solid #ddd", borderRadius: "8px" }}
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    objectFit: "cover",
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                  }}
                 />
-                <button type="button" onClick={() => handleRemoveImage(image)} style={{ position: "absolute", top: "0", right: "0", backgroundColor: "red", color: "white", border: "none", borderRadius: "50%", width: "20px", height: "20px" }}>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveImage(image)}
+                  style={{
+                    position: "absolute",
+                    top: "0",
+                    right: "0",
+                    backgroundColor: "red",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: "20px",
+                    height: "20px",
+                  }}
+                >
                   -
                 </button>
               </div>
             ))}
             {newImages.map((image, index) => (
-              <div key={`new-${index}`} style={{ position: "relative", marginRight: "10px", marginBottom: "10px" }}>
+              <div
+                key={`new-${index}`}
+                style={{
+                  position: "relative",
+                  marginRight: "10px",
+                  marginBottom: "10px",
+                }}
+              >
                 <img
                   src={image.preview}
                   alt={`new-image-${index}`}
-                  style={{ width: "100px", height: "100px", objectFit: "cover", border: "1px solid #ddd", borderRadius: "8px" }}
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    objectFit: "cover",
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                  }}
                 />
-                <button type="button" onClick={() => handleRemoveNewImage(index)} style={{ position: "absolute", top: "0", right: "0", backgroundColor: "red", color: "white", border: "none", borderRadius: "50%", width: "20px", height: "20px" }}>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveNewImage(index)}
+                  style={{
+                    position: "absolute",
+                    top: "0",
+                    right: "0",
+                    backgroundColor: "red",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: "20px",
+                    height: "20px",
+                  }}
+                >
                   -
                 </button>
               </div>
             ))}
-            <label htmlFor="newImages" style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100px", height: "100px", border: "1px solid #ddd", cursor: "pointer", backgroundColor: "#f8f9fa" }}>
-              <input type="file" id="newImages" multiple style={{ display: "none" }} onChange={handleFileChange} />
+            <label
+              htmlFor="newImages"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100px",
+                height: "100px",
+                border: "1px solid #ddd",
+                cursor: "pointer",
+                backgroundColor: "#f8f9fa",
+              }}
+            >
+              <input
+                type="file"
+                id="newImages"
+                multiple
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
               <span style={{ color: "#6c757d" }}>Upload more</span>
             </label>
           </div>
         </div>
         <div className="mb-3">
-          <label htmlFor="report" className="form-label">Report (PDF)</label>
-          {report && !removeReport ? (
-            <div className="mb-2">
+          <label htmlFor="reports" className="form-label">Reports (PDFs)</label>
+          {reports.map((report, index) => (
+            <div key={index} className="mb-2">
               <a href={report} target="_blank" rel="noopener noreferrer">
-              {getFileNameFromUrl(report)}
+                {getFileNameFromUrl(report)}
               </a>
               <button
                 type="button"
                 className="btn btn-danger btn-sm ms-2"
-                onClick={handleRemoveReport}
+                onClick={() => handleRemoveReport(report)}
               >
                 Remove
               </button>
             </div>
-          ) : (
-            <input
-              type="file"
-              id="report"
-              className="form-control"
-              onChange={handleReportChange}
-              accept="application/pdf"
-            />
-          )}
+          ))}
+          {newReports.map((report, index) => (
+            <div key={`new-${index}`} className="mb-2">
+              <span>{report.name}</span>
+              <button
+                type="button"
+                className="btn btn-danger btn-sm ms-2"
+                onClick={() => handleRemoveNewReport(index)}
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+          <input
+            type="file"
+            id="reports"
+            className="form-control"
+            onChange={handleReportChange}
+            accept="application/pdf"
+            multiple
+          />
         </div>
+
         <button type="submit" className="btn btn-primary me-2">Update Project</button>
-        <button type="button" className="btn btn-danger btn-sm" onClick={handleDelete}>Delete</button>
+        <button
+          type="button"
+          className="btn btn-danger btn-sm"
+          onClick={handleDelete}
+        >
+          Delete
+        </button>
       </form>
     </div>
   );

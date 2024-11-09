@@ -19,9 +19,9 @@ router.delete('/comments/:id', middleware.verifyFirebaseToken, projectController
 router.get('/', projectController.getAllProjects);
 router.get('/:id', projectController.getOneProject); 
 router.get('/admin/:id', projectController.getOneProjectForAdmin); 
-router.put('/:id', upload.fields([{ name: 'images', maxCount: 5 }, { name: 'report', maxCount: 2 }]),projectController.updateProject);
+router.put("/:id", middleware.upload, projectController.updateProject);
 router.delete('/:id', projectController.deleteProject);
-router.post('/', upload.fields([{ name: 'images', maxCount: 5 }, { name: 'report', maxCount: 2 }]), projectController.createProject);
+router.post("/", middleware.upload, projectController.createProject);
 
 router.post('/:projectId/like', middleware.verifyFirebaseToken, projectController.likeProject);
 

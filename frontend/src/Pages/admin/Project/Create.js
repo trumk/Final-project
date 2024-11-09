@@ -12,35 +12,32 @@ const CreateProject = () => {
   const navigate = useNavigate();
   
   const [name, setName] = useState('');
-  const [authors, setAuthors] = useState(['']); // Khởi tạo với một tác giả rỗng
+  const [authors, setAuthors] = useState(['']);
   const [description, setDescription] = useState('');  
   const [semester, setSemester] = useState('Spring'); 
   const [department, setDepartment] = useState('IT');  
   const [videoUrl, setVideoUrl] = useState(''); 
   const [images, setImages] = useState([]);
-  const [report, setReport] = useState(null);
+  const [reports, setReports] = useState([]); // Cập nhật thành mảng để chứa nhiều file
 
   const handleFileChange = (e) => {
     setImages(e.target.files);
   };
 
   const handleReportChange = (e) => {
-    setReport(e.target.files[0]);
+    setReports(e.target.files); // Lưu tất cả các file vào state
   };
 
-  // Xử lý thay đổi của từng trường tác giả
   const handleAuthorChange = (index, value) => {
     const newAuthors = [...authors];
     newAuthors[index] = value;
     setAuthors(newAuthors);
   };
 
-  // Thêm trường tác giả mới
   const addAuthorField = () => {
     setAuthors([...authors, '']);
   };
 
-  // Xóa trường tác giả
   const removeAuthorField = (index) => {
     const newAuthors = [...authors];
     newAuthors.splice(index, 1);
@@ -65,9 +62,9 @@ const CreateProject = () => {
       formData.append('images', images[i]);
     }
 
-    // Thêm file PDF nếu có
-    if (report) {
-      formData.append('report', report);
+    // Thêm tất cả các file PDF vào formData
+    for (let i = 0; i < reports.length; i++) {
+      formData.append('reports', reports[i]);
     }
 
     dispatch(createProject(formData, navigate));
@@ -178,13 +175,14 @@ const CreateProject = () => {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="report" className="form-label">Report (PDF)</label>
+          <label htmlFor="reports" className="form-label">Reports (PDF)</label>
           <input
             type="file"
-            id="report"
+            id="reports"
             className="form-control"
             onChange={handleReportChange}
             accept="application/pdf"
+            multiple
           />
         </div>
         <button type="submit" className="btn btn-primary">Create Project</button>

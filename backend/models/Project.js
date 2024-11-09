@@ -43,7 +43,12 @@ const projectSchema = new Schema(
         required: false,
       },
     ],
-    report: { type: String, default: "" },
+    reports: [
+      {
+        type: String,
+        required: false,
+      },
+    ],
     video: {
       type: String,
       required: false,

@@ -356,12 +356,23 @@ function DetailPage() {
                   className="project-description"
                   dangerouslySetInnerHTML={{ __html: project.description }}
                 />
-                {project.report && (
-                  <div className="project-report">
-                    <h5>Project Material:</h5>
-                    <a href={project.report} download target="_blank" rel="noopener noreferrer">
-                      {getFileNameFromUrl(project.report)}
-                    </a>
+                {project.reports && project.reports.length > 0 && (
+                  <div className="project-reports">
+                    <h5>Project Materials:</h5>
+                    <ul>
+                      {project.reports.map((report, index) => (
+                        <li key={index}>
+                          <a
+                            href={report}
+                            download
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {getFileNameFromUrl(report)}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 )}
                 <button
