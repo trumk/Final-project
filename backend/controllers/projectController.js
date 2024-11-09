@@ -71,18 +71,21 @@ const getOneProjectForAdmin = async (req, res) => {
   }
 };
 
-
 const createProject = async (req, res) => {
   try {
-    const { name, authors, description, semester, department, video } =
-      req.body;
-    const newImages = req.files ? req.files : [];
+    const { name, authors, description, semester, department, video } = req.body;
+    const newImages = req.files.images ? req.files.images : [];
+    const reportFile = req.files.report ? req.files.report[0] : null;
     let images = [];
+    let reportUrl = "";
 
     for (const file of newImages) {
       const publicUrl = await uploadFileToFirebase(file);
-      console.log(publicUrl);
       images.push(publicUrl);
+    }
+
+    if (reportFile) {
+      reportUrl = await uploadFileToFirebase(reportFile);
     }
 
     const newProject = new Project({
@@ -93,19 +96,14 @@ const createProject = async (req, res) => {
       department,
       images,
       video,
+      report: reportUrl 
     });
 
     const savedProject = await newProject.save();
     res.status(201).json(savedProject);
   } catch (error) {
     console.error("Error creating project:", error);
-
-    res.status(500).json({
-      message: "Failed to create project",
-      error: error.message,
-      stack: error.stack,
-      details: error,
-    });
+    res.status(500).json({ message: "Failed to create project", error });
   }
 };
 
@@ -114,73 +112,57 @@ const updateProject = async (req, res) => {
     console.log("Received request:", req.body);
     console.log("Files received:", req.files);
 
-    const { removedImages } = req.body;
-    const newImages = req.files ? req.files : [];
+    const { removedImages, removeReport } = req.body;
+    const newImages = req.files.images || [];
+    const newReport = req.files.report ? req.files.report[0] : null;
     let images = [];
 
-    // Lấy dự án cũ
     const oldProject = await Project.findById(req.params.id);
     if (!oldProject) {
       console.log("Project not found:", req.params.id);
       return res.status(404).json({ message: "Project not found" });
     }
 
-    console.log("Old project images:", oldProject.images);
-
     let oldImages = [...oldProject.images];
+    let reportUrl = oldProject.report;
 
-    // Tải lên ảnh mới lên Firebase
     for (const file of newImages) {
       const publicUrl = await uploadFileToFirebase(file);
-      console.log("Uploaded new image:", publicUrl);
       images.push(publicUrl);
     }
 
-    // Loại bỏ ảnh đã yêu cầu xóa khỏi Firebase
     const removedImagesList = JSON.parse(removedImages || "[]");
-    console.log("Images to remove:", removedImagesList);
-
     for (const imageUrl of removedImagesList) {
-      console.log("Attempting to delete image:", imageUrl);
       await deleteFileFromFirebase(imageUrl);
-      console.log("Deleted image from Firebase:", imageUrl);
     }
 
-    // Cập nhật danh sách ảnh còn lại
     oldImages = oldImages.filter((image) => !removedImagesList.includes(image));
     images = [...oldImages, ...images];
-    console.log("Updated images list:", images);
 
-    const updateData = {};
+    if (removeReport && reportUrl) {
+      await deleteFileFromFirebase(reportUrl);
+      reportUrl = ""; 
+    }
 
-    if (req.body.name) updateData.name = req.body.name;
-    if (req.body.authors)
-      updateData.authors = Array.isArray(req.body.authors)
-        ? req.body.authors
-        : [req.body.authors];
-    if (req.body.description) updateData.description = req.body.description;
-    if (req.body.semester) updateData.semester = req.body.semester;
-    if (req.body.department) updateData.department = req.body.department;
-    if (images.length > 0) updateData.images = images;
-    if (req.body.video) updateData.video = req.body.video;
+    if (newReport) {
+      reportUrl = await uploadFileToFirebase(newReport);
+    }
 
-    console.log("Updating project with data:", updateData);
+    const updateData = {
+      ...req.body,
+      images,
+      report: reportUrl,
+    };
 
-    const updatedProject = await Project.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const updatedProject = await Project.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!updatedProject) {
-      console.log("Project not found after update:", req.params.id);
       return res.status(404).json({ message: "Project not found" });
     }
 
-    console.log("Project updated successfully:", updatedProject);
     res.status(200).json(updatedProject);
   } catch (error) {
     console.error("Error updating project:", error);
@@ -202,17 +184,27 @@ const deleteProject = async (req, res) => {
 
     for (const imageUrl of project.images) {
       const fileName = imageUrl.split("/").pop().split("?")[0];
-      console.log("Attempting to delete image file:", fileName);
-
       const file = bucket.file(fileName);
 
       const [exists] = await file.exists();
       if (exists) {
-        console.log("File exists, deleting file:", fileName);
         await file.delete();
-        console.log("File deleted:", fileName);
+        console.log("Deleted image from Firebase:", fileName);
       } else {
-        console.log("File not found:", fileName);
+        console.log("Image not found on Firebase:", fileName);
+      }
+    }
+
+    if (project.report) {
+      const pdfFileName = project.report.split("/").pop().split("?")[0];
+      const pdfFile = bucket.file(pdfFileName);
+
+      const [pdfExists] = await pdfFile.exists();
+      if (pdfExists) {
+        await pdfFile.delete();
+        console.log("Deleted PDF file from Firebase:", pdfFileName);
+      } else {
+        console.log("PDF file not found on Firebase:", pdfFileName);
       }
     }
 
@@ -220,9 +212,9 @@ const deleteProject = async (req, res) => {
     await Project.findByIdAndDelete(req.params.id);
 
     console.log("Project deleted successfully");
-    res
-      .status(200)
-      .json({ message: "Project and associated images deleted successfully" });
+    res.status(200).json({
+      message: "Project and associated images/PDF deleted successfully",
+    });
   } catch (error) {
     console.error("Error during project deletion:", error);
     res.status(500).json({ message: "Failed to delete project", error });
@@ -346,10 +338,19 @@ const addComment = async (req, res) => {
   }
 };
 
+const deleteCommentAndReplies = async (commentId) => {
+  const replies = await Comment.find({ parentId: commentId });
+  
+  for (const reply of replies) {
+    await deleteCommentAndReplies(reply._id); 
+  }
+  
+  await Comment.findByIdAndDelete(commentId);
+};
+
 const deleteComment = async (req, res) => {
   try {
     const commentId = req.params.id;
-
     const userId = req.user?.uid || req.body.userId || req.cookies.userId;
 
     if (!userId) {
@@ -365,7 +366,7 @@ const deleteComment = async (req, res) => {
       return res.status(403).json({ message: "You can only delete your own comments" });
     }
 
-    await Comment.findByIdAndDelete(commentId);
+    await deleteCommentAndReplies(commentId);
 
     const project = await Project.findById(comment.projectId);
     if (project) {
@@ -373,7 +374,7 @@ const deleteComment = async (req, res) => {
       await project.save();
     }
 
-    res.status(200).json({ message: "Comment deleted successfully" });
+    res.status(200).json({ message: "Comment and all replies deleted successfully" });
   } catch (error) {
     console.error("Error deleting comment:", error);
     res.status(500).json({ message: "Failed to delete comment", error });

@@ -18,6 +18,10 @@ import "./style.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { formatDistanceToNow } from "date-fns";
 
+const getFileNameFromUrl = (url) => {
+  return url.split('/').pop().split('?')[0];
+};
+
 function DetailPage() {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -174,7 +178,7 @@ function DetailPage() {
   };
 
   const renderComments = (parentId = null, parentUserName = "", depth = 0) => {
-    const maxDepth = 2; // Limit the nesting depth
+    const maxDepth = 2; 
 
     return comments
       .filter((comment) => comment.parentId === parentId)
@@ -182,8 +186,7 @@ function DetailPage() {
       .map((comment) => {
         const hasReplies = comments.some((c) => c.parentId === comment._id);
         const currentDepth = Math.min(depth, maxDepth);
-        const marginLeft = `${50 * currentDepth}px`;
-
+        const marginLeft = currentDepth < maxDepth ? `${50 * currentDepth}px` : '0px';
         return (
           <div
             key={comment._id}
@@ -353,8 +356,16 @@ function DetailPage() {
                   className="project-description"
                   dangerouslySetInnerHTML={{ __html: project.description }}
                 />
+                {project.report && (
+                  <div className="project-report">
+                    <h5>Project Material:</h5>
+                    <a href={project.report} download target="_blank" rel="noopener noreferrer">
+                      {getFileNameFromUrl(project.report)}
+                    </a>
+                  </div>
+                )}
                 <button
-                  className={`like-button ${isLiked ? "liked" : ""}`}
+                  className={`like-button ${isLiked ? "liked" : ""} mt-1`}
                   onClick={handleLike}
                 >
                   <FontAwesomeIcon icon={faThumbsUp} /> ({project.likes})

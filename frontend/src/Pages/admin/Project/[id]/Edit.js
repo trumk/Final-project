@@ -21,6 +21,9 @@ const EditProject = () => {
   const [images, setImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
   const [removedImages, setRemovedImages] = useState(new Set());
+  const [report, setReport] = useState(""); 
+  const [newReport, setNewReport] = useState(null); 
+  const [removeReport, setRemoveReport] = useState(false); 
 
   useEffect(() => {
     dispatch(getProjectForAdmin(id));
@@ -35,6 +38,7 @@ const EditProject = () => {
       setDepartment(project.department || "IT");
       setVideoUrl(project.video || "");
       setImages(project.images);
+      setReport(project.report || ""); 
     }
   }, [project]);
 
@@ -47,6 +51,11 @@ const EditProject = () => {
     setNewImages((prevImages) => [...prevImages, ...filePreviews]);
   };
 
+  const handleReportChange = (event) => {
+    setNewReport(event.target.files[0]);
+    setRemoveReport(false); 
+  };
+
   const handleRemoveImage = (imageToRemove) => {
     setImages((prevImages) => prevImages.filter((image) => image !== imageToRemove));
     setRemovedImages((prevRemovedImages) => {
@@ -54,6 +63,11 @@ const EditProject = () => {
       updatedSet.add(imageToRemove);
       return updatedSet;
     });
+  };
+
+  const handleRemoveReport = () => {
+    setRemoveReport(true);
+    setNewReport(null); 
   };
 
   const handleRemoveNewImage = (index) => {
@@ -99,6 +113,14 @@ const EditProject = () => {
     });
     formData.append("removedImages", JSON.stringify([...removedImages]));
 
+    if (newReport) {
+      formData.append("report", newReport);
+    }
+
+    if (removeReport) {
+      formData.append("removeReport", true);
+    }
+
     dispatch(updateProject(id, formData, navigate));
   };
 
@@ -112,6 +134,10 @@ const EditProject = () => {
           console.error(error);
         });
     }
+  };
+
+  const getFileNameFromUrl = (url) => {
+    return url.split('/').pop().split('?')[0];
   };
 
   return (
@@ -249,6 +275,31 @@ const EditProject = () => {
               <span style={{ color: "#6c757d" }}>Upload more</span>
             </label>
           </div>
+        </div>
+        <div className="mb-3">
+          <label htmlFor="report" className="form-label">Report (PDF)</label>
+          {report && !removeReport ? (
+            <div className="mb-2">
+              <a href={report} target="_blank" rel="noopener noreferrer">
+              {getFileNameFromUrl(report)}
+              </a>
+              <button
+                type="button"
+                className="btn btn-danger btn-sm ms-2"
+                onClick={handleRemoveReport}
+              >
+                Remove
+              </button>
+            </div>
+          ) : (
+            <input
+              type="file"
+              id="report"
+              className="form-control"
+              onChange={handleReportChange}
+              accept="application/pdf"
+            />
+          )}
         </div>
         <button type="submit" className="btn btn-primary me-2">Update Project</button>
         <button type="button" className="btn btn-danger btn-sm" onClick={handleDelete}>Delete</button>

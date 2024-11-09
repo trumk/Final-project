@@ -18,9 +18,14 @@ const CreateProject = () => {
   const [department, setDepartment] = useState('IT');  
   const [videoUrl, setVideoUrl] = useState(''); 
   const [images, setImages] = useState([]);
+  const [report, setReport] = useState(null);
 
   const handleFileChange = (e) => {
     setImages(e.target.files);
+  };
+
+  const handleReportChange = (e) => {
+    setReport(e.target.files[0]);
   };
 
   // Xử lý thay đổi của từng trường tác giả
@@ -59,6 +64,12 @@ const CreateProject = () => {
     for (let i = 0; i < images.length; i++) {
       formData.append('images', images[i]);
     }
+
+    // Thêm file PDF nếu có
+    if (report) {
+      formData.append('report', report);
+    }
+
     dispatch(createProject(formData, navigate));
   };
 
@@ -164,6 +175,16 @@ const CreateProject = () => {
             multiple
             onChange={handleFileChange}
             accept="image/*"
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="report" className="form-label">Report (PDF)</label>
+          <input
+            type="file"
+            id="report"
+            className="form-control"
+            onChange={handleReportChange}
+            accept="application/pdf"
           />
         </div>
         <button type="submit" className="btn btn-primary">Create Project</button>
