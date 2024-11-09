@@ -38,7 +38,7 @@ const generatePrompt = async (req, res) => {
       return res.status(400).json({ message: "Prompt is required" });
     }
 
-    const allowedKeywords = ["hi", "project", "comment", "comments", "compare", "rate", "evaluate", "description", "about", "views", "view", "department", "semester", "author", "authors"];
+    const allowedKeywords = ["hi", "project", "comment", "comments", "like", "likes", "compare", "rate", "evaluate", "description", "about", "views", "view", "department", "semester", "author", "authors", "createdAt"];
     const isRelevant = allowedKeywords.some(keyword => userPrompt.toLowerCase().includes(keyword));
 
     if (!isRelevant) {
@@ -51,7 +51,22 @@ const generatePrompt = async (req, res) => {
     await saveUserMessage(userId, userPrompt);
 
     let projectDetails = "";
-    if (userPrompt.toLowerCase().includes("project with the most likes")) {
+
+    if (userPrompt.toLowerCase().includes("project created the earliest") || userPrompt.toLowerCase().includes("project created first")) {
+      const earliestProject = await Project.find().sort({ createdAt: 1 }).limit(1).populate({
+        path: 'comments',
+        select: 'comment userId',
+        populate: { path: 'userId', select: 'userName' },
+      });
+
+      console.log("Earliest Project:", earliestProject);
+
+      if (earliestProject.length > 0) {
+        projectDetails += `The earliest project is "${earliestProject[0].name}" created on ${earliestProject[0].createdAt}.\n`;
+      } else {
+        projectDetails += "No projects found.\n";
+      }
+    } else if (userPrompt.toLowerCase().includes("project with the most likes")) {
       const mostLikedProject = await Project.findOne()
         .sort({ likes: -1 })
         .populate({
@@ -61,7 +76,7 @@ const generatePrompt = async (req, res) => {
         });
 
       if (mostLikedProject) {
-        projectDetails += `The project with the most like is "${mostLikedProject.name} " with ${mostLikedProject.likes} likes.\n`; 
+        projectDetails += `The project with the most likes is "${mostLikedProject.name}" with ${mostLikedProject.likes} likes.\n`; 
       } else {
         projectDetails += "No projects found.\n";
       }
@@ -81,7 +96,8 @@ const generatePrompt = async (req, res) => {
         projectDetails += `Department: ${project.department} \n`; 
         projectDetails += `Likes: ${project.likes} \n`; 
         projectDetails += `Number of Comments: ${project.comments.length} \n`;
-        projectDetails += `Views: ${project.views} \n`; 
+        projectDetails += `Views: ${project.views} \n`;
+        projectDetails += `Created At: ${project.createdAt} \n`;
 
         if (project.comments.length > 0) {
           projectDetails += `Comments:\n`;
@@ -96,7 +112,7 @@ const generatePrompt = async (req, res) => {
     const chatHistory = await getChatHistory(userId);
     const conversationContext = chatHistory.map(msg => `${msg.sender}: ${msg.message}`).join("\n");
 
-    const fullPrompt = `${projectDetails}${conversationContext}\nUser: ${userPrompt}\nAI: `;
+    const fullPrompt = `${projectDetails}${conversationContext}\nUser: ${userPrompt} (sorted by createdAt)\nAI: (respond briefly)`;
 
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const result = await model.generateContent(fullPrompt);
