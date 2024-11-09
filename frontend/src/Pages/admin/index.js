@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllComments, getAllProjects, getAllUsers, logout } from '../../redux/apiRequest';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faProjectDiagram, faUser, faComments, faPlus, faSignOutAlt, faCog, faDatabase  } from '@fortawesome/free-solid-svg-icons';
+import { faProjectDiagram, faUser, faComments, faSignOutAlt, faDatabase, faChartLine } from '@fortawesome/free-solid-svg-icons';
+import Chart from '../../Components/Chart/Chart';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -31,110 +32,71 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="container-fluid p-4">
-      {/* Navbar for logout */}
-      <div className="d-flex justify-content-between mb-4">
-        <h1>Admin Dashboard</h1>
-        <button className="btn btn-logout" onClick={() => setShowLogoutModal(true)}>
-          <FontAwesomeIcon icon={faSignOutAlt} /> Logout
-        </button>
-      </div>
+    <div className="dashboard">
+      <aside className="dashboard-sidebar">
+        <h2 className="sidebar-title">Admin Panel</h2>
+        <ul className="sidebar-menu">
+          <li onClick={() => navigate('/admin')} title="Dashboard">
+            <FontAwesomeIcon icon={faChartLine} /> <span>Dashboard</span>
+          </li>
+          <li onClick={() => navigate('/admin/project')} title="Projects">
+            <FontAwesomeIcon icon={faProjectDiagram} /> <span>Projects</span>
+          </li>
+          <li onClick={() => navigate('/admin/user')} title="Users">
+            <FontAwesomeIcon icon={faUser} /> <span>Users</span>
+          </li>
+          <li onClick={() => navigate('/admin/comment')} title="Comments">
+            <FontAwesomeIcon icon={faComments} /> <span>Comments</span>
+          </li>
+          <li onClick={() => navigate('/admin/backup')} title="Backup Database">
+            <FontAwesomeIcon icon={faDatabase} /> <span>Backup</span>
+          </li>
+          <li onClick={() => setShowLogoutModal(true)} title="Logout">
+            <FontAwesomeIcon icon={faSignOutAlt} /> <span>Logout</span>
+          </li>
+        </ul>
+      </aside>
 
-      <div className="row">
-        {/* Card 1: Projects */}
-        <div className="col-md-4">
-          <div className="card card-custom bg-light mb-3 shadow">
-            <div className="card-header d-flex align-items-center">
-              <FontAwesomeIcon icon={faProjectDiagram} className="me-2" /> Projects
+      <main className="dashboard-main">
+        <nav className="dashboard-navbar">
+          <h1 className="dashboard-title">Dashboard Overview</h1>
+        </nav>
+
+        <div className="dashboard-cards">
+          <div className="card-custom project-card">
+            <FontAwesomeIcon icon={faProjectDiagram} className="card-icon" />
+            <div className="card-content">
+              <h5>{projects ? projects.length : 0} Projects</h5>
+              <p>Manage all submitted projects.</p>
             </div>
-            <div className="card-body">
-              <h5 className="card-title">{projects ? projects.length : 0} Projects</h5>
-              <p className="card-text">Manage all submitted projects.</p>
-              <button className="btn btn-custom">
-                <a href='/admin/project' className="text-white">View projects</a>
-              </button>
+          </div>
+
+          <div className="card-custom user-card">
+            <FontAwesomeIcon icon={faUser} className="card-icon" />
+            <div className="card-content">
+              <h5>{users ? users.length : 0} Users</h5>
+              <p>Manage all registered users.</p>
+            </div>
+          </div>
+
+          <div className="card-custom comment-card">
+            <FontAwesomeIcon icon={faComments} className="card-icon" />
+            <div className="card-content">
+              <h5>{comments ? comments.length : 0} Comments</h5>
+              <p>Review user comments.</p>
             </div>
           </div>
         </div>
 
-        {/* Card 2: Users */}
-        <div className="col-md-4">
-          <div className="card card-custom bg-light mb-3 shadow">
-            <div className="card-header d-flex align-items-center">
-              <FontAwesomeIcon icon={faUser} className="me-2" /> Users
-            </div>
-            <div className="card-body">
-              <h5 className="card-title">{users ? users.length : 0} Users</h5>
-              <p className="card-text">Manage registered users.</p>
-              <button className="btn btn-custom">
-                <a href='/admin/user' className="text-white">View users</a>
-              </button>
-            </div>
+        {/* Chart Section */}
+        <div className="dashboard-content">
+          <div className="chart-section">
+            <Chart />
           </div>
         </div>
+      </main>
 
-        {/* Card 3: Comments */}
-        <div className="col-md-4">
-          <div className="card card-custom bg-light mb-3 shadow">
-            <div className="card-header d-flex align-items-center">
-              <FontAwesomeIcon icon={faComments} className="me-2" /> Comments
-            </div>
-            <div className="card-body">
-              <h5 className="card-title">{comments ? comments.length : 0} Comments</h5>
-              <p className="card-text">Review and manage comments.</p>
-              <button className="btn btn-custom">
-                <a href='/admin/comment' className="text-white">View comments</a>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="row">
-        {/* Card 4: Recent Activities */}
-        <div className="col-md-6">
-          <div className="card card-custom bg-light mb-3 shadow">
-            <div className="card-header d-flex align-items-center">
-              <FontAwesomeIcon icon={faCog} className="me-2" /> Recent Activities
-            </div>
-            <div className="card-body">
-              <h5 className="card-title">Latest Updates</h5>
-              <ul className="list-group">
-                {projects && projects.length > 0 && (
-                  <li className="list-group-item">Project "{projects[0].name}" updated</li>
-                )}
-                {users && users.length > 0 && (
-                  <li className="list-group-item">New user "{users[0].userName}" registered</li>
-                )}
-                {comments && comments.length > 0 && (
-                  <li className="list-group-item">Comment added on "{comments[0].projectId}"</li>
-                )}
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Card 5: Admin Actions */}
-        <div className="col-md-6">
-          <div className="card card-custom bg-light mb-3 shadow">
-            <div className="card-header d-flex align-items-center">
-              <FontAwesomeIcon icon={faCog} className="me-2" /> Admin Actions
-            </div>
-            <div className="card-body">
-              <h5 className="card-title">Quick Actions</h5>
-              <button className="btn btn-primary mb-2 me-2">
-                <FontAwesomeIcon icon={faPlus} />{' '}
-                <a href='/admin/project/create' className="text-white">Add new project</a>
-              </button>
-              <button className="btn btn-warning mb-2" onClick={() => navigate('/admin/backup')}>
-                <FontAwesomeIcon icon={faDatabase} /> Backup Database
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Modal for Logout Confirmation */}
+      {/* Logout Modal */}
       {showLogoutModal && (
         <div className="modal-backdrop">
           <div className="modal-content">

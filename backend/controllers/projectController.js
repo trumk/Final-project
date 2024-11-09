@@ -470,6 +470,39 @@ const filterProjects = async (req, res) => {
   }
 };
 
+const getProjectByDepartment = async (req, res) => {
+  try {
+    const projectCounts = await Project.aggregate([
+      {
+        $group: {
+          _id: "$department",
+          projectCount: { $sum: 1 },
+        },
+      },
+    ]);
+    res.status(200).json(projectCounts);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to get project counts by department", error });
+  }
+};
+
+const getLikeByDepartment = async (req, res) => {
+  try {
+    const likeCounts = await Project.aggregate([
+      {
+        $group: {
+          _id: "$department",
+          totalLikes: { $sum: "$likes" },
+        },
+      },
+    ]);
+    res.status(200).json(likeCounts);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to get like counts by department", error });
+  }
+};
+
+
 module.exports = {
   getAllProjects,
   getOneProject,
@@ -485,4 +518,6 @@ module.exports = {
   searchProjects,
   sortProjects,
   filterProjects,
+  getProjectByDepartment,
+  getLikeByDepartment
 };

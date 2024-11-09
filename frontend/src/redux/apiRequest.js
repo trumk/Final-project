@@ -21,9 +21,15 @@ import {
   getCommentsFailed,
   getCommentsStart,
   getCommentsSuccess,
+  getLikeByDepartmentFailed,
+  getLikeByDepartmentStart,
+  getLikeByDepartmentSuccess,
   getProjectAdminFailed,
   getProjectAdminStart,
   getProjectAdminSuccess,
+  getProjectByDepartmentFailed,
+  getProjectByDepartmentStart,
+  getProjectByDepartmentSuccess,
   getProjectFailed,
   getProjectsFailed,
   getProjectsStart,
@@ -422,5 +428,27 @@ export const initiateBackup = () => async (dispatch) => {
   } catch (error) {
     dispatch(backupRequestFailed(error.response?.data?.message || "Backup failed"));
     toast.error("Failed to backup database");
+  }
+};
+
+export const getProjectByDepartment = () => async (dispatch) => {
+  dispatch(getProjectByDepartmentStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/api/projects/department/projects`);
+    dispatch(getProjectByDepartmentSuccess(res.data));
+  } catch (err) {
+    dispatch(getProjectByDepartmentFailed(err.message));
+    console.error("Failed to fetch projects by department:", err);
+  }
+};
+
+export const getLikeByDepartment = () => async (dispatch) => {
+  dispatch(getLikeByDepartmentStart());
+  try {
+    const res = await axios.get(`${BACKEND_URL}/api/projects/department/likes`);
+    dispatch(getLikeByDepartmentSuccess(res.data));
+  } catch (err) {
+    dispatch(getLikeByDepartmentFailed(err.message));
+    console.error("Failed to fetch likes by department:", err);
   }
 };

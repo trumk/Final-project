@@ -9,6 +9,8 @@ const projectSlice = createSlice({
     error: false,
     msg: "",
     comments: [], 
+    departmentProjects: null,
+    departmentLikes: null,
   },
   reducers: {
     getProjectsStart: (state) => {
@@ -200,6 +202,32 @@ const projectSlice = createSlice({
       state.error = true;
       state.msg = action.payload || "Failed to like project";
     },
+    getProjectByDepartmentStart: (state) => {
+      state.isFetching = true;
+    },
+    getProjectByDepartmentSuccess: (state, action) => {
+      state.isFetching = false;
+      state.departmentProjects = action.payload;
+      state.error = false;
+    },
+    getProjectByDepartmentFailed: (state, action) => {
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to fetch projects by department";
+    },
+    getLikeByDepartmentStart: (state) => {
+      state.isFetching = true;
+    },
+    getLikeByDepartmentSuccess: (state, action) => {
+      state.isFetching = false;
+      state.departmentLikes = action.payload;
+      state.error = false;
+    },
+    getLikeByDepartmentFailed: (state, action) => {
+      state.isFetching = false;
+      state.error = true;
+      state.msg = action.payload || "Failed to fetch likes by department";
+    },
   },
 });
 
@@ -245,7 +273,13 @@ export const {
   likeProjectFailed,
   getAllCommentsStart,
   getAllCommentsSuccess,
-  getAllCommentsFailed
+  getAllCommentsFailed,
+  getProjectByDepartmentStart, 
+  getProjectByDepartmentSuccess,
+  getProjectByDepartmentFailed,
+  getLikeByDepartmentStart, 
+  getLikeByDepartmentSuccess,
+  getLikeByDepartmentFailed,
 } = projectSlice.actions;
 
 export default projectSlice.reducer;
