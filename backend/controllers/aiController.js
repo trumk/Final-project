@@ -38,6 +38,16 @@ const generatePrompt = async (req, res) => {
       return res.status(400).json({ message: "Prompt is required" });
     }
 
+    const generalQuestions = ["what can you do", "what is your main function", "how can you help", "who are you"];
+    const isGeneralQuestion = generalQuestions.some(question => userPrompt.toLowerCase().includes(question));
+
+    if (isGeneralQuestion) {
+      const aiResponse = "I am an AI designed to assist you with any questions regarding the Gree Project.";
+      await saveUserMessage(userId, userPrompt);
+      await saveAiMessage(userId, aiResponse);
+      return res.status(200).json({ text: aiResponse });
+    }
+
     const allowedKeywords = ["hi", "project", "comment", "comments", "like", "likes", "compare", "rate", "evaluate", "description", "about", "views", "view", "department", "semester", "author", "authors", "createdAt"];
     const isRelevant = allowedKeywords.some(keyword => userPrompt.toLowerCase().includes(keyword));
 
