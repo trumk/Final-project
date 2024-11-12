@@ -172,6 +172,13 @@ function DetailPage() {
     setIsLiked(!isLiked);
   };
 
+  const handleMaterialClick = (e) => {
+    if (!currentUser) {
+      e.preventDefault();
+      setIsModalOpen(true);
+    }
+  };  
+
   const handleMediaSelect = (index, isVideo = false) => {
     setSelectedIndex(index);
     setIsVideoSelected(isVideo);
@@ -367,6 +374,7 @@ function DetailPage() {
                             download
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={handleMaterialClick}
                           >
                             {getFileNameFromUrl(report)}
                           </a>
