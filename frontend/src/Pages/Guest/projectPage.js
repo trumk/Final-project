@@ -1,16 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Footer from "../../Components/Footer";
 import Navbar from "../../Components/Navbar";
 import AIChat from "../../Components/AiChat";
-import { useEffect } from "react";
 import { getAllProjects } from "../../redux/apiRequest";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faThumbsUp,
   faCommentAlt,
   faShare,
-  faEye, 
+  faEye,
 } from "@fortawesome/free-solid-svg-icons";
 import "./style.css";
 import SearchSortFilter from "../../Components/SearchSortFilter";
@@ -34,7 +33,6 @@ function Projectpage() {
 
   const handleShareClick = (e, projectId) => {
     e.stopPropagation();
-    e.preventDefault();
     setShowShareModal(showShareModal === projectId ? null : projectId);
   };
 
@@ -49,10 +47,7 @@ function Projectpage() {
               projects.map((project) => (
                 <div key={project._id} className="col-12 mb-4">
                   <div className="project-card">
-                    <a
-                      href={`/project/${project._id}`}
-                      className="project-item"
-                    >
+                    <div className="project-item">
                       {project.images.length > 0 && (
                         <img
                           src={project.images[0]}
@@ -62,34 +57,25 @@ function Projectpage() {
                       )}
                       <div className="project-info">
                         <h5 className="project-name">{project.name}</h5>
-                        <p className="project-author">By {project.authors.join(', ')}</p>
+                        <p className="project-author">
+                          By {project.authors.join(", ")}
+                        </p>
                         <div className="project-actions">
                           <div className="action-buttons">
                             <button className="btn btn-link">
-                              <FontAwesomeIcon
-                                icon={faThumbsUp}
-                                className="icon"
-                              />
+                              <FontAwesomeIcon icon={faThumbsUp} className="icon" />
                               <span>{project.likes}</span>
                             </button>
                             <button className="btn btn-link">
-                              <FontAwesomeIcon
-                                icon={faCommentAlt}
-                                className="icon"
-                              />
+                              <FontAwesomeIcon icon={faCommentAlt} className="icon" />
                               <span>Comment</span>
                             </button>
                             <div className="share-button-wrapper">
                               <button
                                 className="btn btn-link"
-                                onClick={(e) =>
-                                  handleShareClick(e, project._id)
-                                }
+                                onClick={(e) => handleShareClick(e, project._id)}
                               >
-                                <FontAwesomeIcon
-                                  icon={faShare}
-                                  className="icon"
-                                />
+                                <FontAwesomeIcon icon={faShare} className="icon" />
                                 <span>Share</span>
                               </button>
                               {showShareModal === project._id && (
@@ -117,7 +103,7 @@ function Projectpage() {
                           </div>
                         </div>
                       </div>
-                    </a>
+                    </div>
                   </div>
                 </div>
               ))

@@ -5,8 +5,9 @@
   background-color: #f4f4f9;
 }
 
-p{
+p {
   text-align: left;
+  font-size: 16px;
 }
 
 .content-container {

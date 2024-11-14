@@ -82,7 +82,14 @@
     background-color: #c33d2e;
   }
   
-  p {
+  #root > div.login-container > div > form > p:nth-child(4){
+    text-align: center;
+    margin: 20px 0;
+    font-size: 14px;
+    color: #666;
+  }
+
+  #root > div.login-container > div > form > p.register-link{
     text-align: center;
     margin: 20px 0;
     font-size: 14px;
