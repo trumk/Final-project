@@ -39,11 +39,15 @@ const generatePrompt = async (req, res) => {
       return res.status(400).json({ message: "Prompt is required" });
     }
 
-    const generalQuestions = ["what can you do", "what is your main function", "how can you help", "who are you"];
+    const generalQuestions = ["what can you do", "what is your main function", "how can you help", "who are you",
+      "bạn có thể làm gì", "chức năng chính của bạn là gì", "bạn có thể giúp gì", "bạn là ai"
+    ];
     const isGeneralQuestion = generalQuestions.some(question => userPrompt.toLowerCase().includes(question));
 
     if (isGeneralQuestion) {
-      const aiResponse = "I am an AI designed to assist you with any questions regarding the Gree Project.";
+      const aiResponse = userPrompt.match(/[^\x00-\x7F]+/) 
+        ? "Tôi là một AI được thiết kế để hỗ trợ bạn với các câu hỏi về Gree Project." 
+        : "I am an AI designed to assist you with any questions regarding the Gree Project.";
       await saveUserMessage(userId, userPrompt);
       await saveAiMessage(userId, aiResponse);
       return res.status(200).json({ text: aiResponse });
@@ -51,13 +55,15 @@ const generatePrompt = async (req, res) => {
 
     const allowedKeywords = [
       "hi", "project", "comment", "comments", "like", "likes", "compare", "rate", "evaluate", "description",
-      "about", "views", "view", "department", "semester", "author", "authors", "createdAt", "you",
-      "chào", "bạn", "dự án", "bình luận", "thích", "so sánh", "đánh giá", "mô tả", "xem", "khoa", "học kỳ", "tác giả", "tạo vào ngày", "đường dẫn"
+      "about", "views", "view", "department", "semester", "author", "authors", "createdAt",
+      "chào", "dự án", "bình luận", "thích", "so sánh", "đánh giá", "mô tả", "xem", "khoa", "học kỳ", "tác giả", "tạo vào ngày", "đường dẫn"
     ];
     const isRelevant = allowedKeywords.some(keyword => userPrompt.toLowerCase().includes(keyword));
 
     if (!isRelevant) {
-      const aiResponse = "Sorry, I can only answer questions about this website's projects.";
+      const aiResponse = userPrompt.match(/[^\x00-\x7F]+/) 
+        ? "Xin lỗi, tôi chỉ có thể trả lời các câu hỏi về các dự án của trang web này." 
+        : "Sorry, I can only answer questions about this website's projects.";
       await saveUserMessage(userId, userPrompt);
       await saveAiMessage(userId, aiResponse);
       return res.status(200).json({ text: aiResponse });
