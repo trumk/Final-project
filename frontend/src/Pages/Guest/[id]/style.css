@@ -1,4 +1,3 @@
-/* General Page */
 .detail-page {
   padding: 0;
   margin: 0;
@@ -6,7 +5,10 @@
   background-color: #f4f4f9;
 }
 
-/* Container for Content */
+p{
+  text-align: left;
+}
+
 .content-container {
   max-width: 100%;
   margin: 0 auto;
@@ -16,7 +18,6 @@
   gap: 20px;
 }
 
-/* Main content */
 .main-content {
   display: flex;
   justify-content: space-between;
@@ -25,7 +26,6 @@
 }
 
 @media (max-width: 768px) {
-  /* Stacks the main content on top of each other */
   .main-content {
     flex-direction: column;
   }
@@ -35,7 +35,6 @@
   }
 }
 
-/* Project details section */
 .project-details-section {
   flex: 0 0 60%;
   background-color: #ffffff;
@@ -79,7 +78,6 @@
   }
 }
 
-/* Image Previews */
 .image-previews {
   display: flex;
   justify-content: center;
@@ -125,7 +123,6 @@
   margin-bottom: 25px;
 }
 
-/* Like Button */
 .like-button {
   padding: 12px 24px;
   background-color: #acb5ae;
@@ -147,7 +144,6 @@
   transform: translateY(-2px);
 }
 
-/* Loading Message */
 .loading-message {
   text-align: center;
   font-size: 1.5em;
@@ -156,7 +152,6 @@
   font-weight: bold;
 }
 
-/* Buttons */
 button {
   outline: none;
   cursor: pointer;
@@ -167,7 +162,6 @@ button:disabled {
   background-color: #cccccc;
 }
 
-/* Comment Section */
 .comment-section-container {
   width: 100%;
   margin: 20px auto;
@@ -567,7 +561,6 @@ button:disabled {
   border-radius: 10px;
 }
 
-/* Modal Backdrop */
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -581,7 +574,6 @@ button:disabled {
   z-index: 1000;
 }
 
-/* Modal Content */
 .modal-content {
   background-color: #fff;
   padding: 2rem;
@@ -596,7 +588,7 @@ button:disabled {
 .modal-content h3 {
   font-size: 1.6rem;
   margin-bottom: 1rem;
-  color: #ff3333; /* Warning color */
+  color: #ff3333; 
 }
 
 .modal-content p {
@@ -605,7 +597,6 @@ button:disabled {
   color: #333;
 }
 
-/* Close Button */
 .modal-close-button {
   background-color: #ff3333;
   color: #fff;

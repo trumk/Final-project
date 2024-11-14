@@ -19,7 +19,6 @@ import ProtectedRoute from './Components/ProtectedRoute';
 import UserPage from './Pages/admin/User';
 import CommentPage from './Pages/admin/Coment';
 import Profile from './Pages/Guest/[id]/Profile';
-import About from './Pages/Guest/about';
 import Contact from './Pages/Guest/contact';
 import BackupPage from './Pages/admin/Backup';
 
@@ -32,7 +31,6 @@ function App() {
             <Route path='/register' element={<Register />} />
             <Route path='/login' element={<Login />} />
             <Route path='/' element={<Homepage />} />
-            <Route path='/about' element={<About />} />
             <Route path='/contact' element={<Contact />} />
             <Route path='/projects' element={<Projectpage />} />
             <Route path='/project/:id' element={<DetailPage />} />
