@@ -47,7 +47,6 @@
   transition: width 0.3s ease, height 0.3s ease;
 }
 
-/* Chat header */
 .chat-header {
   background-color: #1a9cad;
   padding: 15px;
@@ -72,7 +71,6 @@
   color: #ff4d4d;
 }
 
-/* Chat body */
 .chat-body {
   flex: 1;
   padding: 10px;
@@ -82,7 +80,6 @@
   gap: 10px;
 }
 
-/* Message styling */
 .message {
   display: flex;
   align-items: flex-start;
@@ -92,9 +89,22 @@
   padding: 10px;
   border-radius: 15px;
   position: relative;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-/* AI message bubble */
+.message a {
+  color: #007bff;
+  text-decoration: none;
+  word-break: break-all; 
+  overflow-wrap: anywhere; 
+  font-size: 0.9rem; 
+}
+
+.message a:hover {
+  text-decoration: underline;
+}
+
 .message.ai {
   background-color: #f0f2f5;
   align-self: flex-start;
@@ -105,19 +115,17 @@
   margin-right: 8px;
 }
 
-/* User message bubble */
 .message.user {
   background-color: #e1f3fb;
   align-self: flex-end;
   border-top-right-radius: 0;
-  flex-direction: row-reverse; /* Avatar on the right */
+  flex-direction: row-reverse;
 }
 
 .message.user .chat-avatar {
   margin-left: 8px;
 }
 
-/* Avatar styling */
 .chat-avatar {
   width: 40px;
   height: 40px;
@@ -146,6 +154,13 @@
   border-right: none;
   right: -10px;
   top: 10px;
+}
+
+.message span {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  max-width: 100%;
 }
 
 .chat-footer {
@@ -179,6 +194,11 @@
   margin-left: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.chat-footer button:hover {
+  background-color: #178a93;
+  transform: scale(1.05);
 }
 
 @media (max-width: 768px) {

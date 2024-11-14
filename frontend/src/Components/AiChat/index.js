@@ -44,16 +44,12 @@ function AIChat() {
 
   const formatResponse = (text) => {
     return text
-      .replace(/\*\*(.*?)\*\*/g, "$1") 
-      .replace(/\*\s*/g, "")
-      .replace(/([A-Za-z\s]+):/g, "$1: ")
-      .replace(/([a-z])([A-Z])/g, "$1 $2")
-      .replace(/([A-Za-z]+)([A-Z][a-z])/g, "$1 $2")
-      .replace(/([a-zA-Z])\b(with)\b/g, "$1 $2")
-      .replace(/(\d)([a-zA-Z])/g, "$1 $2")  
-      .replace(/\s+/g, " ")
+      .replace(/```/g, "") 
+      .replace(/\b(http:\/\/localhost:3000\/project\/[a-zA-Z0-9]+)\b/g, "<a href='$1' target='_blank'>$1</a>") 
+      .replace(/\s+/g, " ") 
       .trim();
   };
+  
   
   useEffect(() => {
     if (aiResponse) {
@@ -103,7 +99,6 @@ function AIChat() {
                 <span dangerouslySetInnerHTML={{ __html: msg.text }}></span>
               </div>
             ))}
-            {isFetching && <div className="loading">AI is processing...</div>}
           </div>
 
           <form className="chat-footer" onSubmit={sendMessage}> 

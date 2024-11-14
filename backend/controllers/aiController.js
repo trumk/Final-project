@@ -30,6 +30,7 @@ const generatePrompt = async (req, res) => {
   try {
     const userId = req.body.userId;
     const userPrompt = req.body.prompt;
+    const baseUrl = process.env.BASE_URL;
 
     if (!userId) {
       return res.status(401).json({ message: "User is not authenticated." });
@@ -48,7 +49,11 @@ const generatePrompt = async (req, res) => {
       return res.status(200).json({ text: aiResponse });
     }
 
-    const allowedKeywords = ["hi", "project", "comment", "comments", "like", "likes", "compare", "rate", "evaluate", "description", "about", "views", "view", "department", "semester", "author", "authors", "createdAt"];
+    const allowedKeywords = [
+      "hi", "project", "comment", "comments", "like", "likes", "compare", "rate", "evaluate", "description",
+      "about", "views", "view", "department", "semester", "author", "authors", "createdAt", "you",
+      "chào", "bạn", "dự án", "bình luận", "thích", "so sánh", "đánh giá", "mô tả", "xem", "khoa", "học kỳ", "tác giả", "tạo vào ngày", "đường dẫn"
+    ];
     const isRelevant = allowedKeywords.some(keyword => userPrompt.toLowerCase().includes(keyword));
 
     if (!isRelevant) {
@@ -69,10 +74,8 @@ const generatePrompt = async (req, res) => {
         populate: { path: 'userId', select: 'userName' },
       });
 
-      console.log("Earliest Project:", earliestProject);
-
       if (earliestProject.length > 0) {
-        projectDetails += `The earliest project is "${earliestProject[0].name}" created on ${earliestProject[0].createdAt}.\n`;
+        projectDetails += `The earliest project is "${earliestProject[0].name}" (${baseUrl}/project/${earliestProject[0]._id}) created on ${earliestProject[0].createdAt}.\n`;
       } else {
         projectDetails += "No projects found.\n";
       }
@@ -86,7 +89,7 @@ const generatePrompt = async (req, res) => {
         });
 
       if (mostLikedProject) {
-        projectDetails += `The project with the most likes is "${mostLikedProject.name}" with ${mostLikedProject.likes} likes.\n`; 
+        projectDetails += `The project with the most likes is "${mostLikedProject.name}" (${baseUrl}/project/${mostLikedProject._id}) with ${mostLikedProject.likes} likes.\n`; 
       } else {
         projectDetails += "No projects found.\n";
       }
@@ -99,7 +102,7 @@ const generatePrompt = async (req, res) => {
 
       projectDetails += "Here are all the projects on the website:\n\n";
       projects.forEach((project) => {
-        projectDetails += `Name: ${project.name} \n`; 
+        projectDetails += `Name: ${project.name} (${baseUrl}/project/${project._id})\n`; 
         projectDetails += `Authors: ${project.authors.join(", ")}\n`;
         projectDetails += `Description: ${project.description} \n`; 
         projectDetails += `Semester: ${project.semester} \n`;
