@@ -62,7 +62,7 @@ const generatePrompt = async (req, res) => {
     const isGeneralQuestion = generalQuestions.some(question => userPrompt.toLowerCase().includes(question));
 
     if (isGeneralQuestion) {
-      const aiResponse = userPrompt.match(/[^\x00-\x7F]+/) 
+      const aiResponse = userPrompt.test(/[^\x00-\x7F]+/) 
         ? "Tôi là một AI được thiết kế để hỗ trợ bạn với các câu hỏi về Gree Project." 
         : "I am an AI designed to assist you with any questions regarding the Gree Project.";
       await saveUserMessage(userId, userPrompt);
@@ -76,7 +76,7 @@ const generatePrompt = async (req, res) => {
     const isCommentTutorial = commentTutorial.some(question => userPrompt.toLowerCase().includes(question));
 
     if (isCommentTutorial) {
-      const aiResponse = userPrompt.match(/[^\x00-\x7F]+/) 
+      const aiResponse = userPrompt.test(/[^\x00-\x7F]+/) 
         ? 'Đầu tiên, bạn hãy chọn một dự án bất kỳ để xem chi tiết. Tiếp theo, bạn hãy nhìn lên góc trên bên phải màn hình sẽ có một ô nhập bình luận, bạn hãy nhập bình luận của mình tại đây. Cuối cùng, sau khi nhập bình luận xong thì bạn hãy ấn nút "Comment". Rất vui khi được giúp đỡ bạn 😊' 
         : 'First, select any project to view details. Next, look at the top right corner of the screen, there will be a comment box, enter your comment here. Finally, after entering your comment, click the "Comment" button. Happy to help you 😊';
       await saveUserMessage(userId, userPrompt);
@@ -106,7 +106,7 @@ const generatePrompt = async (req, res) => {
     const isRelevant = allowedKeywords.some(keyword => userPrompt.toLowerCase().includes(keyword));
 
     if (!isRelevant) {
-      const aiResponse = userPrompt.match(/[^\x00-\x7F]+/) 
+      const aiResponse = userPrompt.test(/[^\x00-\x7F]+/) 
         ? "Xin lỗi, tôi chỉ có thể trả lời các câu hỏi về các dự án của trang web này." 
         : "Sorry, I can only answer questions about this website's projects.";
       await saveUserMessage(userId, userPrompt);
