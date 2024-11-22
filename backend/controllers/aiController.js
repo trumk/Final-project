@@ -39,6 +39,23 @@ const generatePrompt = async (req, res) => {
       return res.status(400).json({ message: "Prompt is required" });
     }
 
+    const greetings = [
+      "hello", "hi", "chào", "xin chào", "hey", "yo"
+    ];
+    
+    const isGreeting = greetings.some(greet => 
+      userPrompt.toLowerCase().includes(greet)
+    );
+    
+    if (isGreeting) {
+      const aiResponse = /[^\x00-\x7F]+/.test(userPrompt)
+        ? 'Xin chào! Mình có thể giúp gì cho bạn hôm nay? 😊' 
+        : 'Hello! How can I assist you today? 😊';
+      await saveUserMessage(userId, userPrompt);
+      await saveAiMessage(userId, aiResponse);
+      return res.status(200).json({ text: aiResponse });
+    }    
+
     const generalQuestions = ["what can you do", "what is your main function", "how can you help", "who are you",
       "bạn có thể làm gì", "chức năng chính của bạn là gì", "bạn có thể giúp gì", "bạn là ai"
     ];
@@ -48,6 +65,34 @@ const generatePrompt = async (req, res) => {
       const aiResponse = userPrompt.match(/[^\x00-\x7F]+/) 
         ? "Tôi là một AI được thiết kế để hỗ trợ bạn với các câu hỏi về Gree Project." 
         : "I am an AI designed to assist you with any questions regarding the Gree Project.";
+      await saveUserMessage(userId, userPrompt);
+      await saveAiMessage(userId, aiResponse);
+      return res.status(200).json({ text: aiResponse });
+    }
+
+    const commentTutorial = ["how to comment", "comment tutorial", "comment guide",
+      "làm thế nào để bình luận", "hướng dẫn bình luận"
+    ];
+    const isCommentTutorial = commentTutorial.some(question => userPrompt.toLowerCase().includes(question));
+
+    if (isCommentTutorial) {
+      const aiResponse = userPrompt.match(/[^\x00-\x7F]+/) 
+        ? 'Đầu tiên, bạn hãy chọn một dự án bất kỳ để xem chi tiết. Tiếp theo, bạn hãy nhìn lên góc trên bên phải màn hình sẽ có một ô nhập bình luận, bạn hãy nhập bình luận của mình tại đây. Cuối cùng, sau khi nhập bình luận xong thì bạn hãy ấn nút "Comment". Rất vui khi được giúp đỡ bạn 😊' 
+        : 'First, select any project to view details. Next, look at the top right corner of the screen, there will be a comment box, enter your comment here. Finally, after entering your comment, click the "Comment" button. Happy to help you 😊';
+      await saveUserMessage(userId, userPrompt);
+      await saveAiMessage(userId, aiResponse);
+      return res.status(200).json({ text: aiResponse });
+    }
+
+    const updateProfileTutorial = ["how to update my profile", "guide me to edit my profile", "update profile tutorial",
+      "làm thế nào để cập nhật hồ sơ của tôi", "hướng dẫn tôi cập nhật hồ sơ", "hướng dẫn cập nhật hồ sơ"
+    ];
+    const isUpdateProfileTutorial = updateProfileTutorial.some(question => userPrompt.toLowerCase().includes(question));
+
+    if (isUpdateProfileTutorial) {
+      const aiResponse = /[^\x00-\x7F]+/.test(userPrompt) 
+        ? 'Đầu tiên, bạn hãy nhìn lên góc trên bên phải màn hình, ở thanh điều hướng bạn sẽ thấy username của bạn. Tiếp theo, hãy ấn vào username của bạn, bạn sẽ thấy một menu xổ xuống, bạn hãy chọn "profile". Sau đó, ở trong trang profile, bạn sẽ thấy biểu tượng bút chì ở góc trên bên phải của thẻ hiển thị các thông tin cá nhân của bạn. Khi ấn vào biểu tượng bút chì, bạn có thể thay đổi ảnh đại diện, thay đổi username, thay đổi password. Bạn phải nhập mật khẩu của mình ở ô "Current Password" để có thể thay đổi các thông tin trên. Rất vui khi được giúp đỡ bạn 😊' 
+        : 'First, look at the top right corner of the screen. In the navigation bar, you will see your username. Click on your username, and a dropdown menu will appear. From the menu, select "Profile". Next, on the profile page, you will see a pencil icon in the top right corner of the card displaying your personal information. Click on the pencil icon to edit your profile picture, username, or password. To save changes, you must enter your current password in the "Current Password" field. Happy to help you 😊';
       await saveUserMessage(userId, userPrompt);
       await saveAiMessage(userId, aiResponse);
       return res.status(200).json({ text: aiResponse });
