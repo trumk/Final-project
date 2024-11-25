@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom"; // Import Link từ React Router
 import Footer from "../../Components/Footer";
 import Navbar from "../../Components/Navbar";
 import AIChat from "../../Components/AiChat";
@@ -49,27 +50,33 @@ function Projectpage() {
                   <div className="project-card">
                     <div className="project-item">
                       {project.images.length > 0 && (
-                        <img
-                          src={project.images[0]}
-                          alt={`Project ${project.name}`}
-                          className="project-image"
-                        />
+                        <Link to={`/project/${project._id}`}>
+                          <img
+                            src={project.images[0]}
+                            alt={`Project ${project.name}`}
+                            className="project-image"
+                          />
+                        </Link>
                       )}
                       <div className="project-info">
-                        <h5 className="project-name">{project.name}</h5>
+                        <h5 className="project-name">
+                          <Link to={`/project/${project._id}`}>
+                            {project.name}
+                          </Link>
+                        </h5>
                         <p className="project-author">
                           By {project.authors.join(", ")}
                         </p>
                         <div className="project-actions">
                           <div className="action-buttons">
-                            <button className="btn btn-link">
+                            <Link to={`/project/${project._id}`} className="btn btn-link">
                               <FontAwesomeIcon icon={faThumbsUp} className="icon" />
                               <span>{project.likes}</span>
-                            </button>
-                            <button className="btn btn-link">
+                            </Link>
+                            <Link to={`/project/${project._id}`} className="btn btn-link">
                               <FontAwesomeIcon icon={faCommentAlt} className="icon" />
                               <span>Comment</span>
-                            </button>
+                            </Link>
                             <div className="share-button-wrapper">
                               <button
                                 className="btn btn-link"
