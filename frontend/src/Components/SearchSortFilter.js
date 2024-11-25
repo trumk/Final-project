@@ -14,7 +14,6 @@ const SearchSortFilter = () => {
   const [department, setDepartment] = useState('');
 
 
-  // debounce to avoid calling the API too many times when typing a search
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (searchTerm) {
