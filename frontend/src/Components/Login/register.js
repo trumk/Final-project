@@ -17,6 +17,12 @@ function Register() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    const filteredValue = value.replace(/[^a-zA-Z0-9@._-]/g, '');
+    setEmail(filteredValue);
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault(); 
 
@@ -63,7 +69,7 @@ function Register() {
             type="email"
             placeholder="Enter your email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleEmailChange} 
           />
           <div className="password-container">
             <input

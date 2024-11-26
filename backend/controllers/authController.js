@@ -6,9 +6,14 @@ const register = async (req, res) => {
   const { userName, email, password, role } = req.body;
 
   try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) {
       return res.status(400).json({ message: "Email already exists" });
+    }
+
+    const existingUserName = await User.findOne({ userName });
+    if (existingUserName) {
+      return res.status(400).json({ message: "Username already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -17,15 +22,15 @@ const register = async (req, res) => {
       userName,
       email,
       password: hashedPassword,
-      role: "user",
+      role: "user", 
     });
 
     await newUser.save();
 
     return res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
-    console.error("Registration error:", err);
-    res.status(500).json({ message: "Internal server error", error: err.message });
+    console.error("Registration error:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
 

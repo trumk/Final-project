@@ -151,7 +151,8 @@ export const register = async (user, dispatch) => {
     toast.success("Register successfully");
   } catch (err) {
     dispatch(registerFailed());
-    toast.error("Failed to register");
+    const errorMessage = err.response?.data?.message ?? "Failed to register";
+    toast.error(errorMessage);
   }
 };
 
