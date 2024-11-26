@@ -302,7 +302,6 @@ export const likeProject = (projectId, likeData) => async (dispatch) => {
   try {
     const response = await axios.post(`${BACKEND_URL}/api/projects/${projectId}/like`, likeData);
     dispatch(likeProjectSuccess(response.data));
-    toast.success("Like successfully");
   } catch (error) {
     dispatch(likeProjectFailed(error.message));
     toast.error("Failed to like project");
