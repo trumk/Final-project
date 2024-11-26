@@ -17,6 +17,12 @@ function Register() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const handleUserNameChange = (e) => {
+    const value = e.target.value;
+    const filteredValue = value.replace(/[^a-zA-Z0-9@._-]/g, '');
+    setUsername(filteredValue);
+  };
+
   const handleEmailChange = (e) => {
     const value = e.target.value;
     const filteredValue = value.replace(/[^a-zA-Z0-9@._-]/g, '');
@@ -62,7 +68,7 @@ function Register() {
             type="text"
             placeholder="Enter your username"
             value={userName}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={handleUserNameChange}
           />
           <input
             className="input-field"

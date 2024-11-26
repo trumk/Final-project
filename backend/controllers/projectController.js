@@ -74,6 +74,12 @@ const getOneProjectForAdmin = async (req, res) => {
 const createProject = async (req, res) => {
   try {
     const { name, authors, description, semester, department, video } = req.body;
+
+    const existingProject = await Project.findOne({ name });
+    if (existingProject) {
+      return res.status(400).json({ message: "Project name already exists" });
+    }
+
     const newImages = req.files.images || [];
     const reportFiles = req.files.reports || [];
     let images = [];
@@ -110,7 +116,13 @@ const createProject = async (req, res) => {
 
 const updateProject = async (req, res) => {
   try {
-    const { removedImages, removedReports } = req.body;
+    const { name, removedImages, removedReports } = req.body;
+
+    const existingProject = await Project.findOne({ name, _id: { $ne: req.params.id } });
+    if (existingProject) {
+      return res.status(400).json({ message: "Project name already exists" });
+    }
+
     const newImages = req.files.images || [];
     const newReports = req.files.reports || [];
     let images = [];
