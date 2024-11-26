@@ -75,6 +75,15 @@ const generatePrompt = async (req, res) => {
     const isGeneralQuestion = generalQuestions.some((question) =>
       userPrompt.toLowerCase().includes(question)
     );
+    
+    if (isGeneralQuestion) {
+      const aiResponse = userPrompt.match(/[^\x00-\x7F]+/)
+        ? "Chào! Tôi là một AI được thiết kế để hỗ trợ bạn với các câu hỏi về Gree Project. Rất vui được giúp đỡ bạn 😊"
+        : "Hi! I'm an AI designed to assist you with questions about Gree Project. Happy to help 😊";
+      await saveUserMessage(userId, userPrompt);
+      await saveAiMessage(userId, aiResponse);
+      return res.status(200).json({ text: aiResponse });
+    }
 
     const commentTutorial = [
       "how to comment",
@@ -105,6 +114,7 @@ const generatePrompt = async (req, res) => {
       "làm thế nào để cập nhật hồ sơ",
       "hướng dẫn tôi cập nhật hồ sơ",
       "hướng dẫn cập nhật hồ sơ",
+      "làm sao để cập nhật hồ sơ"
     ];
     const isUpdateProfileTutorial = updateProfileTutorial.some((question) =>
       userPrompt.toLowerCase().includes(question)
@@ -144,6 +154,7 @@ const generatePrompt = async (req, res) => {
       "chào",
       "dự án",
       "bình luận",
+      "bao nhiêu",
       "lượt thích",
       "so sánh",
       "đánh giá",
@@ -237,15 +248,6 @@ const generatePrompt = async (req, res) => {
         }
         projectDetails += "\n";
       });
-    }
-
-    if (isGeneralQuestion) {
-      const aiResponse = userPrompt.match(/[^\x00-\x7F]+/)
-        ? "Chào! Tôi là một AI được thiết kế để hỗ trợ bạn với các câu hỏi về Gree Project. Rất vui được giúp đỡ bạn 😊"
-        : "Hi! I'm an AI designed to assist you with questions about Gree Project. Happy to help 😊";
-      await saveUserMessage(userId, userPrompt);
-      await saveAiMessage(userId, aiResponse);
-      return res.status(200).json({ text: aiResponse });
     }
 
     const chatHistory = await getChatHistory(userId);
