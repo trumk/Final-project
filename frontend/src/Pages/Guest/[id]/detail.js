@@ -127,6 +127,11 @@ function DetailPage() {
       setIsModalOpen(true);
       return;
     }
+    if (containsBannedWords(replyText)) {
+      setWarningMessage("Your reply contains inappropriate words.");
+      setIsWarningModalOpen(true);
+      return;
+    }
     const replyData = {
       userId: currentUser.id,
       comment: replyText,
@@ -326,6 +331,7 @@ function DetailPage() {
                         title="Project Video"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
+                        style={{ borderRadius: "10px" }}
                       ></iframe>
                     </div>
                   )}
@@ -387,7 +393,7 @@ function DetailPage() {
                   className={`like-button ${isLiked ? "liked" : ""} mt-1`}
                   onClick={handleLike}
                 >
-                  <FontAwesomeIcon icon={faThumbsUp} /> ({project.likes})
+                  <FontAwesomeIcon icon={faThumbsUp} /> {project.likes}
                 </button>
               </div>
 
