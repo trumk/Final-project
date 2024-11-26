@@ -55,7 +55,7 @@ function Login() {
           <h1>Welcome! <FontAwesomeIcon icon={faFaceSmile} /></h1>
           <p>Hi! Please login to access your account</p>
         </div>
-        <form className="login-form" onSubmit={handleLogin}> {/* Add form and onSubmit */}
+        <form className="login-form" onSubmit={handleLogin}> 
           <input 
             className="input-field" 
             type="email" 

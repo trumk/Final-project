@@ -1,115 +1,120 @@
 .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(to right, #1e5b75, #34b3a0);
-    margin-bottom: -23px;
-  }
-  
-  .login-box {
-    background-color: #fff;
-    border-radius: 15px;
-    padding: 40px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    max-width: 400px;
-    width: 100%;
-  }
-  
-  .welcome-section h1 {
-    color: #1e5b75;
-    font-size: 24px;
-    margin-bottom: 10px;
-  }
-  
-  .welcome-section p {
-    font-size: 16px;
-    color: #888;
-    margin-bottom: 30px;
-    text-align: left;
-  }
-  
-  .login-form h2 {
-    color: #1e5b75;
-    font-size: 22px;
-    margin-bottom: 20px;
-  }
-  
-  .input-field {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-    color: #333;
-  }
-  
-  .input-field:focus {
-    outline: none;
-    border-color: #34b3a0;
-    box-shadow: 0 0 5px rgba(52, 179, 160, 0.5);
-  }
-  
-  .login-btn {
-    width: 100%;
-    padding: 12px;
-    background-color: #1e5b75;
-    color: white;
-    font-size: 18px;
-    border: none;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    cursor: pointer;
-  }
-  
-  .login-btn:hover {
-    background-color: #1d4e65;
-  }
-  
-  .google-btn {
-    width: 100%;
-    padding: 12px;
-    background-color: #db4437;
-    color: white;
-    font-size: 18px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  
-  .google-btn:hover {
-    background-color: #c33d2e;
-  }
-  
-  #root > div.login-container > div > form > p:nth-child(4){
-    text-align: center;
-    margin: 20px 0;
-    font-size: 14px;
-    color: #666;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(to right, #1e5b75, #34b3a0);
+  margin-bottom: -23px;
+}
 
-  #root > div.login-container > div > form > p.register-link{
-    text-align: center;
-    margin: 20px 0;
-    font-size: 14px;
-    color: #666;
-  }
+.login-box {
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 40px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%;
+}
 
-  #root > div > div > div.login-form > p.register-link{
-    padding-top: 20px;
-  }
-  
-  .password-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-  
-  .password-toggle-icon {
-    position: absolute;
-    right: 10px;
-    cursor: pointer;
-    color: #888;
-  }
-  
+.welcome-section h1 {
+  color: #1e5b75;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.welcome-section p {
+  font-size: 16px;
+  color: #888;
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.login-form h2 {
+  color: #1e5b75;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #333;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #34b3a0;
+  box-shadow: 0 0 5px rgba(52, 179, 160, 0.5);
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #1e5b75;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background-color: #1d4e65;
+}
+
+.google-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #db4437;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.google-btn:hover {
+  background-color: #c33d2e;
+}
+
+#root > div.login-container > div > form > p {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+#root > div.login-container > div > form > p.register-link {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+#root > div > div > div.login-form > p.register-link {
+  padding-top: 20px;
+}
+
+.password-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle-icon {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  color: #888;
+}
+
+#root > div.login-container > div > form > p.error-message {
+  color: red; 
+  text-align: center; 
+  margin: 10px 0; 
+}
