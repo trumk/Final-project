@@ -38,7 +38,7 @@ const generatePrompt = async (req, res) => {
     if (!userPrompt) {
       return res.status(400).json({ message: "Prompt is required" });
     }
-
+    
     const generalQuestions = ["what can you do", "what is your main function", "how can you help", "who are you",
       "bạn có thể làm gì", "chức năng chính của bạn là gì", "bạn có thể giúp gì", "bạn là ai", "hello", "hi", "chào", "xin chào", "hey", "yo"
     ];
@@ -83,8 +83,8 @@ const generatePrompt = async (req, res) => {
 
     const allowedKeywords = [
       "hi", "project", "comment", "comments", "like", "likes", "compare", "rate", "evaluate", "description",
-      "about", "views", "view", "department", "semester", "author", "authors", "createdAt",
-      "chào", "dự án", "bình luận", "thích", "so sánh", "đánh giá", "mô tả", "xem", "khoa", "học kỳ", "tác giả", "tạo vào ngày", "đường dẫn"
+      "about", "views", "view", "department", "semester", "author", "authors", "createdAt", "prompt", "question", "previous",
+      "chào", "dự án", "bình luận", "lượt thích", "so sánh", "đánh giá", "mô tả", "lượt xem", "khoa", "học kỳ", "tác giả", "tạo vào ngày", "đường dẫn", "tiếng việt", "yêu cầu", "câu hỏi", "trước"
     ];
     const isRelevant = allowedKeywords.some(keyword => userPrompt.toLowerCase().includes(keyword));
 
@@ -113,7 +113,7 @@ const generatePrompt = async (req, res) => {
       } else {
         projectDetails += "No projects found.\n";
       }
-    } else if (userPrompt.toLowerCase().includes("project with the most likes")) {
+    } else if (userPrompt.toLowerCase().includes("project with the most likes", "dự án có số lượng lượt thích nhiều nhất")) {
       const mostLikedProject = await Project.findOne()
         .sort({ likes: -1 })
         .populate({
