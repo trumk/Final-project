@@ -46,6 +46,7 @@ function AIChat() {
     return text
       .replace(/```/g, "") 
       .replace(/\b(http:\/\/localhost:3000\/project\/[a-zA-Z0-9]+)\b/g, "<a href='$1' target='_blank'>$1</a>") 
+      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") 
       .replace(/\s+/g, " ") 
       .trim();
   };

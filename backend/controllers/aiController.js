@@ -39,14 +39,14 @@ const generatePrompt = async (req, res) => {
       return res.status(400).json({ message: "Prompt is required" });
     }
 
-    const generalQuestions = ["hi", "what can you do", "what is your main function", "how can you help", "who are you",
+    const generalQuestions = ["what can you do", "what is your main function", "how can you help", "who are you",
       "bạn có thể làm gì", "chức năng chính của bạn là gì", "bạn có thể giúp gì", "bạn là ai"
     ];
     const isGeneralQuestion = generalQuestions.some(question => userPrompt.toLowerCase().includes(question));
 
     if (isGeneralQuestion) {
       const aiResponse = userPrompt.match(/[^\x00-\x7F]+/) 
-        ? "Xin chào! Tôi là một AI được thiết kế để hỗ trợ bạn giải đáp các câu hỏi về Gree Project. Rất vui được giúp đỡ 😊" 
+        ? "Xin chào! Tôi là AI được thiết kế để hỗ trợ bạn giải đáp các câu hỏi về Gree Project. Rất vui được giúp đỡ 😊" 
         : "Hi! I'm an AI designed to assist you with questions about Gree Project. Happy to help 😊";
       await saveUserMessage(userId, userPrompt);
       await saveAiMessage(userId, aiResponse);
@@ -54,8 +54,8 @@ const generatePrompt = async (req, res) => {
     }
 
     const allowedKeywords = [
-      "project", "comment", "comments", "like", "likes", "compare", "rate", "evaluate", "description",
-      "about", "views", "view", "department", "semester", "author", "authors", "createdAt",
+      "project", "comment", "comments", "like", "likes", "compare", "rate", "evaluate", "description", "popular", "detail",
+      "about", "views", "view", "department", "semester", "author", "authors", "createdAt", "phổ biến",
       "chào", "dự án", "bình luận", "thích", "so sánh", "đánh giá", "mô tả", "xem", "khoa", "học kỳ", "tác giả", "tạo vào ngày", "đường dẫn"
     ];
     const isRelevant = allowedKeywords.some(keyword => userPrompt.toLowerCase().includes(keyword));
