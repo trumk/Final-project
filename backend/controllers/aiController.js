@@ -39,32 +39,15 @@ const generatePrompt = async (req, res) => {
       return res.status(400).json({ message: "Prompt is required" });
     }
 
-    const greetings = [
-      "hello", "hi", "chào", "xin chào", "hey", "yo"
-    ];
-    
-    const isGreeting = greetings.some(greet => 
-      userPrompt.toLowerCase().includes(greet)
-    );
-    
-    if (isGreeting) {
-      const aiResponse = /[^\x00-\x7F]+/.test(userPrompt)
-        ? 'Xin chào! Mình có thể giúp gì cho bạn hôm nay? 😊' 
-        : 'Hello! How can I assist you today? 😊';
-      await saveUserMessage(userId, userPrompt);
-      await saveAiMessage(userId, aiResponse);
-      return res.status(200).json({ text: aiResponse });
-    }    
-
     const generalQuestions = ["what can you do", "what is your main function", "how can you help", "who are you",
-      "bạn có thể làm gì", "chức năng chính của bạn là gì", "bạn có thể giúp gì", "bạn là ai"
+      "bạn có thể làm gì", "chức năng chính của bạn là gì", "bạn có thể giúp gì", "bạn là ai", "hello", "hi", "chào", "xin chào", "hey", "yo"
     ];
     const isGeneralQuestion = generalQuestions.some(question => userPrompt.toLowerCase().includes(question));
 
     if (isGeneralQuestion) {
-      const aiResponse = userPrompt.test(/[^\x00-\x7F]+/) 
-        ? "Tôi là một AI được thiết kế để hỗ trợ bạn với các câu hỏi về Gree Project." 
-        : "I am an AI designed to assist you with any questions regarding the Gree Project.";
+      const aiResponse = userPrompt.match(/[^\x00-\x7F]+/) 
+        ? "Chào! Tôi là một AI được thiết kế để hỗ trợ bạn với các câu hỏi về Gree Project. Rất vui được giúp đỡ bạn 😊" 
+        : "Hi! I'm an AI designed to assist you with questions about Gree Project. Happy to help 😊";
       await saveUserMessage(userId, userPrompt);
       await saveAiMessage(userId, aiResponse);
       return res.status(200).json({ text: aiResponse });
@@ -76,7 +59,7 @@ const generatePrompt = async (req, res) => {
     const isCommentTutorial = commentTutorial.some(question => userPrompt.toLowerCase().includes(question));
 
     if (isCommentTutorial) {
-      const aiResponse = userPrompt.test(/[^\x00-\x7F]+/) 
+      const aiResponse = userPrompt.match(/[^\x00-\x7F]+/) 
         ? 'Đầu tiên, bạn hãy chọn một dự án bất kỳ để xem chi tiết. Tiếp theo, bạn hãy nhìn lên góc trên bên phải màn hình sẽ có một ô nhập bình luận, bạn hãy nhập bình luận của mình tại đây. Cuối cùng, sau khi nhập bình luận xong thì bạn hãy ấn nút "Comment". Rất vui khi được giúp đỡ bạn 😊' 
         : 'First, select any project to view details. Next, look at the top right corner of the screen, there will be a comment box, enter your comment here. Finally, after entering your comment, click the "Comment" button. Happy to help you 😊';
       await saveUserMessage(userId, userPrompt);
@@ -85,7 +68,7 @@ const generatePrompt = async (req, res) => {
     }
 
     const updateProfileTutorial = ["how to update my profile", "guide me to edit my profile", "update profile tutorial",
-      "làm thế nào để cập nhật hồ sơ của tôi", "hướng dẫn tôi cập nhật hồ sơ", "hướng dẫn cập nhật hồ sơ"
+      "làm thế nào để cập nhật hồ sơ của tôi", "làm thế nào để cập nhật hồ sơ", "hướng dẫn tôi cập nhật hồ sơ", "hướng dẫn cập nhật hồ sơ"
     ];
     const isUpdateProfileTutorial = updateProfileTutorial.some(question => userPrompt.toLowerCase().includes(question));
 
@@ -106,7 +89,7 @@ const generatePrompt = async (req, res) => {
     const isRelevant = allowedKeywords.some(keyword => userPrompt.toLowerCase().includes(keyword));
 
     if (!isRelevant) {
-      const aiResponse = userPrompt.test(/[^\x00-\x7F]+/) 
+      const aiResponse = userPrompt.match(/[^\x00-\x7F]+/) 
         ? "Xin lỗi, tôi chỉ có thể trả lời các câu hỏi về các dự án của trang web này." 
         : "Sorry, I can only answer questions about this website's projects.";
       await saveUserMessage(userId, userPrompt);
