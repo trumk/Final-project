@@ -320,8 +320,8 @@ function DetailPage() {
                   {isVideoSelected && project.video && (
                     <div className="project-image">
                       <iframe
-                        width="600"
-                        height="380"
+                        width="820"
+                        height="480"
                         src={project.video}
                         title="Project Video"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
