@@ -104,8 +104,9 @@ export const createProject = (formData, navigate) => async (dispatch) => {
     toast.success("Add new project success");
     navigate("/admin/project");
   } catch (err) {
-    dispatch(createProjectFailed(err.message));
-    toast.error("Failed to add new project");
+    dispatch(createProjectFailed());
+    const errorMessage = err.response?.data?.message ?? "Failed to create project";
+    toast.error(errorMessage);
   }
 };
 

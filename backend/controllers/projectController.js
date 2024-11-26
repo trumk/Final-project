@@ -75,6 +75,10 @@ const createProject = async (req, res) => {
   try {
     const { name, authors, description, semester, department, video } = req.body;
 
+    if (!name || !authors || !description || !semester || !department) {
+      return res.status(400).json({ message: "Please fill in required fields" });
+    }
+
     const existingProject = await Project.findOne({ name });
     if (existingProject) {
       return res.status(400).json({ message: "Project name already exists" });
@@ -116,8 +120,12 @@ const createProject = async (req, res) => {
 
 const updateProject = async (req, res) => {
   try {
-    const { name, removedImages, removedReports } = req.body;
+    const { name, authors, description, semester, department, removedImages, removedReports } = req.body;
 
+    if (!name || !authors || !description || !semester || !department) {
+      return res.status(400).json({ message: "Please fill in required fields" });
+    }
+    
     const existingProject = await Project.findOne({ name, _id: { $ne: req.params.id } });
     if (existingProject) {
       return res.status(400).json({ message: "Project name already exists" });
