@@ -106,3 +106,6 @@
 .btn-project:hover {
   background-color: #53cada;
 }
+#root > div:nth-child(1) > section.top-projects.section-padding > div > div.section-header > p{
+  text-align: center;
+}
