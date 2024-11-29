@@ -59,7 +59,7 @@ function Login() {
       <div className="login-box">
         <div className="welcome-section">
           <h1>Welcome! <FontAwesomeIcon icon={faFaceSmile} /></h1>
-          <p>Hi! Please login to access your account</p>
+          <p>Please login to access your account!</p>
         </div>
         <form className="login-form" onSubmit={handleLogin}> 
           <input 

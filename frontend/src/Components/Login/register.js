@@ -60,7 +60,7 @@ function Register() {
           <h1>
             Welcome! <FontAwesomeIcon icon={faFaceSmile} />
           </h1>
-          <p>Hi! Please register to create your account</p>
+          <p>You can create your account here!</p>
         </div>
         <form className="register-form" onSubmit={handleRegister}>
           <input
