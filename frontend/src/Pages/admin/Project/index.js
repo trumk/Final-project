@@ -48,7 +48,7 @@ const ProjectPage = () => {
                 <th scope="col">Author</th>
                 <th scope="col">Description</th>
                 <th scope="col">Created At</th>
-                <th scope="col">Actions</th>
+                <th scope="col">Action</th>
               </tr>
             </thead>
             <tbody>

@@ -78,7 +78,7 @@ const Dashboard = () => {
             <FontAwesomeIcon icon={faUser} className="card-icon" />
             <div className="card-content">
               <h5>{users ? users.length : 0} Users</h5>
-              <p>Manage all registered users.</p>
+              <p>Observe all registered users.</p>
             </div>
           </div>
 
