@@ -91,7 +91,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Chart Section */}
         <div className="dashboard-content">
           <div className="chart-section">
             <Chart />
@@ -99,7 +98,6 @@ const Dashboard = () => {
         </div>
       </main>
 
-      {/* Logout Modal */}
       {showLogoutModal && (
         <div className="modal-backdrop">
           <div className="modal-content">
