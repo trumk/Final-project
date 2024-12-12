@@ -43,7 +43,40 @@ function DetailPage() {
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
   const [warningMessage, setWarningMessage] = useState("");
 
-  const bannedWords = ["fuck", "nigga", "idiot", "shit", "bitch"]; 
+  const bannedWords = [
+    "arse", "arsehead", "arsehole", "ass", "ass hole", "asshole",
+    "bastard", "bitch", "bloody", "bollocks", "brotherfucker", "bugger", "bullshit",
+    "child-fucker", "Christ on a bike", "Christ on a cracker", "cock", "cocksucker", "crap", "cunt",
+    "dammit", "damn", "damned", "damn it", "dick", "dick-head", "dickhead", "dumb ass", "dumb-ass", "dumbass", "dyke",
+    "faggot", "father-fucker", "fatherfucker", "fuck", "fucker", "fucking",
+    "god dammit", "goddammit", "God damn", "god damn", "goddamn", "Goddamn", "goddamned", "goddamnit", "godsdamn",
+    "hell", "holy shit", "horseshit", "I", "in shit", "J", "jackarse", "jack-ass", "jackass",
+    "Jesus Christ", "Jesus fuck", "Jesus Harold Christ", "Jesus H. Christ", "Jesus, Mary and Joseph", "Jesus wept",
+    "kike", "M", "mother fucker", "mother-fucker", "motherfucker",
+    "nigga", "nigra", "P", "pigfucker", "piss", "prick", "pussy",
+    "shit", "shit ass", "shite", "sibling fucker", "sisterfuck", "sisterfucker", "slut", "son of a bitch", "son of a whore", "spastic", "sweet Jesus",
+    "twat", "W", "wanker",
+      "buồi", "buoi", "dau buoi", "daubuoi", "caidaubuoi", "nhucaidaubuoi", "dau boi", "bòi", "dauboi", "caidauboi",
+      "đầu bòy", "đầu bùi", "dau boy", "dauboy", "caidauboy", "b`", "cặc", "cak", "kak", "kac", "cac", "concak",
+      "nungcak", "bucak", "caiconcac", "caiconcak", "cu", "cặk", "cak", "dái", "giái", "zái", "kiu", "cứt", "cuccut",
+      "cutcut", "cứk", "cuk", "cười ỉa", "cười ẻ", "đéo", "đếch", "đếk", "dek", "đết", "đệt", "đách", "dech", "đ'",
+      "deo", "d'", "đel", "đél", "del", "dell ngửi", "dell ngui", "dell chịu", "dell chiu", "dell hiểu", "dell hieu",
+      "dellhieukieugi", "dell nói", "dell noi", "dellnoinhieu", "dell biết", "dell biet", "dell nghe", "dell ăn", "dell an",
+      "dell được", "dell duoc", "dell làm", "dell lam", "dell đi", "dell di", "dell chạy", "dell chay", "deohieukieugi",
+      "địt", "đm", "dm", "đmm", "dmm", "đmmm", "dmmm", "đmmmm", "dmmmm", "đmmmmm", "dmmmmm", "đcm", "dcm", "đcmm",
+      "dcmm", "đcmmm", "dcmmm", "đcmmmm", "dcmmmm", "đệch", "đệt", "dit", "dis", "diz", "đjt", "djt", "địt mẹ", "địt mịe",
+      "địt má", "địt mía", "địt ba", "địt bà", "địt cha", "địt con", "địt bố", "địt cụ", "dis me", "disme", "dismje",
+      "dismia", "dis mia", "dis mie", "đis mịa", "đis mịe", "ditmemayconcho", "ditmemay", "ditmethangoccho", "ditmeconcho",
+      "dmconcho", "dmcs", "ditmecondi", "ditmecondicho", "đụ", "đụ mẹ", "đụ mịa", "đụ mịe", "đụ má", "đụ cha", "đụ bà",
+      "đú cha", "đú con mẹ", "đú má", "đú mẹ", "đù cha", "đù má", "đù mẹ", "đù mịe", "đù mịa", "đủ cha", "đủ má", "đủ mẹ",
+      "đủ mé", "đủ mía", "đủ mịa", "đủ mịe", "đủ mie", "đủ mia", "đìu", "đờ mờ", "đê mờ", "đờ ma ma", "đờ mama", "đê mama",
+      "đề mama", "đê ma ma", "đề ma ma", "dou", "doma", "duoma", "dou má", "duo má", "dou ma", "đou má", "đìu má", "á đù",
+      "á đìu", "đậu mẹ", "đậu má", "đĩ", "di~", "đuỹ", "điếm", "cđĩ", "cdi~", "đilol", "điloz", "đilon", "diloz", "dilol",
+      "dilon", "condi", "condi~", "dime", "di me", "dimemay", "condime", "condimay", "condimemay", "con di cho", "con di cho'",
+      "condicho", "bitch", "biz", "bít chi", "con bích", "con bic", "con bíc", "con bít", "phò", "lồn", "l`", "loz", "lìn",
+      "nulo", "ml", "matlon", "cailon", "matlol", "matloz", "thml", "thangmatlon", "thangml", "đỗn lì", "tml", "thml",
+      "diml", "dml", "hãm", "xàm lol", "xam lol", "xạo lol", "xao lol", "con lol", "ăn lol", "an lol", "mát lol", "mat lol",
+  ];
 
   const containsBannedWords = (text) => {
     const words = text.split(" ");

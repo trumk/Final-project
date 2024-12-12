@@ -7,7 +7,7 @@ const User = require("../models/User");
 
 const deleteFileFromFirebase = async (fileUrl) => {
   try {
-    const fileName = decodeURIComponent(fileUrl.split("/o/")[1].split("?")[0]);
+    const fileName = decodeURIComponent(fileUrl.split("/o/")[1].split("?")[0]); 
     const file = bucket.file(fileName);
 
     const [exists] = await file.exists();
@@ -197,28 +197,29 @@ const deleteProject = async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    for (const imageUrl of project.images) {
-      const fileName = imageUrl.split("/").pop().split("?")[0];
-      const file = bucket.file(fileName);
-
-      const [exists] = await file.exists();
-      if (exists) {
-        await file.delete();
+    if (project.images && project.images.length > 0) {
+      for (const imageUrl of project.images) {
+        try {
+          await deleteFileFromFirebase(imageUrl);
+        } catch (error) {
+          console.error(`Failed to delete image: ${imageUrl}`, error);
+        }
       }
     }
 
-    for (const reportUrl of project.reports) {
-      const reportFileName = reportUrl.split("/").pop().split("?")[0];
-      const reportFile = bucket.file(reportFileName);
-
-      const [exists] = await reportFile.exists();
-      if (exists) {
-        await reportFile.delete();
+    if (project.reports && project.reports.length > 0) {
+      for (const reportUrl of project.reports) {
+        try {
+          await deleteFileFromFirebase(reportUrl);
+        } catch (error) {
+          console.error(`Failed to delete report: ${reportUrl}`, error);
+        }
       }
     }
 
     await Project.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Project and associated images/reports deleted successfully" });
+
+    res.status(200).json({ message: "Project and associated files (images/reports) deleted successfully" });
   } catch (error) {
     console.error("Error during project deletion:", error);
     res.status(500).json({ message: "Failed to delete project", error });

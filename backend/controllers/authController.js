@@ -3,7 +3,7 @@ const User = require("../models/User");
 const { clearChatHistory } = require("./aiController");
 
 const register = async (req, res) => {
-  const { userName, email, password, role } = req.body;
+  const { userName, email, password } = req.body;
 
   try {
     const existingEmail = await User.findOne({ email });
