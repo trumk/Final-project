@@ -44,7 +44,6 @@ const SearchSortFilter = () => {
 
   return (
     <div className="search-sort-filter">
-     {/* Search */}
      <div className="search-container">
         <input
           type="text"
@@ -70,7 +69,6 @@ const SearchSortFilter = () => {
         {error && <p>Error loading projects.</p>}
       </div>
 
-      {/* Sort */}
       <div className="sort-container">
         <select value={sortOption} onChange={handleSort} className="sort-select">
           <option value="">Sort by</option>
@@ -79,7 +77,6 @@ const SearchSortFilter = () => {
         </select>
       </div>
 
-      {/* Filter */}
       <div className="filter-container">
         <select
           value={semester}

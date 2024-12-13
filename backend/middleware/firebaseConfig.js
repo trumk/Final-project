@@ -40,6 +40,12 @@ const upload = multer({
 ]);
 
 const uploadFileToFirebase = async (file) => {
+  const allowedMimeTypes = ["image/jpeg", "image/png", "image/gif", "application/pdf"];
+  
+  if (!allowedMimeTypes.includes(file.mimetype)) {
+    throw new Error("Unsupported file type. Only images and PDFs are allowed.");
+  }
+
   const fileName = Date.now() + "-" + file.originalname;
   const firebaseFile = admin.storage().bucket().file(fileName);
   const downloadToken = uuidv4();
