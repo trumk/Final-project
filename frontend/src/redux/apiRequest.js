@@ -55,7 +55,7 @@ import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logou
 import { aiRequestFailed, aiRequestStart, aiRequestSuccess, clearAIResponse, clearHistory } from "./aiSlice";
 import { backupRequestFailed, backupRequestStart, backupRequestSuccess } from "./backupSlice";
 
-const BACKEND_URL = "https://final-project-backend-2ybk.onrender.com:5000";
+const BACKEND_URL = "http://localhost:5000";
 
 export const getAllProjects = () => async (dispatch) => {
   dispatch(getProjectsStart());

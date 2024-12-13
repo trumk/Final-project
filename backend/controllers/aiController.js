@@ -55,7 +55,7 @@ const generatePrompt = async (req, res) => {
 
     const allowedKeywords = [
       "project", "comment", "comments", "like", "likes", "compare", "rate", "evaluate", "description", "popular", "detail",
-      "about", "views", "view", "department", "semester", "author", "authors", "createdAt", "phổ biến", "về",
+      "about", "views", "view", "department", "semester", "author", "authors", "createdAt", "phổ biến", "về", "đồ án", "web",
       "chào", "dự án", "bình luận", "thích", "so sánh", "đánh giá", "mô tả", "xem", "khoa", "học kỳ", "tác giả", "tạo vào ngày", "đường dẫn", "tiếng việt"
     ];
     const isRelevant = allowedKeywords.some(keyword => userPrompt.toLowerCase().includes(keyword));

@@ -22,7 +22,7 @@ const register = async (req, res) => {
       userName,
       email,
       password: hashedPassword,
-      role: "user", 
+      role: "user",
     });
 
     await newUser.save();
@@ -30,6 +30,19 @@ const register = async (req, res) => {
     return res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
     console.error("Registration error:", error);
+
+    if (error.name === "ValidationError") {
+      const errors = Object.keys(error.errors).reduce((acc, key) => {
+        acc[key] = error.errors[key].message;
+        return acc;
+      }, {});
+
+      return res.status(400).json({
+        message: "Validation error",
+        errors, 
+      });
+    }
+
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
